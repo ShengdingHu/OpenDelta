@@ -39,26 +39,3 @@ class LoraModel(DeltaBase, nn.Module):
         else:
             raise NotImplementedError
         return new_module
-    
-    
-    
-    
-
-
-
-
-        
-
-
-
-
-
-
-def get_lora_t5(t5model):
-    loramodel = LoraModel(modify_module_list = ["SelfAttention.q","SelfAttention.v"])
-    print([name for name, v in t5model.named_modules()])
-    t5model = loramodel(t5model)
-    print([name for name, v in t5model.named_modules()])
-    exit()
-    return t5model
-

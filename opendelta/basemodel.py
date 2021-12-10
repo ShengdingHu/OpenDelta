@@ -60,7 +60,6 @@ class DeltaBase(object):
             replacedmodule = self.new_module_like(getattr(ptr, sub_keys[-1]))
         setattr(ptr, sub_keys[-1], replacedmodule)
 
-    @staticmethod
     def modify_module_input_output(module, modify_name, pre_func=lambda x:x, post_func=lambda x:x):
         r"""Not tested yet.
         """
