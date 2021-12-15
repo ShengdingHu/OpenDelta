@@ -38,7 +38,6 @@ class PrefixLayer(nn.Module):
         # from IPython import embed
         # embed()
         if 'position_bias' in kwargs and kwargs['position_bias'] is not None:
-            print("positional bias not None")
             if kwargs['position_bias'].shape[-1] != args[0].shape[-2] + self.prefix_token_num: # Then the position_bias should be re-calculated 
                 kwargs['position_bias'] = None
         if kwargs['past_key_value'] is None:
