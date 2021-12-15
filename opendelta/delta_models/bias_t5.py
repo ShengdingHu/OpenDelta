@@ -38,6 +38,7 @@ class BiasModel(DeltaBase, nn.Module):
                 self._reset_bias_parameters(module)
                 self.delta_params.append(bias)
             else:
+                module.bias.requires_grad = True
                 self.delta_params.append(module.bias)
         else:
             pass
