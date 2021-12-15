@@ -29,14 +29,14 @@ from transformers.optimization import Adafactor, AdafactorSchedule  # use Adafac
 from openprompt.data_utils.data_sampler import FewShotSampler
 from openprompt.data_utils import PROCESSORS
 from yacs.config import CfgNode
-from opendelta.delta_models.lora_t5 import LoraModel
+from opendelta.delta_models.prefix_t5 import PrefixModel
 
 
 def get_dataset_specific_config(args):  
     config = CfgNode(new_allowed=True)
     dataset = {}
     config.dataset_decoder_max_length = 10
-    config.max_seq_l = 480 # this should be specified according to the running GPU's capacity 
+    config.max_seq_l = 320 # this should be specified according to the running GPU's capacity 
     config.batchsize_t = 4
     config.batchsize_e = 4
     config.gradient_accumulation_steps = 4
@@ -98,7 +98,7 @@ parser.add_argument("--shot", type=int, default=-1)
 parser.add_argument("--seed", type=int, default=144)
 parser.add_argument("--plm_eval_mode", action="store_true", help="whether to turn off the dropout in the freezed model. Set to true to turn off.")
 parser.add_argument("--model", type=str, default='t5-lm', help="We test both t5 and t5-lm in this scripts, the corresponding tokenizerwrapper will be automatically loaded.")
-parser.add_argument("--model_name_or_path", default='/home/hushengding/plm_cache/t5-large-lm-adapt/')
+parser.add_argument("--model_name_or_path", default='/home/hushengding/plm_cache/t5-base-lm-adapt/')
 parser.add_argument("--project_root", default="/home/hushengding/OpenDelta_dev/OpenDelta/", help="The project root in the file system, i.e. the absolute path of OpenPrompt")
 parser.add_argument("--template_id", type=int)
 parser.add_argument("--verbalizer_id", type=int)
@@ -141,10 +141,26 @@ dataset, dconfig = get_dataset_specific_config(args)
 # load plm and set it to eval mode
 plm, tokenizer, model_config, WrapperClass = load_plm(args.model, args.model_name_or_path)
 
-# using LoraModel to modify the orginial model
-loramodel = LoraModel(modify_module_list = ["SelfAttention.q","SelfAttention.v"])
-plm = loramodel(plm)
-print(loramodel.trainable_parameters_names)
+# using mydeltamodel to modify the orginial model
+def get_memory_allocate(state = ""):
+    t = torch.cuda.get_device_properties(0).total_memory
+    r = torch.cuda.memory_reserved(0)
+    a = torch.cuda.memory_allocated(0)
+    f = r-a  # free inside reserved
+    print(f"state: {state} total memory {t}, reserved {r} allacated {a}, free {f}")
+
+plm = plm.cuda()
+get_memory_allocate(state = "before")
+mydeltamodel = PrefixModel(modify_module_list=[r"encoder.*[3-8]+.*SelfAttention"])
+plm = mydeltamodel(plm)
+mydeltamodel.cuda()
+get_memory_allocate(state = "after")
+
+get_memory_allocate(state = "after")
+# exit()
+print("trainable parameter name", mydeltamodel.trainable_parameters_names, len(mydeltamodel.trainable_parameters_names))
+plm_trainable_params = [n for n,p in plm.named_parameters() if p.requires_grad]
+print("plm trainable parameter name", plm_trainable_params, len(plm_trainable_params))
 
 # pipeline related 
 mytemplate = ManualTemplate(tokenizer=tokenizer, text=dconfig.textual_template)
@@ -179,7 +195,7 @@ tot_step = args.max_steps
 # optimizer related 
 optimizer_grouped_parameters = []
 optimizer_grouped_parameters.extend([
-    {'params': loramodel.trainable_parameters, 'weight_decay': 0.01, 'lr': args.lora_lr},
+    {'params': mydeltamodel.trainable_parameters, 'weight_decay': 0.01, 'lr': args.lora_lr},
 ])
 if args.optimizer.lower() == "adafactor":
     optimizer = Adafactor(optimizer_grouped_parameters,  
@@ -203,10 +219,10 @@ def get_num_optimized_parameters(opt):
             pnum_tot += param.numel()
     return pnum_tot
 num_params = get_num_optimized_parameters(optimizer)
-print(f"Lora trainable parameters num: {loramodel.num_trainable_parameters} Num_params in optimizer is {num_params}, total num of parameters in plm is {pytorch_total_params}")
+print(f"Lora trainable parameters num: {mydeltamodel.num_trainable_parameters} Num_params in optimizer is {num_params}, total num of parameters in plm is {pytorch_total_params}")
 
 
-content_write += f"Num_params\t{loramodel.num_trainable_parameters}"
+content_write += f"Num_params\t{mydeltamodel.num_trainable_parameters}"
 
 
 # training

@@ -1,18 +1,21 @@
 
 
+from inspect import signature
 from typing import Optional
 from opendelta.utils.utils import *
 import torch.nn as nn
 import torch
-
+from functools import wraps
+from decorator import decorate
 class DeltaBase(object):
     """Not rigorous currently
     """
     def __init__(self):
         pass
     
-    def new_module_like(self, module: nn.Module):
-        raise NotImplementedError
+    def freeze_plm(self, plm):
+        for n, p in plm.named_parameters():
+            p.requires_grad = False
     
     @property
     def trainable_parameters_names(self,):
@@ -44,34 +47,54 @@ class DeltaBase(object):
     def from_pretrained(self, path, config):
         pass
 
-    def modify_module(self,
-                      module: nn.Module, 
-                      key: str,
-                      replacedmodule: Optional[nn.Module]=None):
-        r"""Replace a module's child module using the module's reference name.
-        If the replacemodule is None, it will call self.new_module_like method which are
-        different for different objects. 
+    def find_module(self, root_module: nn.Module, key:str):
+        r"""Find the module using a name given by module.named_parameters() methods.
+        Return both the parent reference and the child name and reference.
         """
         sub_keys = key.split(".")
-        ptr = module
+        parent_module = root_module
         for sub_key in sub_keys[:-1]:
-            ptr = getattr(ptr, sub_key)
-        if replacedmodule is None:
-            replacedmodule = self.new_module_like(getattr(ptr, sub_keys[-1]))
-        setattr(ptr, sub_keys[-1], replacedmodule)
+            parent_module = getattr(parent_module, sub_key)
+        module = getattr(parent_module, sub_keys[-1])
+        return parent_module, sub_keys[-1], module
 
-    def modify_module_input_output(module, modify_name, pre_func=lambda x:x, post_func=lambda x:x):
-        r"""Not tested yet.
+    def replace_module(self,
+                      parent_module: nn.Module, 
+                      children_name: str,
+                      replacedmodule: Optional[nn.Module]=None):
+        r"""Replace a module using the reference of its parent module.
         """
-        def decorator_func(_org_func=None, _pre_func=None, _post_func=None):
-            def func_wrapper(*args,**kwargs):
-                new_args, new_kwargs = _pre_func(*args, **kwargs)
-                ret = _org_func(*new_args, **new_kwargs)
-                new_ret = _post_func(ret)
-                return new_ret
-            return func_wrapper
-        for name, m in module.named_modules(): 
-            if name == modify_name:
-                module.forward = decorator_func(_org_func=m.forward, _pre_func=pre_func, _post_func=post_func)
+        raise NotImplementedError
+    
+    def modify_module(self, module: nn.Module):
+        r"""Modify the inside parameteres of a module.
+        """
+        raise NotImplementedError
 
+    def insert_sequential_module(self, module, pre_caller=None, post_caller=None):
+        r"""insert a module (previous not exists in the code base) before a module. Specifically, it modifies the forward 
+        function of the original module to  firstly pass the arguments into the new module's forward function and then pass
+        it into the original ones. The new module can also be inserted after the original module with similar mechanism. 
+
+        When implementing the new module , researchers should be aware of the components of arguments of the original module's forward function.
+        """
+        def _caller(_org_func, _pre_caller, _post_caller,  *args, **kwargs):
+            if _pre_caller is not None:
+                args, kwargs = _pre_caller(*args, **kwargs)
+            ret = _org_func(*args, **kwargs)
+            if _post_caller is not None:
+                ret = _post_caller(ret)
+            return ret
+
+        if hasattr(module.forward, "__wrapped__"):
+            raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
+        module.forward = decorate(module.forward, _caller, extras=(pre_caller, post_caller), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
+    
+
+    def insert_parrellel_module(self, ):
+        # TODO
+        pass
+
+
+        
 
