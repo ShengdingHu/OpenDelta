@@ -32,6 +32,7 @@ class DeltaBase(object):
             if param.requires_grad:
                 pnum_tot += param.numel()
         return pnum_tot
+    
 
     @property
     def num_additional_frozen_parameters(self,):

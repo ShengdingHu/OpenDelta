@@ -93,22 +93,26 @@ def evaluate(prompt_model, dataloader):
     score =  crossfit_evaluate(predictions, ground_truths, metric="ACC")
     return score
 
+DIRBASE = "/home/hushengding/"
 parser = argparse.ArgumentParser("")
 parser.add_argument("--shot", type=int, default=-1)
 parser.add_argument("--seed", type=int, default=144)
 parser.add_argument("--plm_eval_mode", action="store_true", help="whether to turn off the dropout in the freezed model. Set to true to turn off.")
 parser.add_argument("--model", type=str, default='t5-lm', help="We test both t5 and t5-lm in this scripts, the corresponding tokenizerwrapper will be automatically loaded.")
-parser.add_argument("--model_name_or_path", default='/home/hushengding/plm_cache/t5-base-lm-adapt/')
-parser.add_argument("--project_root", default="/home/hushengding/OpenDelta_dev/OpenDelta/", help="The project root in the file system, i.e. the absolute path of OpenPrompt")
+parser.add_argument("--model_name_or_path", default=f'{DIRBASE}/plm_cache/t5-base-lm-adapt/')
+parser.add_argument("--project_root", default=f"{DIRBASE}/OpenDelta_dev/OpenDelta/", help="The project root in the file system, i.e. the absolute path of OpenPrompt")
 parser.add_argument("--template_id", type=int)
 parser.add_argument("--verbalizer_id", type=int)
-parser.add_argument("--data_dir", type=str, default="/home/hushengding/huggingface_datasets/") # sometimes, huggingface datasets can not be automatically downloaded due to network issue, please refer to 0_basic.py line 15 for solutions. 
+parser.add_argument("--data_dir", type=str, default=f"{DIRBASE}/huggingface_datasets/saved_to_disk/") # sometimes, huggingface datasets can not be automatically downloaded due to network issue, please refer to 0_basic.py line 15 for solutions. 
 parser.add_argument("--dataset",type=str)
 parser.add_argument("--result_file", type=str, default="../sfs_out/results.txt")
 parser.add_argument("--max_steps", default=20000, type=int)
-parser.add_argument("--lora_lr", type=float, default=3e-5)
-parser.add_argument("--lora_r", type=float, default=8)
-parser.add_argument("--lora_alpha", type=float, default=16)
+parser.add_argument("--delta_lr", type=float, default=3e-5)
+# lora specific 
+parser.add_argument("--prefix_token_num", type=int, default=5)
+parser.add_argument("--mid_dim", type=int, default=512)
+parser.add_argument("--not_reparameterize", action="store_true")
+
 parser.add_argument("--warmup_step", type=int, default=500)
 parser.add_argument("--eval_every_steps", type=int, default=500)
 parser.add_argument("--optimizer", type=str, default="Adafactor")
@@ -124,9 +128,7 @@ content_write += f"seed {args.seed}\t"
 content_write += f"shot {args.shot}\t"
 content_write += f"plm_eval_mode {args.plm_eval_mode}\t"
 content_write += f"eval_every_steps {args.eval_every_steps}\t"
-content_write += f"lora_lr {args.lora_lr}\t"
-content_write += f"lora_r {args.lora_r}\t"
-content_write += f"lora_alpha {args.lora_alpha}\t"
+content_write += f"delta_lr {args.delta_lr}\t"
 content_write += f"optimizer {args.optimizer}\t"
 content_write += f"warmup_step {args.warmup_step}\t"
 content_write += "\n"
@@ -141,23 +143,12 @@ dataset, dconfig = get_dataset_specific_config(args)
 # load plm and set it to eval mode
 plm, tokenizer, model_config, WrapperClass = load_plm(args.model, args.model_name_or_path)
 
-# using mydeltamodel to modify the orginial model
-def get_memory_allocate(state = ""):
-    t = torch.cuda.get_device_properties(0).total_memory
-    r = torch.cuda.memory_reserved(0)
-    a = torch.cuda.memory_allocated(0)
-    f = r-a  # free inside reserved
-    print(f"state: {state} total memory {t}, reserved {r} allacated {a}, free {f}")
-
 plm = plm.cuda()
-get_memory_allocate(state = "before")
-mydeltamodel = PrefixModel(modify_module_list=[r"encoder.*[3-8]+.*SelfAttention"])
+mydeltamodel = PrefixModel(modify_module_list=[r"encoder.*[3-8]+.*SelfAttention"], prefix_token_num=args.prefix_token_num, reparameterize=(not args.not_reparameterize), mid_dim=args.mid_dim )
 plm = mydeltamodel(plm)
 mydeltamodel.cuda()
-get_memory_allocate(state = "after")
 
-get_memory_allocate(state = "after")
-# exit()
+# check trainable params
 print("trainable parameter name", mydeltamodel.trainable_parameters_names, len(mydeltamodel.trainable_parameters_names))
 plm_trainable_params = [n for n,p in plm.named_parameters() if p.requires_grad]
 print("plm trainable parameter name", plm_trainable_params, len(plm_trainable_params))
@@ -195,7 +186,7 @@ tot_step = args.max_steps
 # optimizer related 
 optimizer_grouped_parameters = []
 optimizer_grouped_parameters.extend([
-    {'params': mydeltamodel.trainable_parameters, 'weight_decay': 0.01, 'lr': args.lora_lr},
+    {'params': mydeltamodel.trainable_parameters, 'weight_decay': 0.01, 'lr': args.delta_lr},
 ])
 if args.optimizer.lower() == "adafactor":
     optimizer = Adafactor(optimizer_grouped_parameters,  
@@ -209,7 +200,7 @@ elif args.optimizer.lower() == "adamw":
                     optimizer, 
                     num_warmup_steps=args.warmup_step, num_training_steps=tot_step) # usually num_warmup_steps is 500
 
-pytorch_total_params = sum(p.numel() for p in plm.parameters())
+plm_total_params = sum(p.numel() for p in plm.parameters())
 
 def get_num_optimized_parameters(opt):
     pnum_tot = 0
@@ -219,11 +210,12 @@ def get_num_optimized_parameters(opt):
             pnum_tot += param.numel()
     return pnum_tot
 num_params = get_num_optimized_parameters(optimizer)
-print(f"Lora trainable parameters num: {mydeltamodel.num_trainable_parameters} Num_params in optimizer is {num_params}, total num of parameters in plm is {pytorch_total_params}")
+tune_rate = num_params/plm_total_params
+print(f"Trainable parameters num: {mydeltamodel.num_trainable_parameters} Num_params in optimizer: {num_params}, total num of params in plm: {plm_total_params}, tune rate: {tune_rate*100:.4}%")
 
 
 content_write += f"Num_params\t{mydeltamodel.num_trainable_parameters}"
-
+content_write += f"tune_rate \t{tune_rate}"
 
 # training
 tot_loss = 0
@@ -283,13 +275,7 @@ for epoch in range(1000000):
     if leave_training:
         break  
     
-    
-# # super_glue test split can not be evaluated without submitting the results to their website. So we skip it here and keep them as comments.
-#
-# prompt_model.load_state_dict(torch.load(f"{args.project_root}/ckpts/{this_run_unicode}.ckpt"))
-# prompt_model = prompt_model.cuda()
-# test_acc = evaluate(prompt_model, test_dataloader, desc="Test")
-# test_acc = evaluate(prompt_model, test_dataloader, desc="Test")
+
 
 # a simple measure for the convergence speed.
 thres99 = 0.99*best_val_acc
