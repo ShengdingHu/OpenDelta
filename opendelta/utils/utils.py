@@ -31,7 +31,7 @@ def regex_match(str_a: str , list_b: List[str]):
     Returns:
     """
     for str_b in list_b:
-        ret = re.match(str_b, str_a)
+        ret = re.search(str_b, str_a)
         if ret is not None:
             if ret.group() == str_a:
                 return True

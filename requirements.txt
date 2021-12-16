@@ -5,3 +5,4 @@ tqdm==4.62.2
 openprompt
 loralib
 decorator
+rich
