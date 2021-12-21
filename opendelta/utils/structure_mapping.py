@@ -71,6 +71,8 @@ roberta_mapping = {
                     "output.dense": {"__name__":"proj"},
                     "output.LayerNorm": {"__name__":"layer_norm"},
                 },
+                "output": {"__name__":"ff"},
+                "intermediate": {"__name__":"ff"},
                 "intermediate.dense": {"__name__":"ff.w1"},
                 "output.dense": {"__name__":"ff.w2"},
                 "output.LayerNorm": {"__name__":"ff.layer_norm"},
@@ -99,6 +101,8 @@ bert_mapping = {
                     "output.dense": {"__name__":"proj"},
                     "output.LayerNorm": {"__name__":"layer_norm"},
                 },
+                "output": {"__name__":"ff"},  # TODO: can't handle multiple structure correspond to one common structure
+                "intermediate": {"__name__":"ff"},
                 "intermediate.dense": {"__name__":"ff.w1"},
                 "output.dense": {"__name__":"ff.w2"},
                 "output.LayerNorm": {"__name__":"ff.layer_norm"},
@@ -122,13 +126,40 @@ gpt2_mapping = {
                 "c_proj": {"__name__":"proj"},
             },
             "ln_1": {"__name__":"attn.layer_norm"},
-            "mlp.c_fc": {"__name__":"ff.w1"},
-            "mlp.c_proj": {"__name__":"ff.w2"},
+            "mlp":{ "__name__": "ff",
+               "c_fc": {"__name__":"w1"},
+               "c_proj": {"__name__":"w2"}
+            },
             "ln_2": {"__name__":"ff.layer_norm"},
         },
     },
     "transformer.ln_f": {"__name__":"decoder.layernorm"},
     "lm_head": {"__name__":"lm_head.proj"},
+}
+
+distilbert_mapping = {
+    "distilbert.embeddings.word_embeddings": {"__name__":"embeddings"},
+    "distilbert.embeddings.position_embeddings": {"__name__":""},
+    "distilbert.embeddings.token_type_embeddings": {"__name__":""},
+    "distilbert.embeddings.LayerNorm": {"__name__":""},
+    "distilbert.transformer": {"__name__":"encoder",
+        "layer": {"__name__":"block",
+            "$": {"__name__":"$",
+                "attention": {"__name__":"attn",
+                    "q_lin": {"__name__":"q"},
+                    "k_lin": {"__name__":"k"},
+                    "v_lin": {"__name__":"v"},
+                    "out_lin": {"__name__":"proj"},
+                },
+                "ffn": {"__name__":"ff",
+                      "lin1": {"__name__":"w1"},
+                      "lin2": {"__name__":"w2"},
+                },
+                "sa_layer_norm": {"__name__":"attn.layer_norm"},
+                "output_layer_norm":{"__name__": "ff.layer_norm"}
+            }
+        }
+    }
 }
 
 def transform(org_key, mapping, strict=True, warning=False):
@@ -177,6 +208,7 @@ Mappings = {
     "gpt2": gpt2_mapping,
     "bert": bert_mapping,
     "roberta": roberta_mapping,
+    "distilbert": distilbert_mapping
 }
 
 if __name__ == "__main__":

@@ -29,7 +29,7 @@ from transformers.optimization import Adafactor, AdafactorSchedule  # use Adafac
 from openprompt.data_utils.data_sampler import FewShotSampler
 from openprompt.data_utils import PROCESSORS
 from yacs.config import CfgNode
-from opendelta.delta_models.prefix_t5 import PrefixModel
+from opendelta.delta_models.prefix import PrefixModel
 
 
 def get_dataset_specific_config(args):  

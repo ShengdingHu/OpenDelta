@@ -29,7 +29,7 @@ from transformers.optimization import Adafactor, AdafactorSchedule  # use Adafac
 from openprompt.data_utils.data_sampler import FewShotSampler
 from openprompt.data_utils import PROCESSORS
 from yacs.config import CfgNode
-from opendelta.delta_models.adapter1 import AdapterModel
+from opendelta.delta_models.bias import BiasModel
 
 
 def get_dataset_specific_config(args):  
@@ -108,10 +108,9 @@ parser.add_argument("--dataset",type=str)
 parser.add_argument("--result_file", type=str, default="../sfs_out/results.txt")
 parser.add_argument("--max_steps", default=20000, type=int)
 parser.add_argument("--delta_lr", type=float, default=3e-5)
-# adapter specific 
-parser.add_argument("--bottleneck_dim", default=32, type=int)
-parser.add_argument("--non_linearity", default='relu', type=str)
-parser.add_argument("--parallel_adapter", action="store_true")
+# dias specific 
+
+
 parser.add_argument("--warmup_step", type=int, default=500)
 parser.add_argument("--eval_every_steps", type=int, default=500)
 parser.add_argument("--optimizer", type=str, default="Adafactor")
@@ -128,9 +127,6 @@ content_write += f"shot {args.shot}\t"
 content_write += f"plm_eval_mode {args.plm_eval_mode}\t"
 content_write += f"eval_every_steps {args.eval_every_steps}\t"
 content_write += f"delta_lr {args.delta_lr}\t"
-content_write += f"bottleneck_dim {args.bottleneck_dim}\t"
-content_write += f"non_linearity {args.non_linearity}\t"
-content_write += f"parallel_adapter {args.parallel_adapter}\t"
 content_write += f"optimizer {args.optimizer}\t"
 content_write += f"warmup_step {args.warmup_step}\t"
 content_write += "\n"
@@ -146,8 +142,7 @@ dataset, dconfig = get_dataset_specific_config(args)
 plm, tokenizer, model_config, WrapperClass = load_plm(args.model, args.model_name_or_path)
 
 plm = plm.cuda()
-
-mydeltamodel = AdapterModel(bottleneck_dim=args.bottleneck_dim, non_linearity=args.non_linearity, sequential=(not args.parallel_adapter))
+mydeltamodel = BiasModel()
 plm = mydeltamodel(plm)
 mydeltamodel.cuda()
 

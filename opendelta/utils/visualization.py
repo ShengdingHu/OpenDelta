@@ -1,4 +1,3 @@
-from logging import root
 from typing import List
 from rich.tree import Tree as RichTree
 from rich import print as richprint
@@ -86,6 +85,8 @@ class Visualization(object):
         self.normal_color = "white"
         self.virtual_color = "orange"
         self.not_common_color = "bright_black"
+        self.no_grad_color = "rgb(0,70,100)"
+        self.delta_color = "rgb(175,0,255)"
 
     def check_mode(self, ):
         if self.keep_non_params and self.common_structure:
@@ -98,9 +99,10 @@ class Visualization(object):
                         rootname="root", 
                         expand_params=False, 
                         keep_non_params=False, 
-                        common_structure=True, 
+                        common_structure=False, 
                         mapping=None, 
-                        only_common=False):
+                        only_common=False
+                        ):
         r"""Draw the structure graph in command line. 
 
         Args: 
@@ -352,7 +354,7 @@ class Visualization(object):
         edges = iter(nums[:1] + sum(gaps, []) + nums[-1:])
         return list(zip(edges, edges))
 
-    def add_param_info_node(self, m:nn.Module, tree:ModuleTree):
+    def add_param_info_node(self, m:nn.Module, tree:ModuleTree, record_grad_state=True, record_delta=True):
         r""" Add parameter infomation of the module. The parameters that are not inside a module (i.e., created using nn.Parameter) will be added in this function.
         """
         known_module = [n for n,c in m.named_children()]
@@ -360,7 +362,20 @@ class Visualization(object):
             if n.split(".")[0] not in known_module:
                 if len(n.split(".")) > 1: raise RuntimeError(f"The name field {n} should be a parameter since it doesn't appear in named_children, but it contains '.'")
                 info = "{}:{}".format(n, list(p.shape))
-                tree.add(info=info, is_param_node=True, param_color=self.param_color)
+
+                if record_grad_state:
+                    if not p.requires_grad:
+                        color = self.no_grad_color
+                    else:
+                        color = self.param_color
+                else:
+                    color = self.param_color
+                
+                if record_delta:
+                    if hasattr(p, "_is_delta") and getattr(p, "_is_delta"):
+                        color = self.delta_color
+
+                tree.add(info=info, is_param_node=True, param_color=color)
 
     
  

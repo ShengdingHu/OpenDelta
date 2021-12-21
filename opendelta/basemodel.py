@@ -1,43 +1,170 @@
 
 
-from inspect import signature
+from opendelta.utils.signature import signature
 from typing import Optional
+from opendelta.utils.cuda import get_device
 from opendelta.utils.utils import *
 import torch.nn as nn
 import torch
 from functools import wraps
 from decorator import decorate
+from opendelta.utils.structure_mapping import transform
+
+
+def is_leaf_module(module):
+    r"""Whether the module is a leaf module
+    """
+    return len([n for n,_ in module.named_children()]) == 0
+
+def non_module_param(module: nn.Module):
+    module_names = [n for n, _ in module.named_modules()]
+    ret = []
+    for n, p in module.named_parameters():
+        if not is_child_key(n, module_names):
+            ret.append((n,p))
+    return ret
+
+
+
 class DeltaBase(object):
     """Not rigorous currently
     """
-    def __init__(self):
-        pass
-    
-    def freeze_plm(self, plm):
-        for n, p in plm.named_parameters():
-            p.requires_grad = False
-    
-    @property
-    def trainable_parameters_names(self,):
-        return [n for n,p in self.named_parameters() if p.requires_grad]
+    def __init__(self, 
+                 common_structure=False,
+                 structure_mapping=None
+                 ):
+        self.common_structure = common_structure
+        self.structure_mapping = structure_mapping
+        if self.common_structure and self.structure_mapping is None:
+            raise RuntimeError("Using common structure but the structure mapping is None")
 
-    @property
-    def trainable_parameters(self,):
-        return [p for n,p in self.named_parameters() if p.requires_grad]
+    def __call__(self, 
+                 module: nn.Module, 
+                 modified_keys: List[str],
+                 is_regex: Optional[bool]=False,
+                 registration_name: Optional[str] = "deltas"
+                ) -> nn.Module:
+        r"""modify the modules into delta models.
 
-    @property
-    def num_trainable_parameters(self,):
+        Args:
+
+        Returns:
+
+        """
+        self.plm_total_params = sum(p.numel() for p in module.parameters())
+        for key, _ in module.named_modules():
+            if self.find_key(key, modified_keys, is_regex):
+                # print("find key",key)
+                self.update_module(module, key)
+        setattr(module, registration_name, self)
+        self.mark_as_delta()
+        return module
+    
+    def mark_as_delta(self, module: nn.Module=None,):
+        if module is None:
+            module=self
+        for p in module.parameters():
+            setattr(p, "_is_delta", True)
+    
+    def update_module(self, module: nn.Module, key: str):
+        r"""Different of each delta models. 
+        """
+        raise NotImplementedError
+    
+    
+    def freeze_module(self, module: nn.Module, exclude=["deltas"], is_regex=False, prefix=""):
+        r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
+        deltas module should be filtered with `_is_delta` attributes because it may have parameter sharing to the main model, (e.g., bias term)
+        """
+        if is_leaf_module(module):
+            for n, p in module.named_parameters():
+                if self.find_key(".".join([prefix,n]), exclude, is_regex=is_regex, only_tail=True):
+                    continue
+                if "deltas" not in exclude or (not (hasattr(p, "_is_delta") and getattr(p, "_is_delta"))):
+                    p.requires_grad = False
+            return 
+        else:
+            for n, c in module.named_children():
+                if self.find_key(".".join([prefix,n]), exclude, is_regex=is_regex, only_tail=True): # if found, untouch the parameters
+                    continue
+                else: # firstly freeze the non module params, then go deeper.
+                    params = non_module_param(module)
+                    for n, p in params:
+                        if "deltas" not in exclude or (not (hasattr(p, "_is_delta") and getattr(p, "_is_delta"))):
+                            p.requires_grad = False
+                    self.freeze_module(c, prefix=".".join([prefix,n]), exclude=exclude, is_regex=is_regex)
+
+
+
+    def find_key(self, key: str, target_list: List[str], is_regex: bool, only_tail=True):
+        r""" Check whether any target string is in the key or in the tail of the key. 
+
+        Args:
+            key (:obj:`str`) The key which might be a referencing name to a submodule in the module, e.g. bert.embeddings.word_embeddings
+            target (:obj:`List[str]`) The list of target string e.g. ["attention", "word_embeddings", "ffn.out"] 
+            is_regex (:obj:`bool`) whether the syntax in the target_list is plain text or regular expression.
+
+        Returns: 
+            bool
+        """
+        if self.common_structure:
+            key = transform(key, self.structure_mapping, strict=False)
+        if key is None:
+            return False
+        if is_regex:
+            try:
+                re.compile(key)
+            except re.error:
+                print(f"Non valid regular expression. {key}")
+            if only_tail:
+                # print("here")
+                # # from IPython import embed
+                # # embed()
+                return endswith_in_regex(key, target_list)
+            else:
+                return substring_in_regex(key, target_list)
+        else:
+            if only_tail:
+                return endswith_in(key, target_list)
+            else:
+                return substring_in(key, target_list)
+
+    def pseudo_data_to_instantiate(self, module):
+        r"""Create a pseudo_data into the module to know the dimemsion of each tensor in the computation graph.
+        #TODO: To test more data input format, i.e. may need to pass more than inputs/decoder_input_ids.
+        """
+        device = get_device(module)
+        pseudo_input = torch.tensor([[0,0]]).to(device)
+        if "decoder_input_ids" in  signature(module.forward).args:
+            module(pseudo_input, decoder_input_ids = pseudo_input)
+        else:
+            module(pseudo_input)
+
+    def trainable_parameters_names(self, module: Optional[nn.Module]=None):
+        if module is None:
+            module = self
+        return [n for n,p in module.named_parameters() if p.requires_grad]
+
+    def trainable_parameters(self,module: Optional[nn.Module]=None):
+        if module is None:
+            module = self
+        return [p for n,p in module.named_parameters() if p.requires_grad]
+
+
+    def num_trainable_parameters(self, module: Optional[nn.Module]=None):
+        if module is None:
+            module = self
         pnum_tot = 0
-        for param in self.parameters():
+        for param in module.parameters():
             if param.requires_grad:
                 pnum_tot += param.numel()
         return pnum_tot
     
-
-    @property
-    def num_additional_frozen_parameters(self,):
+    def num_frozen_parameters(self, module: Optional[nn.Module]=None):
+        if module is None:
+            module = self
         pnum_tot = 0
-        for param in self.parameters():
+        for param in module.parameters():
             if not param.requires_grad:
                 pnum_tot += param.numel()
         return pnum_tot
@@ -51,6 +178,11 @@ class DeltaBase(object):
     def find_module(self, root_module: nn.Module, key:str):
         r"""Find the module using a name given by module.named_parameters() methods.
         Return both the parent reference and the child name and reference.
+
+        Returns:
+            nn.Module: A reference to the parent module of the replaced module
+            str: The key of the replaced module relevant to its parent module
+            nn.Module: The replaced module. 
         """
         sub_keys = key.split(".")
         parent_module = root_module

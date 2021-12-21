@@ -5,30 +5,26 @@ from transformers.models.t5 import T5ForConditionalGeneration
 import loralib as lora
 import torch.nn as nn
 
-
 class LoraModel(DeltaBase, nn.Module):
-    def __init__(self, 
-                 modify_module_list=["SelfAttention.q","SelfAttention.v"],
+    def __init__(self,
                  lora_r=8,
                  lora_alpha=16,
-                 lora_dropout=0.0,):
-        DeltaBase.__init__(self)
+                 lora_dropout=0.0,
+                 common_structure=False,
+                 structure_mapping=None
+                 ):
+        DeltaBase.__init__(self, common_structure=common_structure, structure_mapping=structure_mapping)
         nn.Module.__init__(self)
-        self.modify_module_list = modify_module_list
         self.lora_r = lora_r
         self.lora_alpha = lora_alpha
         self.lora_dropout = lora_dropout
-        self.lora_modules = nn.ModuleList()
+        self.delta_modules = nn.ModuleList()
     
-    def __call__(self, plm, plm_frozen=True) -> nn.Module:
-        if plm_frozen:
-            self.freeze_plm(plm)
-        for key, _ in plm.named_modules():
-            if substring_in(key, self.modify_module_list):
-                print("key",key)
-                parent_ref, children_name, child_ref = self.find_module(plm, key)
-                self.replace_module(parent_ref, children_name, child_ref)
-        return plm
+    
+    def update_module(self, module: nn.Module, key: str):
+        parent_ref, children_name, child_ref = self.find_module(module, key)
+        self.replace_module(parent_ref, children_name, child_ref)
+        
     
     def replace_module(self,
                       parent_module: nn.Module, 
@@ -47,8 +43,15 @@ class LoraModel(DeltaBase, nn.Module):
                                      r=self.lora_r, 
                                      lora_alpha=self.lora_alpha,
                                      lora_dropout=self.lora_dropout)
-            self.lora_modules.append(new_module)
+            self.delta_modules.append(new_module)
         else:
             raise NotImplementedError
 
         setattr(parent_module, children_name, new_module)
+    
+    def mark_as_delta(self, module: nn.Module = None):
+        if module is None:
+            module=self
+        for n, p in module.named_parameters():
+            if "lora" in n.split(".")[-1]: # only lora_A, lora_B is the delta parameter.
+                setattr(p, "_is_delta", True)
