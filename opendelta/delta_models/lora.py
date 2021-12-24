@@ -43,8 +43,13 @@ class LoraModel(DeltaBase, nn.Module):
                                      r=self.lora_r, 
                                      lora_alpha=self.lora_alpha,
                                      lora_dropout=self.lora_dropout)
+            new_module.weight = child_module.weight
+            new_module.bias = child_module.bias
             self.delta_modules.append(new_module)
         else:
+            from IPython import embed
+            print("line49")
+            embed()
             raise NotImplementedError
 
         setattr(parent_module, children_name, new_module)
@@ -53,5 +58,6 @@ class LoraModel(DeltaBase, nn.Module):
         if module is None:
             module=self
         for n, p in module.named_parameters():
-            if "lora" in n.split(".")[-1]: # only lora_A, lora_B is the delta parameter.
+            para_name = n.split(".")[-1]
+            if "weight" not in para_name: # only lora_A, lora_B is the delta parameter.
                 setattr(p, "_is_delta", True)
