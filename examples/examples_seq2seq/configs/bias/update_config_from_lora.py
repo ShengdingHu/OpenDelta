@@ -32,6 +32,7 @@ filenames = [x for x in os.listdir("../lora") if x.endswith(".json")]
 for filename in filenames:
     baseconfig = json.load(open(f"../lora/{filename}"))
     baseconfig['delta_type'] = "bias"
+    baseconfig["delta_lr"] = 3e-3
     dataset_name = filename[len("lora_"):-len(".json")]
     baseconfig["output_dir"] = "/".join(baseconfig["output_dir"].split("/")[:-2]+["bias",dataset_name])
     json.dump(baseconfig, open(f"bias_{dataset_name}.json",'w'), indent=4,sort_keys=True)

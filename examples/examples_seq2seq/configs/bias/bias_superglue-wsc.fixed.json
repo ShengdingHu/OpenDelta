@@ -2,7 +2,7 @@
     "dataset_config_name": [
         "en"
     ],
-    "delta_lr": 0.0003,
+    "delta_lr": 0.003,
     "delta_type": "bias",
     "do_eval": true,
     "do_test": true,
