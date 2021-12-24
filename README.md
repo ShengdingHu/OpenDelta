@@ -5,7 +5,7 @@ Implementation of various parameter efficient methods.
 
 (tested using examples/testing.py)
 
-|   | Lora  | Bias  |  Prefix | adapter1 |
+|   | Lora  | Bias  |  Prefix | adapter |
 |---|---|---|---|---|
 | t5 | [x] | [x] | [x]  | [x]  |
 | gpt2 | [x]  | [x]  |  [x] |  [x] |
