@@ -105,7 +105,7 @@ elif args.delta_model == "prefix":
     
 
 elif args.delta_model == "adapter":
-    from opendelta.delta_models.adapter1 import AdapterModel
+    from opendelta.delta_models.adapter import AdapterModel
     if not args.common_structure:
         if 'distilbert' ==  args.model_name:
             delta_model = AdapterModel()
