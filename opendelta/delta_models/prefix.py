@@ -39,6 +39,7 @@ class PrefixLayerT5(nn.Module):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
         batch_size = args[0].shape[0]
+        seq_len = args[0].shape[-2]
         if not self.instantiated:
             self.hidden_dim = args[0].shape[-1]
             self.instantiate(hidden_dim=self.hidden_dim)
@@ -51,23 +52,26 @@ class PrefixLayerT5(nn.Module):
         else:
             past_value = self.past_value_reparam
 
-        # from IPython import embed
-        # embed()
+
         def expand_batchsize(x):
             x = x.reshape(self.prefix_token_num, self.num_heads, -1).transpose(0,1)
             x = x.unsqueeze(0).expand(batch_size, *x.shape)
             return x
-        # from IPython import embed
-        # embed()
+        
         if 'position_bias' in kwargs and kwargs['position_bias'] is not None:
-            if kwargs['position_bias'].shape[-1] != args[0].shape[-2] + self.prefix_token_num: # Then the position_bias should be re-calculated 
+            if kwargs['position_bias'].shape[-1] != seq_len + self.prefix_token_num: # Then the position_bias should be re-calculated 
                 kwargs['position_bias'] = None
         if kwargs['past_key_value'] is None:
             kwargs['past_key_value'] = (expand_batchsize(past_key), expand_batchsize(past_value))
         
+        past_key_len = kwargs['past_key_value'][0].shape[-2]
+        
         if 'mask' in kwargs and kwargs['mask'] is not None:
-            am = kwargs['mask']  # Should check the format of the attention_mask when moving to a new plm.
-            kwargs['mask'] = torch.cat([-torch.zeros((*am.shape[:-1],self.prefix_token_num), dtype = am.dtype,device=am.device), am], dim=-1)
+            mask_len = kwargs['mask'].shape[-1]
+            if past_key_len + seq_len == mask_len + self.prefix_token_num:
+       
+                am = kwargs['mask']  # Should check the format of the attention_mask when moving to a new plm.
+                kwargs['mask'] = torch.cat([-torch.zeros((*am.shape[:-1],self.prefix_token_num), dtype = am.dtype,device=am.device), am], dim=-1)
         return args, kwargs
     
     def post_forward(self, output):

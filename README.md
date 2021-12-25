@@ -3,7 +3,7 @@ Implementation of various parameter efficient methods.
 
 ### Execution Tested Combination
 
-(tested using examples/testing.py)
+(tested using testing/testing.py)
 
 |   | Lora  | Bias  |  Prefix | adapter | low_rank_adapter | compactor |
 |---|---|---|---|---|---|---|
