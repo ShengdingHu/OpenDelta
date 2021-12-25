@@ -1,2 +1,0 @@
-cd examples/examples_seq2seq
-CUDA_VISIBLE_DEVICES=3 python run_seq2seq_baseline.py configs/baseline.json
