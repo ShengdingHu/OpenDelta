@@ -17,3 +17,7 @@ Implementation of various parameter efficient methods.
 ### Performance Checked Combination
 
 To add.
+
+### TODOs
+
+[] Compactor `shared_phm_rule=True` not supported

@@ -1,3 +1,10 @@
+
+from opendelta.basemodel import DeltaBase
+from opendelta.delta_models.layers.low_rank_linear import LowRankLinear
+from opendelta.delta_models.layers.activations import Activations
+from typing import Optional
+import torch.nn as nn
+import torch
 from functools import partial
 from typing import Optional
 from opendelta.utils.utils import *
@@ -7,44 +14,41 @@ import loralib as lora
 import torch.nn as nn
 import torch
 import math
-from opendelta.delta_models.layers.activations import Activations
-import inspect
 
 
-
-
-
-class AdapterLayer(nn.Module):
-    r"""A layer of adapter tuning module. 
+class LowRankAdapter(nn.Module):
+    """This is the low-rank adapter, in which each adapter is composed of two rank-one matrices.
     """
-    def __init__(self, bottleneck_dim=32, non_linearity='relu', device=None):
+    def __init__(self, 
+                 reduction_factor=32, 
+                 non_linearity="gelu_new",
+                 low_rank_w_init="glorot-uniform", 
+                 low_rank_rank=1,
+                 device=None):
         super().__init__()
-        self.bottleneck_dim = bottleneck_dim
+        self.reduction_factor = reduction_factor
+        self.non_linearity = non_linearity
+        self.low_rank_w_init = low_rank_w_init
+        self.low_rank_rank = low_rank_rank
         self.device = device
         self.instantiated = False
-        self.non_linearity = non_linearity
+
     
     def instantiate(self, hidden_dim):
-        self.modulelist = nn.Sequential()
-        self.modulelist.add_module("down_proj",nn.Linear(hidden_dim, self.bottleneck_dim, device=self.device))
 
-        # select non-linearity
-        self.modulelist.add_module("non_linear", Activations(self.non_linearity.lower()))
+        self.down_sample_size = hidden_dim // self.reduction_factor
+        self.activation = Activations(self.non_linearity.lower()).to(self.device)
+        self.down_sampler = LowRankLinear(hidden_dim, self.down_sample_size,
+                                          w_init=self.low_rank_w_init,
+                                          rank=self.low_rank_rank).to(self.device)
+        self.up_sampler = LowRankLinear(self.down_sample_size, hidden_dim,
+                                        w_init=self.low_rank_w_init,
+                                        rank=self.low_rank_rank).to(self.device)
 
-        self.modulelist.add_module("up_proj", nn.Linear(self.bottleneck_dim, self.hidden_dim,  device=self.device))
-
-        # TODO:
-        # If we want to have a layer norm on output, we apply it later after a separate residual connection
-        # This means that we learn a new output layer norm, which replaces another layer norm learned in the bert layer
-        # if self.add_layer_norm_after:
-        #     self.adapter_norm_after = nn.LayerNorm(self.input_size)
-
-        # if we want to initialize with the bert strategy then this function is called for all the linear layers
         self.instantiated = True
-        
-    
+
     def forward(self, output):
-        r""" Get the hidden_states from the PLM's layer output, pass it into the adapter, 
+        r""" Get the hidden_states from the PLM's layer output, pass it into the low-rank adapter, 
         then combined with the main hidden_states. Finally pass it into the subsequent layer.
 
         """
@@ -62,7 +66,10 @@ class AdapterLayer(nn.Module):
             self.instantiate(hidden_dim=self.hidden_dim)
             
 
-        adapter_output = self.modulelist(hiddens)
+        z = self.down_sampler(hiddens)
+        z = self.activation(z)
+        adapter_output = self.up_sampler(z)
+
         modified_output = adapter_output + hiddens # residual_connection
         if isinstance(output, tuple):
             output = (modified_output,) + output[1:]
@@ -71,24 +78,30 @@ class AdapterLayer(nn.Module):
         else:
             raise TypeError
         return output
-    
-  
 
-class AdapterModel(DeltaBase, nn.Module):
+
+
+
+
+
+class LowRankAdapterModel(DeltaBase, nn.Module):
     r"""
     """
     def __init__(self, 
-                 bottleneck_dim: Optional[int]=32, 
-                 non_linearity: Optional[str]='relu',
-                 sequential: Optional[str] = True,
                  common_structure = False,
                  structure_mapping = None,
-                ):
+                 reduction_factor = 32,
+                 non_linearity = "gelu_new",
+                 low_rank_w_init = "glorot-uniform", 
+                 low_rank_rank = 1,
+                 ):
+            
         DeltaBase.__init__(self, common_structure=common_structure, structure_mapping=structure_mapping)
         nn.Module.__init__(self)
-        self.bottleneck_dim = bottleneck_dim
+        self.reduction_factor = reduction_factor
         self.non_linearity = non_linearity
-        self.sequential = sequential
+        self.low_rank_w_init = low_rank_w_init
+        self.low_rank_rank = low_rank_rank
         self.delta_modules = nn.ModuleList()
         
     def __call__(self, 
@@ -113,7 +126,11 @@ class AdapterModel(DeltaBase, nn.Module):
     
     def new_module_like(self, module):
         module_device = get_device(module)
-        adapterlayer = AdapterLayer(bottleneck_dim=self.bottleneck_dim, non_linearity=self.non_linearity, device=module_device)
+        adapterlayer = LowRankAdapter(reduction_factor = self.reduction_factor,
+                                      non_linearity = self.non_linearity,
+                                      low_rank_w_init = self.low_rank_w_init, 
+                                      low_rank_rank = self.low_rank_rank,
+                                      device=module_device)
         self.delta_modules.append(adapterlayer)  
         return adapterlayer
     

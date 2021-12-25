@@ -2,24 +2,27 @@ import torch
 import math
 import torch.nn as nn
 
-class Activation_Function_Class(nn.Module):
+import torch.nn as nn
+from transformers.activations import get_activation
+
+class Activations(nn.Module):
     """
     Implementation of various activation function. Copied from open-source project AdapterHub #TODO: addlink
     """
 
-    def __init__(self, hidden_act):
+    def __init__(self, activation_type):
 
-        if hidden_act.lower() == "relu":
+        if activation_type.lower() == "relu":
             self.f = nn.functional.relu
-        elif hidden_act.lower() == "tanh":
+        elif activation_type.lower() == "tanh":
             self.f = torch.tanh
-        elif hidden_act.lower() == "swish":
+        elif activation_type.lower() == "swish":
 
             def swish(x):
                 return x * torch.sigmoid(x)
 
             self.f = swish
-        elif hidden_act.lower() == "gelu":
+        elif activation_type.lower() == "gelu":
 
             def gelu_new(x):
                 """
@@ -29,12 +32,16 @@ class Activation_Function_Class(nn.Module):
                 return 0.5 * x * (1 + torch.tanh(math.sqrt(2 / math.pi) * (x + 0.044715 * torch.pow(x, 3))))
 
             self.f = gelu_new
-        elif hidden_act.lower() == "gelu_orig":
+        elif activation_type.lower() == "gelu_orig":
             self.f = nn.functional.gelu
-        elif hidden_act.lower() == "leakyrelu":
+        elif activation_type.lower() == "leakyrelu":
             self.f = nn.functional.leaky_relu
+        else:
+            self.f = get_activation(activation_type)
 
         super().__init__()
 
     def forward(self, x):
         return self.f(x)
+
+

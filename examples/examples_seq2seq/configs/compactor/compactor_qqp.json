@@ -1,0 +1,37 @@
+{
+    "dataset_config_name": [
+        "en"
+    ],
+    "delta_lr": 0.003,
+    "delta_type": "compactor",
+    "do_eval": true,
+    "do_test": true,
+    "do_train": true,
+    "eval_dataset_config_name": [
+        "en"
+    ],
+    "eval_dataset_name": "qqp",
+    "evaluation_strategy": "epoch",
+    "greater_is_better": true,
+    "learning_rate": 0.0003,
+    "load_best_model_at_end": true,
+    "max_source_length": 128,
+    "metric_for_best_model": "average_metrics",
+    "model_name_or_path": "../../../../plm_cache/t5-base",
+    "non_linearity": "gelu_new",
+    "num_train_epochs": 3,
+    "output_dir": "outputs/compactor/qqp",
+    "per_device_eval_batch_size": 100,
+    "per_device_train_batch_size": 100,
+    "predict_with_generate": true,
+    "save_strategy": "epoch",
+    "save_total_limit": 1,
+    "split_validation_test": true,
+    "task_name": "qqp",
+    "test_dataset_config_name": [
+        "en"
+    ],
+    "test_dataset_name": "qqp",
+    "tokenizer_name": "../../../../plm_cache/t5-base",
+    "warmup_steps": 0
+}

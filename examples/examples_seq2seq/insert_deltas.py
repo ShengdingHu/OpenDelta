@@ -101,8 +101,28 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
         else:
             delta_model = AdapterModel(common_structure=True, structure_mapping=Mappings[model_args.model_name])
             delta_model(model, modified_keys=[r"attn", "ff"], registration_name="deltas" )
-            delta_model.freeze_module(model, exclude=["qa_outputs", "deltas"])
+            delta_model.freeze_module(model, exclude=["deltas"])
             
+    elif delta_args.delta_type == "compactor":
+        from opendelta.delta_models.compactor import CompactorModel
+        if not delta_args.common_structure:
+            if ckpt_name.startswith('t5'):
+                delta_model = CompactorModel()
+                delta_model(model, modified_keys=["SelfAttention", "DenseReluDense"], registration_name="deltas")
+                delta_model.freeze_module(model, exclude=["deltas"]) 
+            else:
+                raise NotImplementedError
+        else:
+            raise NotImplementedError
+    elif delta_args.delta_type == "low_rank_adapter":
+        from opendelta.delta_models.low_rank_adapter import LowRankAdapterModel
+        if not delta_args.common_structure:
+            if ckpt_name.startswith('t5'):
+                delta_model = LowRankAdapterModel()
+                delta_model(model, modified_keys=["SelfAttention", "DenseReluDense"], registration_name="deltas")
+                delta_model.freeze_module(model, exclude=["deltas"]) 
+            else:
+                raise NotImplementedError
 
     vis2 = Visualization(model)
     vis2.structure_graph()
