@@ -5,12 +5,12 @@ Implementation of various parameter efficient methods.
 
 (tested using examples/testing.py)
 
-|   | Lora  | Bias  |  Prefix | adapter |
-|---|---|---|---|---|
-| t5 | :heavy_check_mark: | [x] | [x]  | [x]  |
-| gpt2 | [x]  | [x]  |  [x] |  [x] |
-| bart |  [x] |   [x]|  [x] | [x]  |
-| distilbert |  [x] | [x]  |  [x] | [x]  |
+|   | Lora  | Bias  |  Prefix | adapter | low_rank_adapter | compactor |
+|---|---|---|---|---|---|---|
+| t5 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark: | :heavy_check_mark:|
+| gpt2 | :heavy_check_mark:  | :heavy_check_mark:  |  :heavy_check_mark: |  :heavy_check_mark: |
+| bart |  :heavy_check_mark: |   :heavy_check_mark:|  :heavy_check_mark: | :heavy_check_mark:  |
+| distilbert |  :heavy_check_mark: | :heavy_check_mark:  |  :heavy_check_mark: | :heavy_check_mark:  |
 | roberta |   |   |   |  |
 | bert |  |   |  |  |
 
