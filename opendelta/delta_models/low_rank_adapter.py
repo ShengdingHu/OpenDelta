@@ -16,7 +16,7 @@ import torch
 import math
 
 
-class LowRankAdapter(nn.Module):
+class LowRankAdapterLayer(nn.Module):
     """This is the low-rank adapter, in which each adapter is composed of two rank-one matrices.
     """
     def __init__(self, 
@@ -126,7 +126,7 @@ class LowRankAdapterModel(DeltaBase, nn.Module):
     
     def new_module_like(self, module):
         module_device = get_device(module)
-        adapterlayer = LowRankAdapter(reduction_factor = self.reduction_factor,
+        adapterlayer = LowRankAdapterLayer(reduction_factor = self.reduction_factor,
                                       non_linearity = self.non_linearity,
                                       low_rank_w_init = self.low_rank_w_init, 
                                       low_rank_rank = self.low_rank_rank,
