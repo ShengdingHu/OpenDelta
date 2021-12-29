@@ -16,6 +16,8 @@ class DeltaArguments:
                                                                     "generalization ability of a delta model across different pretrained models. "})
     delta_lr: Optional[float] = field(default=3e-4, 
                                       metadata={"help": "Learning rate of delta parameters"})
+
+    delta_linear_type: Optional[str] = field(default="none", metadata={"help": "Linear type in delta_modules."})
     
     # train_task_adapters: Optional[bool] = field(default=False,
     #                                             metadata={"help": "If set, adds task adapters in the model."})

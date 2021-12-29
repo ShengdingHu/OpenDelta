@@ -114,6 +114,7 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
                 raise NotImplementedError
         else:
             raise NotImplementedError
+
     elif delta_args.delta_type == "low_rank_adapter":
         from opendelta.delta_models.low_rank_adapter import LowRankAdapterModel
         if not delta_args.common_structure:
@@ -121,6 +122,21 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
                 delta_model = LowRankAdapterModel()
                 delta_model(model, modified_keys=["SelfAttention", "DenseReluDense"], registration_name="deltas")
                 delta_model.freeze_module(model, exclude=["deltas"]) 
+            else:
+                raise NotImplementedError
+    
+
+    #
+    elif delta_args.delta_type == "topo_adapter":
+        from opendelta.delta_models.topodelta import TopoAdapterModel
+        if not delta_args.common_structure:
+            if ckpt_name.startswith('t5'):
+                delta_model = TopoAdapterModel(linear_type=delta_args.delta_linear_type)
+                delta_model(model, modified_keys=["SelfAttention", "DenseReluDense"], registration_name="deltas")
+                delta_model.freeze_module(model, exclude=["deltas"]) 
+                model = model.cuda()
+                from IPython import embed
+                embed()
             else:
                 raise NotImplementedError
 

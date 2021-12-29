@@ -141,6 +141,10 @@ class DeltaTrainer(Seq2SeqTrainer, BaseTrainer):
                     "weight_decay": 0.0,
                 },
             ]
+            # from IPython import embed
+            # print("In line 145")
+            # embed()
+            # print("optimized", optimizer_grouped_parameters)
             optimizer_cls = Adafactor if self.args.adafactor else AdamW
             if self.args.adafactor:
                 optimizer_cls = Adafactor
