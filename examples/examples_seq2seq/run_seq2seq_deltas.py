@@ -46,7 +46,7 @@ from dataclasses import dataclass, field
 from transformers.models.t5.modeling_t5 import T5Config, T5ForConditionalGeneration
 from examples_seq2seq.trainers.model_args import ModelArguments
 from examples_seq2seq.trainers.trainer_args import TrainingArguments, DataTrainingArguments
-from examples_seq2seq.delta_args import DeltaArguments
+from delta_args import DeltaArguments
 
 
 logger = logging.getLogger(__name__)
@@ -181,7 +181,7 @@ def main():
     # model = modify_model_after_init(model, training_args, adapter_args)
 
 
-    from examples_seq2seq.insert_deltas import insert_deltas
+    from examples.insert_deltas import insert_deltas
     model = insert_deltas(model, model_args, delta_args)
 
 

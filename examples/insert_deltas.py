@@ -1,4 +1,4 @@
-from examples_seq2seq.delta_args import DeltaArguments
+from delta_args import DeltaArguments
 from examples_seq2seq.trainers.model_args import ModelArguments
 from opendelta.utils.visualization import Visualization
 from opendelta.utils.structure_mapping import Mappings
@@ -21,6 +21,10 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
             elif ckpt_name.startswith('t5'):
                 delta_model = LoraModel()
                 delta_model(model, modified_keys=["SelfAttention.k", "SelfAttention.v"])
+                delta_model.freeze_module(model, exclude=["deltas"])
+            elif ckpt_name.startswith("roberta"):
+                delta_model = LoraModel()
+                delta_model(model, modified_keys=["attention.self.key", "attention.self.value"])
                 delta_model.freeze_module(model, exclude=["deltas"])
             else:
                 raise NotImplementedError
