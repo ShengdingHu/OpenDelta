@@ -23,9 +23,9 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
                 delta_model(model, modified_keys=["SelfAttention.k", "SelfAttention.v"])
                 delta_model.freeze_module(model, exclude=["deltas"])
             elif ckpt_name.startswith("roberta"):
-                delta_model = LoraModel()
+                delta_model = LoraModel(lora_alpha=delta_args.lora_alpha, lora_r=delta_args.lora_rank, lora_dropout=delta_args.lora_dropout)
                 delta_model(model, modified_keys=["attention.self.key", "attention.self.value"])
-                delta_model.freeze_module(model, exclude=["deltas"])
+                delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules)
             else:
                 raise NotImplementedError
         else:

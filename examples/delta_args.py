@@ -16,6 +16,18 @@ class DeltaArguments:
                                                                     "generalization ability of a delta model across different pretrained models. "})
     delta_lr: Optional[float] = field(default=3e-4, 
                                       metadata={"help": "Learning rate of delta parameters"})
+    modified_modules: Optional[List[str]] = field(default=None,
+                                      metadata={"help": "The list of names of the modules that need to insert deltas."})
+    unfreeze_modules: Optional[List[str]] = field(default_factory=lambda : ["deltas"],
+                                      metadata={"help": "The list of names of the unfreeze modules"})
+
+    lora_alpha: Optional[int] = field(default=8, 
+                                      metadata={"help": "The scaling parameter in lora model"})
+    lora_rank : Optional[int] = field(default=8,
+                                      metadata={"help": "Rank of the lora model"})
+    lora_dropout: Optional[float] = field(default=0.0,
+                                      metadata={"help": "The dropout rate in loar.linear"})
+                
     
     # train_task_adapters: Optional[bool] = field(default=False,
     #                                             metadata={"help": "If set, adds task adapters in the model."})
