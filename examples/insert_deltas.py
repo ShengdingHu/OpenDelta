@@ -130,5 +130,5 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
 
     vis2 = Visualization(model)
     vis2.structure_graph()
-    print(f"Tunable params rate {delta_model.num_trainable_parameters()/delta_model.num_frozen_parameters(model)}")
+    print(f"Tunable params {delta_model.num_trainable_parameters(model)/1024**2} M , ratio {delta_model.num_trainable_parameters(model)/(delta_model.num_frozen_parameters(model)+delta_model.num_trainable_parameters(model))*100}\%")
     return model
