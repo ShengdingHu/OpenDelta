@@ -1,7 +1,8 @@
 
 
+import os
 from opendelta.utils.signature import signature
-from typing import Optional
+from typing import Optional, Union
 from opendelta.utils.cuda import get_device
 from opendelta.utils.utils import *
 import torch.nn as nn
@@ -56,9 +57,19 @@ class DeltaBase(object):
             if self.find_key(key, modified_keys, is_regex):
                 # print("find key",key)
                 self.update_module(module, key)
-        setattr(module, registration_name, self)
+        # if the delta parameters are not contained in the original models parameters
+        # we need to register it to the module
+        self.register_delta_if_new(module, registration_name)
+        # mark the paratmers that are the delta parameters for easily 
+        # extracting the delta_paramters.
+        # This is important if the delta parameters are contained in the
+        # original models parameters
         self.mark_as_delta()
         return module
+    
+    def register_delta_if_new(self, module: nn.Module, registration_name: Optional[str] = "deltas"):
+        setattr(module, registration_name, self)
+
     
     def mark_as_delta(self, module: nn.Module=None,):
         if module is None:
@@ -67,7 +78,7 @@ class DeltaBase(object):
             setattr(p, "_is_delta", True)
     
     def update_module(self, module: nn.Module, key: str):
-        r"""Different of each delta models. 
+        r"""Different in each delta models. 
         """
         raise NotImplementedError
     
@@ -144,6 +155,11 @@ class DeltaBase(object):
         if module is None:
             module = self
         return [n for n,p in module.named_parameters() if p.requires_grad]
+    
+    def frozen_parameters_names(self, module: Optional[nn.Module]=None):
+        if module is None:
+            module = self
+        return [n for n,p in module.named_parameters() if not p.requires_grad]
 
     def trainable_parameters(self,module: Optional[nn.Module]=None):
         if module is None:
@@ -227,6 +243,33 @@ class DeltaBase(object):
     def insert_parrellel_module(self, ):
         # TODO
         pass
+
+    def set_active_state_dict(self, module: nn.Module):
+        r"""modify the state_dict of the model
+
+        filter_func: only the parameters that requires grad is keeped in the state_dict
+        """
+        def _caller(_org_func, excludes,  *args, **kwargs):
+            state_dict = _org_func(*args, **kwargs)
+            keys = list(state_dict.keys())
+            for n  in keys:
+                if n in excludes:
+                    state_dict.pop(n)
+            return state_dict
+        excludes = self.frozen_parameters_names(module)
+        
+        if hasattr(module.state_dict, "__wrapped__"):
+            raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
+        module.state_dict = decorate(module.state_dict, _caller, extras=(excludes,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
+    
+
+    def from_pretrained(self, module:nn.Module, pretrained_deltas_name_or_path: Optional[Union[str, os.PathLike]], *model_args, **kwargs):
+        r"""Todo: currenlty, simply load the state_dict and instantiate the original model 
+        """
+        state_dict = torch.load(os.path.join(pretrained_deltas_name_or_path, "pytorch_model.bin"))
+        module.load_state_dict(state_dict, strict=False)
+        
+    
 
 
         

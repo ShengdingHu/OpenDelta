@@ -21,6 +21,9 @@ class DeltaArguments:
     unfreeze_modules: Optional[List[str]] = field(default_factory=lambda : ["deltas"],
                                       metadata={"help": "The list of names of the unfreeze modules"})
 
+    pretrained_delta_path: Optional[str] = field(default="",
+                                     metadata = {"help": "The path of the saved delta modules checkpoints"})
+
     lora_alpha: Optional[int] = field(default=8, 
                                       metadata={"help": "The scaling parameter in lora model"})
     lora_rank : Optional[int] = field(default=8,

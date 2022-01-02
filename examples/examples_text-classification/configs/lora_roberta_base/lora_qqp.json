@@ -22,7 +22,7 @@
     "model_name_or_path": "../../../../plm_cache/roberta-base",
     "non_linearity": "gelu_new",
     "num_train_epochs": 25,
-    "output_dir": "outputs/lora/roberta-base/qqp",
+    "output_dir": "outputs/lora/roberta-base/v2/qqp",
     "per_device_eval_batch_size": 100,
     "per_device_train_batch_size": 16,
     "predict_with_generate": true,

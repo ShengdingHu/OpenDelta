@@ -31,9 +31,9 @@ filenames = [x for x in os.listdir(".") if x.endswith(".json")]
 # Notice! some file shouldn't be changed.
 for filename in filenames:
     baseconfig = json.load(open(f"{filename}"))
-    baseconfig["model_name_or_path"] = "../../../../plm_cache/roberta-base"
-    baseconfig["tokenizer_name"] = "../../../../plm_cache/roberta-base"
-    baseconfig["model_name"] = "roberta"
+    baseconfig["model_name_or_path"] = "../../../../plm_cache/t5-base"
+    baseconfig["tokenizer_name"] = "../../../../plm_cache/t5-base"
+    baseconfig["model_name"] = "t5"
     baseconfig["warmup_ratio"] = 0.06
     baseconfig["lora_alpha"] = 8
     baseconfig["lora_rank"] = 8
@@ -47,7 +47,7 @@ for filename in filenames:
     baseconfig["num_train_epochs"] = CONFIGS[dataset_name][0] if dataset_name in CONFIGS else 40
     baseconfig["per_device_train_batch_size"] = CONFIGS[dataset_name][1] if dataset_name in CONFIGS else 16
     baseconfig["max_source_length"] = CONFIGS[dataset_name][2]  if dataset_name in CONFIGS else 512
-    baseconfig["output_dir"] = f"outputs/lora/roberta-base/v2/{dataset_name}"
+    baseconfig["output_dir"] = f"outputs/lora/t5-base/v1/{dataset_name}"
     baseconfig["unfreeze_modules"] = ["classifier", "deltas"]
     json.dump(baseconfig, open(f"lora_{dataset_name}.json",'w'), indent=4,sort_keys=True)
 

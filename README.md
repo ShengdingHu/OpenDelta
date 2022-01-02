@@ -5,15 +5,15 @@ Implementation of various parameter efficient methods.
 
 (tested using testing/testing.py)
 
-|   | Lora  | Bias  |  Prefix | adapter | low_rank_adapter | compactor |
-|---|---|---|---|---|---|---|
-| t5 | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:  | :heavy_check_mark:  | :heavy_check_mark: | :heavy_check_mark:|
-| gpt2 | :heavy_check_mark:  | :heavy_check_mark:  |  :heavy_check_mark: |  :heavy_check_mark: |
-| bart |  :heavy_check_mark: |   :heavy_check_mark:|  :heavy_check_mark: | :heavy_check_mark:  |
-| distilbert |  :heavy_check_mark: | :heavy_check_mark:  |  :heavy_check_mark: | :heavy_check_mark:  |
-| roberta |   |   |   |  |
-| bert |  |   |  |  |
-
+|   | Lora  | Bias<br>Tuning  |  Prefix<br> Tuning | Adapter<br>Houstbly | Adapter<br>Preffier| Adapter<br>Drop|  Adapater<br> Low-Rank | Compactor | Prompt <br> Tuning | Diff<br>Pruning |
+|---|---|---|---|---|---|---|---|---| ---|---| ---|
+| T5  | :white_check_mark: | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  | :ballot_box_with_check:  |  :ballot_box_with_check: | :white_check_mark:| :white_check_mark: |
+| GPT-2 | :ballot_box_with_check:  | :ballot_box_with_check:  |  :ballot_box_with_check:  | :ballot_box_with_check:  |  :ballot_box_with_check: |  :ballot_box_with_check: |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
+| BART |  :ballot_box_with_check: |   :ballot_box_with_check:|  :ballot_box_with_check:  | :ballot_box_with_check:  |  :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
+| DistilBERT |  :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
+| RoBERTa |   :white_check_mark: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
+| BERT |   :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
+| DeBERTa |   |
 ### Performance Checked Combination
 
 Google sheet [here](https://docs.google.com/spreadsheets/d/1BIVa8ocAPga-u7rBOXLYaTfaJSjI1dWfwohmLjmFDrY/edit?usp=sharing)

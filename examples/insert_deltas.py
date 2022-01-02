@@ -128,7 +128,12 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
             else:
                 raise NotImplementedError
 
+
+    delta_model.set_active_state_dict(model)
+    if delta_args.pretrained_delta_path:
+        delta_model.from_pretrained(model, delta_args.pretrained_delta_path)
+    
     vis2 = Visualization(model)
     vis2.structure_graph()
-    print(f"Tunable params {delta_model.num_trainable_parameters(model)/1024**2} M , ratio {delta_model.num_trainable_parameters(model)/(delta_model.num_frozen_parameters(model)+delta_model.num_trainable_parameters(model))*100}\%")
+    print(f"Tunable params {delta_model.num_trainable_parameters(model)/1024**2} M , ratio {delta_model.num_trainable_parameters(model)/(delta_model.num_frozen_parameters(model)+delta_model.num_trainable_parameters(model))*100}%")
     return model

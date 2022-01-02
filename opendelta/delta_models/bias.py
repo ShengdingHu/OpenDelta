@@ -46,3 +46,7 @@ class BiasModel(DeltaBase, nn.Module):
         fan_in, _ = init._calculate_fan_in_and_fan_out(linear_module.weight)
         bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
         init.uniform_(linear_module.bias, -bound, bound)
+    
+    def register_delta_if_new(self, module: nn.Module, registration_name: Optional[str] = "deltas"):
+        # Do nothing since lora modules is a part of the original module.
+        pass

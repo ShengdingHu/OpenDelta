@@ -44,12 +44,9 @@ class LoraModel(DeltaBase, nn.Module):
                                      lora_alpha=self.lora_alpha,
                                      lora_dropout=self.lora_dropout)
             new_module.weight = child_module.weight
-            new_module.bias = child_module.bias
+            new_module.bias = child_module.bias # if bias is None, also copy
             self.delta_modules.append(new_module)
         else:
-            from IPython import embed
-            print("line49")
-            embed()
             raise NotImplementedError
 
         setattr(parent_module, children_name, new_module)
@@ -58,6 +55,11 @@ class LoraModel(DeltaBase, nn.Module):
         if module is None:
             module=self
         for n, p in module.named_parameters():
-            para_name = n.split(".")[-1]
-            if "weight" not in para_name: # only lora_A, lora_B is the delta parameter.
+            param_name = n.split(".")[-1]
+            if "lora_A" in param_name or "lora_B" in param_name: # only lora_A, lora_B is the delta parameter.
                 setattr(p, "_is_delta", True)
+    
+    def register_delta_if_new(self, module: nn.Module, registration_name: Optional[str] = "deltas"):
+        # Do nothing since lora modules is a part of the original module.
+        pass
+        
