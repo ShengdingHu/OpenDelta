@@ -42,5 +42,5 @@
     "warmup_ratio": 0.06,
     "warmup_steps": 0,
     "weight_decay": 0.1,
-    "pretrained_delta_path": "outputs/lora/roberta-base/v2/mrpc_bk"
+    "overwrite_output_dir": true
 }
