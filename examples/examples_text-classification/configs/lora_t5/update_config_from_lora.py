@@ -39,10 +39,7 @@ for filename in filenames:
     baseconfig["lora_rank"] = 8
     baseconfig["delta_lr"] = 5e-4
     baseconfig["weight_decay"] = 0.1
-    try:
-      del baseconfig["metric_for_best_model"]
-    except KeyError:
-      pass
+
     dataset_name = filename[len("lora_"):-len(".json")]
     baseconfig["num_train_epochs"] = CONFIGS[dataset_name][0] if dataset_name in CONFIGS else 40
     baseconfig["per_device_train_batch_size"] = CONFIGS[dataset_name][1] if dataset_name in CONFIGS else 16

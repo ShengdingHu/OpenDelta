@@ -38,7 +38,7 @@ from transformers import (
 from transformers.trainer_utils import is_main_process, get_last_checkpoint
 # from ..seq2seq.utils import get_adapter_config
 from examples_seq2seq.data import AutoTask, TaskDataCollatorForSeq2Seq, AutoPostProcessor
-from examples_seq2seq.delta_trainer import DeltaTrainer
+from examples_seq2seq.seq2seq_trainer import Seq2SeqTrainer
 # from training_args import AdapterTrainingArguments
 from examples_seq2seq.trainers.trainer_utils import save_training_config 
 from dataclasses import dataclass, field
@@ -326,7 +326,7 @@ def main():
 
 
     # Initialize our Trainer
-    trainer = DeltaTrainer(
+    trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
         delta_args=delta_args,

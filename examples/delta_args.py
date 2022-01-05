@@ -14,7 +14,7 @@ class DeltaArguments:
                                                                     "Use other model with common structure, the user should explicitly know write"
                                                                     "the structure mapping first. However, this feature is useful when measureing/studying the"
                                                                     "generalization ability of a delta model across different pretrained models. "})
-    delta_lr: Optional[float] = field(default=3e-4, 
+    delta_lr: Optional[float] = field(default=None, 
                                       metadata={"help": "Learning rate of delta parameters"})
     modified_modules: Optional[List[str]] = field(default=None,
                                       metadata={"help": "The list of names of the modules that need to insert deltas."})
