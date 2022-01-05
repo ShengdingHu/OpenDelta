@@ -13,7 +13,8 @@
     "eval_dataset_name": "qqp",
     "evaluation_strategy": "epoch",
     "greater_is_better": true,
-    "learning_rate": 0.0003,
+    "metric_for_best_model": "eval_accuracy",
+    "learning_rate": 0.0005,
     "load_best_model_at_end": true,
     "lora_alpha": 8,
     "lora_rank": 8,
@@ -40,7 +41,6 @@
         "deltas"
     ],
     "warmup_ratio": 0.06,
-    "warmup_steps": 0,
     "weight_decay": 0.1,
     "overwrite_output_dir": true
 }

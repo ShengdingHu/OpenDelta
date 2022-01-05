@@ -24,7 +24,7 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
                 delta_model.freeze_module(model, exclude=["deltas"])
             elif ckpt_name.startswith("roberta"):
                 delta_model = LoraModel(lora_alpha=delta_args.lora_alpha, lora_r=delta_args.lora_rank, lora_dropout=delta_args.lora_dropout)
-                delta_model(model, modified_keys=["attention.self.key", "attention.self.value"])
+                delta_model(model, modified_keys=["attention.self.query", "attention.self.value"])
                 delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules)
             else:
                 raise NotImplementedError
@@ -132,6 +132,9 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
     delta_model.set_active_state_dict(model)
     if delta_args.pretrained_delta_path:
         delta_model.from_pretrained(model, delta_args.pretrained_delta_path)
+    
+    # from IPython import embed
+    # embed(header="137")
     
     vis2 = Visualization(model)
     vis2.structure_graph()

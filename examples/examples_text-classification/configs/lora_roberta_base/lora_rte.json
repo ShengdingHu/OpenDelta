@@ -6,14 +6,15 @@
     "delta_type": "lora",
     "do_eval": true,
     "do_test": true,
-    "do_train": true,
+    "do_train": false,
     "eval_dataset_config_name": [
         "en"
     ],
     "eval_dataset_name": "rte",
     "evaluation_strategy": "epoch",
     "greater_is_better": true,
-    "learning_rate": 0.0003,
+    "metric_for_best_model": "eval_accuracy",
+    "learning_rate": 0.0005,
     "load_best_model_at_end": true,
     "lora_alpha": 8,
     "lora_rank": 8,
@@ -21,7 +22,7 @@
     "model_name": "roberta",
     "model_name_or_path": "../../../../plm_cache/roberta-base",
     "non_linearity": "gelu_new",
-    "num_train_epochs": 80,
+    "num_train_epochs": 0,
     "output_dir": "outputs/lora/roberta-base/v2/rte",
     "per_device_eval_batch_size": 100,
     "per_device_train_batch_size": 32,
@@ -40,7 +41,7 @@
         "deltas"
     ],
     "warmup_ratio": 0.06,
-    "warmup_steps": 0,
     "weight_decay": 0.1,
-    "overwrite_output_dir": true
+    "overwrite_output_dir": true,
+    "pretrained_delta_path": "../../../../plm_cache/ft_cache/roberta_base_lora_rte.bin"
 }

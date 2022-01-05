@@ -266,7 +266,7 @@ class DeltaBase(object):
     def from_pretrained(self, module:nn.Module, pretrained_deltas_name_or_path: Optional[Union[str, os.PathLike]], *model_args, **kwargs):
         r"""Todo: currenlty, simply load the state_dict and instantiate the original model 
         """
-        state_dict = torch.load(os.path.join(pretrained_deltas_name_or_path, "pytorch_model.bin"))
+        state_dict = torch.load(os.path.join(pretrained_deltas_name_or_path))
         module.load_state_dict(state_dict, strict=False)
         
     
