@@ -5,6 +5,14 @@ from transformers.models.t5 import T5ForConditionalGeneration
 import loralib as lora
 import torch.nn as nn
 
+
+class LoraConfig(_DeltaBaseConfig):
+    r"""
+    """
+    
+    pass
+
+
 class LoraModel(DeltaBase, nn.Module):
     def __init__(self,
                  lora_r=8,
@@ -19,6 +27,10 @@ class LoraModel(DeltaBase, nn.Module):
         self.lora_alpha = lora_alpha
         self.lora_dropout = lora_dropout
         self.delta_modules = nn.ModuleList()
+    
+    @classmethod
+    def from_config(cls, config: LoraConfig):
+
     
     
     def update_module(self, module: nn.Module, key: str):

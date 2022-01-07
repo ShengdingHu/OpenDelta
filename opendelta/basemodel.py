@@ -10,6 +10,7 @@ import torch
 from functools import wraps
 from decorator import decorate
 from opendelta.utils.structure_mapping import transform
+from transformers.file_utils import PushToHubMixin
 
 
 def is_leaf_module(module):
@@ -25,6 +26,27 @@ def non_module_param(module: nn.Module):
             ret.append((n,p))
     return ret
 
+
+class BaseDeltaConfig(PushToHubMixin):
+    r"""Base class for all configuration classes. Base class for all delta configuration classes. Handles a few parameters common to all models' configurations as well as
+    methods for loading/downloading/saving configurations.
+
+    Class attributes (overridden by derived classes):
+
+    - **delta_type** （`str`) -- the name of the delta modules, used to create the correct [`~opendelta.AutoConfig`].
+    - 
+
+    Args: 
+        name_or_path (`str`, *optional*, defaults to `""`):
+            Store the string that was passed to [`DeltaModel.from_pretrained`] or
+            as `pretrained_model_name_or_path` if the configuration was created
+            with such a method.
+        modified_modules (`List[str]`, *optional*, defaults to `None`):
+            The list of keys to determine which modules you want to modify. OpenDelta will take every modulees that ends with the one of the provided keys as the modification target. For example, if you want to add adapter to the attention output of distilbert's layer 0, i.e., `distilbert.transformer.layer.0.attention out_lin` you can just add pass ` 0.attention.out_lin`, as the latter string will uniquely determine the modified modules. When you want to 
+    """
+
+    
+    pass
 
 
 class DeltaBase(object):

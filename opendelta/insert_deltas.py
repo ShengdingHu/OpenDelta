@@ -6,30 +6,22 @@ import torch.nn as nn
 
 
 
+
+class AutoDelta(nn.Module):
+    def __init__(self, ):
+        pass
+
+
 def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments):
     ckpt_name = model_args.model_name_or_path.split("/")[-1]
-    print(ckpt_name)
     vis = Visualization(model)
     vis.structure_graph()
     if delta_args.delta_type == "lora":
         from opendelta.delta_models.lora import LoraModel
         if not delta_args.common_structure:
-            if ckpt_name.startswith('distilbert'):
-                delta_model = LoraModel()
-                delta_model(model, modified_keys=["k_lin", "3.attention.v_lin","4.attention.v_lin"])
-                delta_model.freeze_module(model, exclude=["qa_outputs", "deltas", 'bias'])
-            elif ckpt_name.startswith('t5'):
-                delta_model = LoraModel()
-                delta_model(model, modified_keys=["SelfAttention.k", "SelfAttention.v"])
-                delta_model.freeze_module(model, exclude=["deltas"])
-            elif ckpt_name.startswith("roberta"):
-                delta_model = LoraModel(lora_alpha=delta_args.lora_alpha, lora_r=delta_args.lora_rank, lora_dropout=delta_args.lora_dropout)
-                delta_model(model, modified_keys=["attention.self.query", "attention.self.value"])
-                delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules)
-            else:
-                delta_model = LoraModel(lora_alpha=delta_args.lora_alpha, lora_r=delta_args.lora_rank, lora_dropout=delta_args.lora_dropout)
-                delta_model(model, modified_keys=delta_args.modified_modules)
-                delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules)
+            delta_model = LoraModel(lora_alpha=delta_args.lora_alpha, lora_r=delta_args.lora_rank, lora_dropout=delta_args.lora_dropout)
+            delta_model(model, modified_keys=delta_args.modified_modules)
+            delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules)
         else:
             delta_model = LoraModel(common_structure=True, structure_mapping=Mappings[model_args.model_name])
             delta_model(model, modified_keys=["attn.k", "attn.v"])
@@ -37,24 +29,15 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
 
     elif delta_args.delta_type == "bias":
         from opendelta.delta_models.bias import BiasModel
-        if not delta_args.common_structure:
-            if ckpt_name.startswith('distilbert'):
-                delta_model = BiasModel()
-                delta_model(model, modified_keys=["attention", "ffn"])
-                delta_model.freeze_module(model, exclude=["deltas"])
-            elif ckpt_name.startswith('t5'):
-                delta_model = BiasModel()
-                delta_model(model, modified_keys=["SelfAttention", "DenseReluDense"])
-                delta_model.freeze_module(model, exclude=["deltas"])
-            else:
-                delta_model = BiasModel()
-                delta_model(model, modified_keys=["SelfAttention", "DenseReluDense"])
-                delta_model.freeze_module(model, exclude=["deltas"])
+        if not delta_args.common_structure: 
+            delta_model = BiasModel()
+            delta_model(model, modified_keys=delta_args.modified_modules)
+            delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules)
         else:
-            delta_model = LoraModel(common_structure=True, structure_mapping=Mappings[model_args.model_name])
+            delta_model = BiasModel(common_structure=True, structure_mapping=Mappings[model_args.model_name])
             delta_model(model, modified_keys=["attn", "ff"])
             delta_model.freeze_module(model, exclude=["deltas"])
-
+            
 
     elif delta_args.delta_type == "prefix":
         from opendelta.delta_models.prefix import PrefixModel
