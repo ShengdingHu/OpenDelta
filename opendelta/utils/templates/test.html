@@ -1,0 +1,96 @@
+$def with (content)
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.collapsible:hover {
+  background-color: #555;
+}
+
+
+.active.selectable {
+  background-color: #6A3;
+}
+.active.selectable:hover {
+  background-color: #7A3;
+}
+
+.content {
+  padding: 0px;
+  display: none;
+  overflow: hidden;
+}
+
+.button_inline {
+    display: inline;
+}
+
+</style>
+</head>
+<body style="line-height: 100%;">
+
+<button id="submit" style="float:right">submit</button>
+
+$:content
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    var content = this.nextElementSibling;
+    if (this.innerHTML == "[+]")
+      this.innerHTML = "[-]";
+    else
+      this.innerHTML = "[+]";
+    while (!content.classList.contains("content")) content = content.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+
+var coll = document.getElementsByClassName("selectable");
+let array = [];
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    if (this.name != "") {
+      if (this.classList.contains("active")) {
+        array.push(this.name)
+      }
+      else {
+        array.splice(array.indexOf(this.name), 1)
+      }
+      array.sort();
+    }
+  });
+}
+
+var submit = document.getElementById("submit");
+submit.addEventListener("click", function() {
+    const Http = new XMLHttpRequest();
+    const url='/submit/?name='+array.join(";");
+    Http.open("GET", url);
+    Http.send();
+});
+</script>
+
+</body>
+</html>
