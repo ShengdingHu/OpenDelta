@@ -1,35 +1,68 @@
 from typing import Optional
+
+from opendelta.utils.signature import get_arg_names, get_arg_names_inside_func
 from opendelta.utils.utils import *
 from opendelta.basemodel import DeltaBase
 from transformers.models.t5 import T5ForConditionalGeneration
 import loralib as lora
 import torch.nn as nn
+from opendelta import BaseDeltaConfig
 
-
-class LoraConfig(_DeltaBaseConfig):
+class LoraConfig(BaseDeltaConfig):
     r"""
+    This is the configuration class to store the configuration of a [`LoraModel`]
+
     """
-    
-    pass
+    def __init__(
+        self, 
+        lora_r=8,
+        lora_alpha=16,
+        lora_dropout=0.0,
+        **kwargs
+    ): 
+        super().__init__(**kwargs)
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # the arg has not been registered in parent config
+                setattr(self, arg_name, locals()[arg_name])
 
 
-class LoraModel(DeltaBase, nn.Module):
+
+class LoraModel(DeltaBase):
+
+    config_class = LoraConfig
+    delta_type = "lora"
+    default_modified_modules = ['attn.q', 'attn.v']
     def __init__(self,
+                 backbone_model: nn.Module, 
                  lora_r=8,
                  lora_alpha=16,
                  lora_dropout=0.0,
-                 common_structure=False,
-                 structure_mapping=None
+                 modified_modules: Optional[bool] = None,
+                 common_structure: Optional[bool] = None,
+                 registration_name: Optional[str] = "deltas",
                  ):
-        DeltaBase.__init__(self, common_structure=common_structure, structure_mapping=structure_mapping)
-        nn.Module.__init__(self)
-        self.lora_r = lora_r
-        self.lora_alpha = lora_alpha
-        self.lora_dropout = lora_dropout
+        DeltaBase.__init__(self, 
+                           backbone_model, 
+                           modified_modules=modified_modules,
+                           common_structure=common_structure,
+                           registration_name=registration_name
+                           )
+        arg_names = get_arg_names_inside_func(self.__init__)
+        from IPython import embed
+        embed(header= "in lora")
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # not registered in parent class
+                setattr(self, arg_name, locals()[arg_name])
+
         self.delta_modules = nn.ModuleList()
+
+        self.add_all_delta_to_backbone(backbone_model,
+                                   modified_modules,
+                                   registration_name)
     
-    @classmethod
-    def from_config(cls, config: LoraConfig):
+    # @classmethod
+    # def from_config(cls, config: LoraConfig):
 
     
     

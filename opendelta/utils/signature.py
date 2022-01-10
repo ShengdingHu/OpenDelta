@@ -35,3 +35,16 @@ def signature(f):
     argspec = namedtuple('Signature', ['args', 'defaults',
                                         'varargs', 'keywords'])
     return argspec(args, defaults, varargs, keywords) 
+
+def get_arg_names(f):
+    args = signature(f).args
+    if args[0] == "self":
+        args = args[1:]
+    return args
+
+
+def get_arg_names_inside_func(func):
+    arg_names = func.__code__.co_varnames[: func.__code__.co_argcount]
+    if arg_names[0] == "self":
+        arg_names = arg_names[1:]
+    return arg_names
