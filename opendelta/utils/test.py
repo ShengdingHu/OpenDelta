@@ -19,17 +19,39 @@ prefix1 = f"│"+space*5
 prefix2 = f"├─{space}"
 prefix3 = f"└─{space}"
 
+def colorfy(label):
+    i = 0
+    res = ""
+    while i < len(label):
+        if label[i] == '[':
+            color = ""
+            i += 1
+            while label[i] != ']':
+                color += label[i]
+                i += 1
+            i += 1
+            if color[0].isdigit(): # dims but not color
+                res += f'[{color}]'
+            else:
+                if res != "": res += '</span>'
+                res += f'<span style="color: {color}">'
+        else:
+            res += label[i]
+            i += 1
+    res += '</span>'
+    return res
+
 def dfs(o, depth, last, name):
     html = ""
     name += o.module_name
     for i in range(depth-1):
         html += prefix0 if last[i] else prefix1
     if depth > 0: html += prefix3 if last[-1] else prefix2
-    html += f"""
-        <button class="collapsible button_inline">[+]</button><button class="selectable button_inline" name="{name}">{o.label}</button><br/>
-        <div class="content">
-        """
     length = len(o.children)
+    if length > 0:
+        html += f'<button class="collapsible button_inline">[+]</button>'
+    html += f'<button class="selectable button_inline" name="{name}">{colorfy(o.label)}</button><br/>'
+    html += f'<div class="content">'
     for i, child in enumerate(o.children):
         last = last + [i == length-1]
         html += dfs(child, depth+1, last, name + ".")
