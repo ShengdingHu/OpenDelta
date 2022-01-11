@@ -5,7 +5,8 @@ Base Classes
 Delta Base
 ---------------------------------------
 
-:obj:'BaseDeltaConfig' is the base class for all the delta models.
+
+:obj:`BaseDeltaConfig` is the base configuration class for all the delta models.
 
 .. autoclass:: opendelta.delta_configs.BaseDeltaConfig
     :members:

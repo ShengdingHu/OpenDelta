@@ -40,7 +40,7 @@ def load_structure_mapping_according_to_backbone(backbone_type):
 
 
 class DeltaBase(nn.Module, SaveLoadMixin):
-    """Not rigorous currently
+    """The Base class for all delta models. 
     """
     delta_type = ""
     config_class = BaseDeltaConfig
@@ -68,10 +68,13 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         if self.common_structure and self.structure_mapping is None:
             raise RuntimeError("Using common structure but the structure mapping is None")
         
-    def forward(self, *args, **kwargs):
-        r""" Removed method. As the model is a delta model, which should be attached to a backbone model \
-            and can't forward any data by itself. Please using the backbone model's forward function \
-            after attach the delta model to the backbone.
+    def forward(self, *args, **kwargs) -> "RuntimeError":
+        r""" 
+            .. warning::
+
+                Removed method. As the model is a delta model, which should be attached to a backbone model \
+                and can't forward any data by itself. Please using the backbone model's forward function \
+                after attach the delta model to the backbone.
         """
         raise RuntimeError("This is a delta model, which should be attached to a backbone model \
             and can't forward any data by itself. Please using the backbone model's forward function \
@@ -144,13 +147,18 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
     
     def mark_as_delta(self, module: nn.Module=None,):
+        r""" Mark a model's all parameters as delta parameters by setting a "_is_delta"  attribute to each of them.
+        Generally, it is used after creating the delta modules.
+        Args:
+            module (:obj:`nn.Module`) The module to mark as delta.
+        """
         if module is None:
             module=self
         for p in module.parameters():
             setattr(p, "_is_delta", True)
     
     def update_module(self, module: nn.Module, key: str):
-        r"""Different in each delta models. 
+        r"""Update a module specified by :obj:`key`. The method is reimplemented 
         """
         raise NotImplementedError
     

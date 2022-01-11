@@ -13,7 +13,13 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
+import sys
+sys.path.insert(0, "../../")
+import datetime
+import sphinx_rtd_theme
+import doctest
+import opendelta
+import opendelta.delta_models
 
 # -- Project information -----------------------------------------------------
 
@@ -22,7 +28,16 @@ copyright = '2021, Shengding Hu, Ning Ding, Yujia Qin'
 author = 'THUNLP OpenDelta Team'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = '0.1.1'
+version = "0.1.1"
+
+html_theme = 'sphinx_rtd_theme'
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+doctest_default_flags = doctest.NORMALIZE_WHITESPACE
+autodoc_member_order = 'bysource'
+intersphinx_mapping = {'python': ('https://docs.python.org/', None)}
+
 
 
 # -- General configuration ---------------------------------------------------
@@ -31,7 +46,17 @@ release = '0.1.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.githubpages',
+    'sphinx_copybutton',
 ]
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -47,9 +72,55 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+# html_theme = 'alabaster'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
+html_theme_options = {
+    #'collapse_navigation': False,
+    #'display_version': True,
+    #'logo_only': False,
+    'navigation_depth': 2,
+}
+
 html_static_path = ['_static']
+html_css_files = ['css/custom.css']
+html_js_files = ['js/custom.js']
+rst_context = {'opendelta': opendelta}
+rst_epilog = "\n.. include:: .special.rst\n"
+add_module_names = False
+
+def include_only_tagged(app, what, name, obj, skip, options):
+    inclusion_tag_format = "[NODOC]" #can be any pattern here, choose what works for you
+    for tag in app.tags.tags:
+        if obj.__doc__ is not None and not obj.__doc__.startswith(inclusion_tag_format):
+            return False
+    return True
+
+def skip2(app, what, name, obj, skip, options):
+        members = [
+            '__init__',
+            '__repr__',
+            '__weakref__',
+            '__dict__',
+            '__module__',
+        ]
+        return True if name in members else skip
+
+def skip(app, what, name, obj, skip, options):
+    skip = include_only_tagged(app, what, name, obj, skip, options) or\
+            skip2(app, what, name, obj, skip, options)
+    return skip
+
+def setup(app):
+    
+    
+
+    def rst_jinja_render(app, docname, source):
+        src = source[0]
+        rendered = app.builder.templates.render_string(src, rst_context)
+        source[0] = rendered
+
+    app.connect('autodoc-skip-member', skip)
+    app.connect("source-read", rst_jinja_render)

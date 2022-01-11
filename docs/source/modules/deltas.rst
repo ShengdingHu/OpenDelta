@@ -5,6 +5,8 @@ Delta Models
 Lora
 ---------------------------------------
 
+.. currentmodule:: opendelta.delta_models
+
 :obj:'LoraModel' is 
 
 .. autoclass:: opendelta.delta_models.lora.LoraModel

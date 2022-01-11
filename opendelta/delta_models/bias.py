@@ -1,3 +1,4 @@
+from typing import Optional
 from opendelta.utils.utils import *
 from opendelta.basemodel import DeltaBase
 from transformers.models.t5 import T5ForConditionalGeneration

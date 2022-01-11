@@ -13,7 +13,8 @@ Implementation of various parameter efficient methods.
 | DistilBERT |  :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
 | RoBERTa |   :white_check_mark: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
 | BERT |   :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
-| DeBERTa |   |
+| ViT |   :ballot_box_with_check: |   |   |   |    |   |  |    | 
+
 ### Performance Checked Combination
 
 Google sheet [here](https://docs.google.com/spreadsheets/d/1BIVa8ocAPga-u7rBOXLYaTfaJSjI1dWfwohmLjmFDrY/edit?usp=sharing)
