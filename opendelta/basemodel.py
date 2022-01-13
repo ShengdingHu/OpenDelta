@@ -40,11 +40,37 @@ def load_structure_mapping_according_to_backbone(backbone_type):
 
 
 class DeltaBase(nn.Module, SaveLoadMixin):
-    """The Base class for all delta models. 
+    r"""This is the base class for all delta models. It provides four simple but effective functionalities 
+    for building the delta model:
+
+        #. addressing a module inside the backbone model using a minimal description key. 
+        #. provide the interface for modifying and inserting model which keeps the docs/IO the same as the module 
+           before modification.
+        #. pass a pseudo input to determine the inter dimension of the delta models. 
+        #. freeze a part of model parameters according to key. 
+        
+        It also provides unified interface for model loading and saving. 
+
+    Class attributes (overridden by derived classes):
+    
+    - delta_type (:obj:`str`) the name of the delta modules, used to create the correct [`~opendelta.AutoDeltaModel`].
+    - config_class (:obj:`BaseDeltaConfig`) The corresponding config model 
+
+
+    Args:
+        backbone_model (:obj:`nn.Module`, *required*)  backbone model that the delta models are build opon. The modification to the 
+            backbone model are in place.
+        modified_modules (:obj:`List[str]`, *optional*, default to :obj:`None`) The modules are subjected to update. 
+            leave this argument :obj:`None` will make the delta model return to the default setting, which add the delta
+            models to the position experimented the paper. In this setting, the common structure mapping is loaded to 
+            addressing the corresponding modules.
+        registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`) The root name of the delta models when
+            attached to the backbone model. 
+        common_structure (:obj:`bool`, *optional* ,default to :obj:`None`) Whether use the common structure mapping to 
+            specify the position of the delta modules. 
     """
     delta_type = ""
     config_class = BaseDeltaConfig
-    _keys_to_ignore_on_save = None
     def __init__(self, 
                  backbone_model: nn.Module,
                  modified_modules: Optional[List[str]] = None,
@@ -89,13 +115,13 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         checking.
 
         Args:
-            config: (:obj:`BaseDeltaConfig` or `dict`) A config object or a dict that contains the necessary value to 
+            config (:obj:`BaseDeltaConfig` or `dict`) A config object or a dict that contains the necessary value to 
                             initialize the delta model.
             backbone_model (:obj:`nn.Module`) A pytorch module that will be pass into the delta model as the backbone 
                     model. modifications will be made in place in the backbone model.
             check_hash (:obj:`bool`, default to `True`) Whether to check hash of the backbone model and the config's 
                             backbone hash. 
-            kwargs: Any configurations that are passed to update the config object. 
+            kwargs: Any configurations that are passed to update the config object. #TODO unit test needed.
         """
         backbone_hash = gen_model_hash(backbone_model)
         if check_hash and hasattr(config, "backbone_hash") and \
@@ -118,11 +144,22 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                  modified_modules: List[str],
                  registration_name: Optional[str] = "deltas",
                 ) -> nn.Module:
-        r"""modify the modules into delta models.
+        r"""The main function to add delta models to the backbone model based on the modification modules.
+        If the delta models is added as a new module (e.g., adapter) instead of a existing module (e.g, Lora, BitFit)
+        the root name of the delta model in the backbone is named as :string:`registration_name`.
 
         Args:
+            backbone_model (:obj:`nn.Module`, *required*)  backbone model that the delta models are build opon. The 
+                modification to the backbone model are in place.
+            modified_modules (:obj:`List[str]`, *optional*, default to :obj:`None`) The modules are subjected to update. 
+                leave this argument :obj:`None` will make the delta model return to the default setting, which add the delta
+                models to the position experimented the paper. In this setting, the common structure mapping is loaded to 
+                addressing the corresponding modules.
+            registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`) The root name of the delta models when
+                attached to the backbone model. 
 
         Returns:
+            :obj:`nn.Module` The modified backbone model.
 
         """
         self.plm_total_params = sum(p.numel() for p in backbone.parameters())
@@ -141,7 +178,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         return backbone
     
     def register_delta_if_new(self, module: nn.Module, registration_name: Optional[str] = "deltas"):
-        r"""
+        r"""[NODOC] register a delta if it is added as a new module (e.g., adapter) instead of a existing module 
+        (e.g, Lora, BitFit)
         """
         setattr(module, registration_name, self)
 
@@ -149,8 +187,9 @@ class DeltaBase(nn.Module, SaveLoadMixin):
     def mark_as_delta(self, module: nn.Module=None,):
         r""" Mark a model's all parameters as delta parameters by setting a "_is_delta"  attribute to each of them.
         Generally, it is used after creating the delta modules.
+
         Args:
-            module (:obj:`nn.Module`) The module to mark as delta.
+            module (:obj:`nn.Module`): The module to mark as delta.
         """
         if module is None:
             module=self
@@ -158,14 +197,30 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             setattr(p, "_is_delta", True)
     
     def update_module(self, module: nn.Module, key: str):
-        r"""Update a module specified by :obj:`key`. The method is reimplemented 
+        r"""Update a module specified by :obj:`key`. The method is reimplemented in each specific delta model. 
         """
         raise NotImplementedError
     
     
-    def freeze_module(self, module: Optional[nn.Module] = None, exclude=["deltas"], set_state_dict: Optional[bool]=True, prefix=""):
+    def freeze_module(self,
+                      module: Optional[nn.Module] = None, 
+                      exclude=["deltas"], 
+                      set_state_dict: Optional[bool]=True, 
+                      prefix=""):
         r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
-        deltas module should be filtered with `_is_delta` attributes because it may have parameter sharing to the main model, (e.g., bias term)
+        deltas module is filtered with `_is_delta` attributes because it may have parameter sharing to the main 
+        model, (e.g., bias term)
+
+        Args:
+            module (:obj:`nn.Module`, *optional*, default to :obj:`None`) The module of which some parts are frozen.
+                If left with :obj:`None`, the function will the self.backbone_model as the module to be frozen. 
+            exclude (:obj:`List[str]`, *optional*, default to :string:`["deltas"]`) The parameters that don't need to 
+                be freezed. Default to all the delta parameters.
+            set_state_dict (:obj:`bool`, *optional*, default to :obj:`True`) Whether setting the backbone model's state
+                dict to all the parameters that still need grad.
+            prefix (:obj:`str`, *optional*, default to :string:`""`) A parameters that are used for recursive frozen. 
+                Should not be changed by passing argument other than :string:`""`.
+        
         """
         if module is None:
             module = self.backbone_model
@@ -187,21 +242,17 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                             p.requires_grad = False
                     self.freeze_module(c, prefix=".".join([prefix,n]), exclude=exclude)
         
+        # modify the active state dict that still need grad
         if set_state_dict:
             self.set_active_state_dict(module)
 
 
 
     def find_key(self, key: Union[str, re.Pattern], target_list: List[str], only_tail=True):
-        r""" Check whether any target string is in the key or in the tail of the key. 
-
-        Args:
-            key (:obj:`str`) The key which might be a referencing name to a submodule in the module, e.g. bert.embeddings.word_embeddings
-            target (:obj:`List[str]`) The list of target string e.g. ["attention", "word_embeddings", "ffn.out"] 
-            is_regex (:obj:`bool`) whether the syntax in the target_list is plain text or regular expression.
+        r"""Check whether any target string is in the key or in the tail of the key, i.e., 
 
         Returns: 
-            bool
+            :obj:`bool` True if the key matchs the target list.
         """
         if self.common_structure:
             key = transform(key, self.structure_mapping, strict=False)
@@ -218,8 +269,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             else:
                 return substring_in(key, target_list)
 
-    def pseudo_data_to_instantiate(self, module):
-        r"""Create a pseudo_data into the module to know the dimemsion of each tensor in the computation graph.
+    def _pseudo_data_to_instantiate(self, module):
+        r"""[NODOC] Create a pseudo_data into the module to know the dimemsion of each tensor in the computation graph.
         #TODO: To test more data input format, i.e. may need to pass more than inputs/decoder_input_ids.
         """
         device = get_device(module)
@@ -230,22 +281,55 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             module(pseudo_input)
 
     def trainable_parameters_names(self, module: Optional[nn.Module]=None):
+        r"""A small sugar function to return all the trainable parameter's name in the (by default, backbone) model.
+
+        Args: 
+            module (:obj:`nn.Module`): of which module we want to know the trainable paramemters' name.
+        
+        Returns:
+            :obj:`List[str]`
+        """
         if module is None:
-            module = self
+            module = self.backbone_model
         return [n for n,p in module.named_parameters() if p.requires_grad]
     
     def frozen_parameters_names(self, module: Optional[nn.Module]=None):
+        r"""A small sugar function to return all the frozen parameters' name in the (by default, backbone) model.
+
+        Args: 
+            module (:obj:`nn.Module`): of which module we want to know the frozen paramemters' name.
+        
+        Returns:
+            :obj:`List[str]`
+        """
         if module is None:
-            module = self
+            module = self.backbone_model
         return [n for n,p in module.named_parameters() if not p.requires_grad]
 
     def trainable_parameters(self,module: Optional[nn.Module]=None):
+        r"""A small sugar function to return all the frozen parameters in the (by default, backbone) model.
+
+        Args: 
+            module (:obj:`nn.Module`): of which module we want to know the frozen paramemters.
+        
+        Returns:
+            :obj:`List[nn.Parameter]` 
+        """
         if module is None:
             module = self
         return [p for n,p in module.named_parameters() if p.requires_grad]
 
 
     def num_trainable_parameters(self, module: Optional[nn.Module]=None):
+        r"""A small sugar function to get the number of trainable parameter in the backbone model. Often used to 
+        compute the trainable rate.
+
+        Args: 
+            module (:obj:`nn.Module`): of which module we want to know the number of trainable paramemters.
+        
+        Returns:
+            :obj:`List[nn.Parameter]` 
+        """
         if module is None:
             module = self
         pnum_tot = 0
@@ -254,29 +338,27 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                 pnum_tot += param.numel()
         return pnum_tot
     
-    def num_frozen_parameters(self, module: Optional[nn.Module]=None):
-        if module is None:
-            module = self
-        pnum_tot = 0
-        for param in module.parameters():
-            if not param.requires_grad:
-                pnum_tot += param.numel()
-        return pnum_tot
-    
-    def load_state_dict(self, path):
-        pass
-
-    def from_pretrained(self, path, config):
-        pass
+    # def num_frozen_parameters(self, module: Optional[nn.Module]=None):
+    #     if module is None:
+    #         module = self
+    #     pnum_tot = 0
+    #     for param in module.parameters():
+    #         if not param.requires_grad:
+    #             pnum_tot += param.numel()
+    #     return pnum_tot
 
     def find_module(self, root_module: nn.Module, key:str):
-        r"""Find the module using a name given by module.named_parameters() methods.
-        Return both the parent reference and the child name and reference.
+        r"""Find the module using a key and the root module. Return both the parent reference, the child name and reference.
+
+        Args:
+            root_module (:obj:`root_module`) The root_module to find the sub module in
+            key (:obj:`str`) The relative key to the root module. 
 
         Returns:
-            nn.Module: A reference to the parent module of the replaced module
-            str: The key of the replaced module relevant to its parent module
-            nn.Module: The replaced module. 
+            (:obj:`nn.Module`, :obj:`str`, :obj:`nn.Module`): 
+            * A reference to the parent module of the target module, mainly for substuting the target module. 
+            * The key of the target module relevant to its parent module
+            * Target module.
         """
         sub_keys = key.split(".")
         parent_module = root_module
@@ -289,12 +371,14 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                       parent_module: nn.Module, 
                       children_name: str,
                       replacedmodule: Optional[nn.Module]=None):
-        r"""Replace a module using the reference of its parent module.
+        r"""Replace a module using the reference of its parent module. This method will be reimplemented in different
+        derived class if needed
         """
         raise NotImplementedError
     
     def modify_module(self, module: nn.Module):
-        r"""Modify the inside parameteres of a module.
+        r"""Modify the inside parameteres of a module. This method will be reimplemented in different
+        derived class if needed.
         """
         raise NotImplementedError
 
@@ -323,9 +407,10 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         pass
 
     def set_active_state_dict(self, module: nn.Module):
-        r"""modify the state_dict of the model
+        r"""modify the state_dict function of the model (by default, the backbone model) to return only the tunable part.
 
-        filter_func: only the parameters that requires grad is keeped in the state_dict
+        Args:
+            module (:obj:`nn.Module`): The module modified. The modification is in-place.
         """
         def _caller(_org_func, excludes,  *args, **kwargs):
             state_dict = _org_func(*args, **kwargs)
@@ -341,45 +426,40 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         module.state_dict = decorate(module.state_dict, _caller, extras=(excludes,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
     
 
-    # def from_finetuned(self, module:nn.Module, pretrained_deltas_name_or_path: Optional[Union[str, os.PathLike]], *model_args, **kwargs):
-    #     r"""Todo: currenlty, simply load the state_dict and instantiate the original model 
+
+
+    # @classmethod
+    # def _from_config(cls, config, **kwargs):
+    #     r"""[NODOC] initialize a delta model given a config 
     #     """
-    #     state_dict = torch.load(os.path.join(pretrained_deltas_name_or_path))
-    #     module.load_state_dict(state_dict, strict=False)
+    #     torch_dtype = kwargs.pop("torch_dtype", None)
 
-    @classmethod
-    def _from_config(cls, config, **kwargs):
-        r"""
-        All context managers that the model should be initialized under go here.
-        Args:
-            torch_dtype (`torch.dtype`, *optional*):
-                Override the default `torch.dtype` and load the model under this dtype.
-        """
-        torch_dtype = kwargs.pop("torch_dtype", None)
+    #     # override default dtype if needed
+    #     dtype_orig = None
+    #     if torch_dtype is not None:
+    #         dtype_orig = cls._set_default_torch_dtype(torch_dtype)
 
-        # override default dtype if needed
-        dtype_orig = None
-        if torch_dtype is not None:
-            dtype_orig = cls._set_default_torch_dtype(torch_dtype)
+    #     if is_deepspeed_zero3_enabled(): # TODO: to check compatibility with deepspeed
+    #         import deepspeed
 
-        if is_deepspeed_zero3_enabled(): # TODO: to check compatibility with deepspeed
-            import deepspeed
+    #         logger.info("Detected DeepSpeed ZeRO-3: activating zero.init() for this model")
+    #         # this immediately partitions the model across all gpus, to avoid the overhead in time
+    #         # and memory copying it on CPU or each GPU first
+    #         with deepspeed.zero.Init(config_dict_or_path=deepspeed_config()):
+    #             model = cls(config, **kwargs)
+    #     else:
+    #         model = cls(config, **kwargs)
 
-            logger.info("Detected DeepSpeed ZeRO-3: activating zero.init() for this model")
-            # this immediately partitions the model across all gpus, to avoid the overhead in time
-            # and memory copying it on CPU or each GPU first
-            with deepspeed.zero.Init(config_dict_or_path=deepspeed_config()):
-                model = cls(config, **kwargs)
-        else:
-            model = cls(config, **kwargs)
+    #     # restore default dtype if it was modified
+    #     if dtype_orig is not None:
+    #         torch.set_default_dtype(dtype_orig)
 
-        # restore default dtype if it was modified
-        if dtype_orig is not None:
-            torch.set_default_dtype(dtype_orig)
-
-        return model
+    #     return model
 
     def create_config_from_model(self, ):
+        r"""[NODOC] If the delta model was built by directly passing arguments, instead of passing a config object.
+        create the config of the delta model for saving the delta model.
+        """
         # common_attributes
         config = self.config_class()
         config_keys = signature(config.__init__)[0] + signature(super(self.config_class, config).__init__)[0]
@@ -390,7 +470,9 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         config.delta_type = self.delta_type
         self.config = config
     
-    def load_state_dict_into_backbone(self, backbone_model: nn.Module = None, state_dict: dict = {}):
+    def _load_state_dict_into_backbone(self, backbone_model: nn.Module = None, state_dict: dict = {}):
+        r"""[NODOC]
+        """
         if backbone_model is None:
             backbone_model = self.backbone_model
         self.backbone_model.load_state_dict(state_dict, strict=False)

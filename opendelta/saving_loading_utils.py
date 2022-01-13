@@ -393,7 +393,7 @@ class SaveLoadMixin(PushToHubMixin):
         # load the state_dict into the backbone_model. As the delta model's parameter 
         # is the same object as the deltas in the backbone model with different reference name,
         # the state_dict will also be loaded into the delta model.
-        delta_model.load_state_dict_into_backbone(backbone_model, state_dict)
+        delta_model._load_state_dict_into_backbone(backbone_model, state_dict)
 
         # Set model in evaluation mode to deactivate DropOut modules by default
         backbone_model.eval()

@@ -101,7 +101,7 @@ class AdapterModel(DeltaBase, nn.Module):
             if self.find_key(key, modified_keys, is_regex):
                 # print("find key",key)
                 self.update_module(module, key)
-        self.pseudo_data_to_instantiate(module)
+        self._pseudo_data_to_instantiate(module)
         setattr(module, registration_name, self)
         self.mark_as_delta()
         return module

@@ -382,7 +382,7 @@ class PrefixModel(DeltaBase, nn.Module):
                 print("find key",key)
                 self.update_module(module, key)
         
-        self.pseudo_data_to_instantiate(module)
+        self._pseudo_data_to_instantiate(module)
         # exit()
         if self.reparameterize:
             reparams = ReparameterizeFunction(prefix_token_num=self.prefix_token_num, embed_dim=self.embed_dim, mid_dim=self.mid_dim, module_list=self.delta_modules)
