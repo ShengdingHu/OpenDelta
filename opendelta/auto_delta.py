@@ -1,196 +1,183 @@
-from delta_args import DeltaArguments
-from examples_seq2seq.trainers.model_args import ModelArguments
+from typing import OrderedDict
 from opendelta.utils.visualization import Visualization
 from opendelta.utils.structure_mapping import Mappings
 import torch.nn as nn
 from transformers.file_utils import PushToHubMixin
+from opendelta.utils.logging import get_logger
+import importlib
+from opendelta.delta_configs import BaseDeltaConfig
+
+logger = get_logger(__name__)
 
 
-def _get_model_class(config, model_mapping):
-    supported_models = model_mapping[type(config)]
-    if not isinstance(supported_models, (list, tuple)):
-        return supported_models
+DELTA_CONFIG_MAPPING = {
+    "lora": "LoraConfig", 
+}
 
-    name_to_model = {model.__name__: model for model in supported_models}
-    architectures = getattr(config, "architectures", [])
-    for arch in architectures:
-        if arch in name_to_model:
-            return name_to_model[arch]
-        elif f"TF{arch}" in name_to_model:
-            return name_to_model[f"TF{arch}"]
-        elif f"Flax{arch}" in name_to_model:
-            return name_to_model[f"Flax{arch}"]
+DELTA_MODEL_MAPPING = {
+    "lora": "LoraModel"
+}
 
-    # If not architecture is set in the config or match the supported models, the first element of the tuple is the
-    # defaults.
-    return supported_models[0]
+class _LazyConfigMapping(OrderedDict):
+    """
+    A dictionary that lazily load its values when they are requested.
+    """
+
+    def __init__(self, mapping):
+        self._mapping = mapping
+        self._extra_content = {}
+        self._modules = {}
+
+    def __getitem__(self, key):
+        if key in self._extra_content:
+            return self._extra_content[key]
+        if key not in self._mapping:
+            raise KeyError(key)
+        value = self._mapping[key]
+        module_name = key #model_type_to_module_name(key)
+        # if module_name not in self._modules:
+        self._modules[module_name] = importlib.import_module(f".{module_name}", "opendelta.delta_models")
+        return getattr(self._modules[module_name], value)
+
+    def keys(self):
+        return list(self._mapping.keys()) + list(self._extra_content.keys())
+
+    def values(self):
+        return [self[k] for k in self._mapping.keys()] + list(self._extra_content.values())
+
+    def items(self):
+        return [(k, self[k]) for k in self._mapping.keys()] + list(self._extra_content.items())
+
+    def __iter__(self):
+        return iter(list(self._mapping.keys()) + list(self._extra_content.keys()))
+
+    def __contains__(self, item):
+        return item in self._mapping or item in self._extra_content
+
+    def register(self, key, value):
+        """
+        Register a new configuration in this mapping.
+        """
+        if key in self._mapping.keys():
+            raise ValueError(f"'{key}' is already used by a Transformers config, pick another name.")
+        self._extra_content[key] = value
 
 
-class _BaseAutoModelClass:
-    # Base class for auto models.
-    _model_mapping = None
+LAZY_CONFIG_MAPPING = _LazyConfigMapping(DELTA_CONFIG_MAPPING)
 
-    def __init__(self, *args, **kwargs):
+
+
+class AutoDeltaConfig:
+    r"""
+    This is a generic configuration class that will be instantiated as one of the configuration classes of the library
+    when created with the [`~AutoConfig.from_pretrained`] class method.
+    This class cannot be instantiated directly using `__init__()` (throws an error).
+    """
+
+    def __init__(self):
         raise EnvironmentError(
-            f"{self.__class__.__name__} is designed to be instantiated "
-            f"using the `{self.__class__.__name__}.from_pretrained(pretrained_model_name_or_path)` or "
-            f"`{self.__class__.__name__}.from_config(config)` methods."
+            "AutoConfig is designed to be instantiated "
+            "using the `AutoConfig.from_pretrained(pretrained_model_name_or_path)` method."
         )
 
     @classmethod
-    def from_config(cls, config, **kwargs):
-        trust_remote_code = kwargs.pop("trust_remote_code", False)
-        if hasattr(config, "auto_map") and cls.__name__ in config.auto_map:
-            if not trust_remote_code:
-                raise ValueError(
-                    "Loading this model requires you to execute the modeling file in that repo "
-                    "on your local machine. Make sure you have read the code there to avoid malicious use, then set "
-                    "the option `trust_remote_code=True` to remove this error."
-                )
-            if kwargs.get("revision", None) is None:
-                logger.warn(
-                    "Explicitly passing a `revision` is encouraged when loading a model with custom code to ensure "
-                    "no malicious code has been contributed in a newer revision."
-                )
-            class_ref = config.auto_map[cls.__name__]
-            module_file, class_name = class_ref.split(".")
-            model_class = get_class_from_dynamic_module(config.name_or_path, module_file + ".py", class_name, **kwargs)
-            return model_class._from_config(config, **kwargs)
-        elif type(config) in cls._model_mapping.keys():
-            model_class = _get_model_class(config, cls._model_mapping)
-            return model_class._from_config(config, **kwargs)
-
+    def for_model(cls, model_type: str, *args, **kwargs):
+        if model_type in LAZY_CONFIG_MAPPING:
+            config_class = LAZY_CONFIG_MAPPING[model_type]
+            return config_class(*args, **kwargs)
         raise ValueError(
-            f"Unrecognized configuration class {config.__class__} for this kind of AutoModel: {cls.__name__}.\n"
-            f"Model type should be one of {', '.join(c.__name__ for c in cls._model_mapping.keys())}."
+            f"Unrecognized model identifier: {model_type}. Should contain one of {', '.join(CONFIG_MAPPING.keys())}"
         )
-
+    
     @classmethod
-    def from_pretrained(cls, pretrained_model_name_or_path, *model_args, **kwargs):
-        from IPython import embed 
-        embed(header = "from config") 
-        config = kwargs.pop("config", None)
-        trust_remote_code = kwargs.pop("trust_remote_code", False)
-        kwargs["_from_auto"] = True
-        if not isinstance(config, PretrainedConfig):
-            config, kwargs = AutoConfig.from_pretrained(
-                pretrained_model_name_or_path, return_unused_kwargs=True, trust_remote_code=trust_remote_code, **kwargs
-            )
-        if hasattr(config, "auto_map") and cls.__name__ in config.auto_map:
-            if not trust_remote_code:
-                raise ValueError(
-                    f"Loading {pretrained_model_name_or_path} requires you to execute the modeling file in that repo "
-                    "on your local machine. Make sure you have read the code there to avoid malicious use, then set "
-                    "the option `trust_remote_code=True` to remove this error."
-                )
-            if kwargs.get("revision", None) is None:
-                logger.warn(
-                    "Explicitly passing a `revision` is encouraged when loading a model with custom code to ensure "
-                    "no malicious code has been contributed in a newer revision."
-                )
-            class_ref = config.auto_map[cls.__name__]
-            module_file, class_name = class_ref.split(".")
-            model_class = get_class_from_dynamic_module(
-                pretrained_model_name_or_path, module_file + ".py", class_name, **kwargs
-            )
-            return model_class.from_pretrained(pretrained_model_name_or_path, *model_args, config=config, **kwargs)
-        elif type(config) in cls._model_mapping.keys():
-            model_class = _get_model_class(config, cls._model_mapping)
-            return model_class.from_pretrained(pretrained_model_name_or_path, *model_args, config=config, **kwargs)
-        raise ValueError(
-            f"Unrecognized configuration class {config.__class__} for this kind of AutoModel: {cls.__name__}.\n"
-            f"Model type should be one of {', '.join(c.__name__ for c in cls._model_mapping.keys())}."
-        )
-
-    @classmethod
-    def register(cls, config_class, model_class):
-        """
-        Register a new model for this class.
-
+    def from_finetuned(cls, finetuned_model_name_or_path, **kwargs):
+        r"""
+        Instantiate one of the configuration classes of the library from a pretrained model configuration.
+        The configuration class to instantiate is selected based on the `model_type` property of the config object that
+        is loaded, or when it's missing, by falling back to using pattern matching on `pretrained_model_name_or_path`:
+        List options
         Args:
-            config_class ([`PretrainedConfig`]):
-                The configuration corresponding to the model to register.
-            model_class ([`PreTrainedModel`]):
-                The model to register.
-        """
-        if hasattr(model_class, "config_class") and model_class.config_class != config_class:
-            raise ValueError(
-                "The model class you are passing has a `config_class` attribute that is not consistent with the "
-                f"config class you passed (model has {model_class.config_class} and you passed {config_class}. Fix "
-                "one of those so they match!"
-            )
-        cls._model_mapping.register(config_class, model_class)
+            pretrained_model_name_or_path (`str` or `os.PathLike`):
+                Can be either:
+                    - A string, the *model id* of a pretrained model configuration hosted inside a model repo on
+                      huggingface.co. Valid model ids can be located at the root-level, like `bert-base-uncased`, or
+                      namespaced under a user or organization name, like `dbmdz/bert-base-german-cased`.
+                    - A path to a *directory* containing a configuration file saved using the
+                      [`~PretrainedConfig.save_pretrained`] method, or the [`~PreTrainedModel.save_pretrained`] method,
+                      e.g., `./my_model_directory/`.
+                    - A path or url to a saved configuration JSON *file*, e.g.,
+                      `./my_model_directory/configuration.json`.
+            cache_dir (`str` or `os.PathLike`, *optional*):
+                Path to a directory in which a downloaded pretrained model configuration should be cached if the
+                standard cache should not be used.
+            force_download (`bool`, *optional*, defaults to `False`):
+                Whether or not to force the (re-)download the model weights and configuration files and override the
+                cached versions if they exist.
+            resume_download (`bool`, *optional*, defaults to `False`):
+                Whether or not to delete incompletely received files. Will attempt to resume the download if such a
+                file exists.
+            proxies (`Dict[str, str]`, *optional*):
+                A dictionary of proxy servers to use by protocol or endpoint, e.g., `{'http': 'foo.bar:3128',
+                'http://hostname': 'foo.bar:4012'}`. The proxies are used on each request.
+            revision(`str`, *optional*, defaults to `"main"`):
+                The specific model version to use. It can be a branch name, a tag name, or a commit id, since we use a
+                git-based system for storing models and other artifacts on huggingface.co, so `revision` can be any
+                identifier allowed by git.
+            return_unused_kwargs (`bool`, *optional*, defaults to `False`):
+                If `False`, then this function returns just the final configuration object.
+                If `True`, then this functions returns a `Tuple(config, unused_kwargs)` where *unused_kwargs* is a
+                dictionary consisting of the key/value pairs whose keys are not configuration attributes: i.e., the
+                part of `kwargs` which has not been used to update `config` and is otherwise ignored.
+            trust_remote_code (`bool`, *optional*, defaults to `False`):
+                Whether or not to allow for custom models defined on the Hub in their own modeling files. This option
+                should only be set to `True` for repositories you trust and in which you have read the code, as it will
+                execute code present on the Hub on your local machine.
+            kwargs(additional keyword arguments, *optional*):
+                The values in kwargs of any keys which are configuration attributes will be used to override the loaded
+                values. Behavior concerning key/value pairs whose keys are *not* configuration attributes is controlled
+                by the `return_unused_kwargs` keyword parameter.
+        Examples:
+        ```python
+        >>> from transformers import AutoConfig
+        >>> # Download configuration from huggingface.co and cache.
+        >>> config = AutoConfig.from_pretrained("bert-base-uncased")
+        >>> # Download configuration from huggingface.co (user-uploaded) and cache.
+        >>> config = AutoConfig.from_pretrained("dbmdz/bert-base-german-cased")
+        >>> # If configuration file is in a directory (e.g., was saved using *save_pretrained('./test/saved_model/')*).
+        >>> config = AutoConfig.from_pretrained("./test/bert_saved_model/")
+        >>> # Load a specific configuration file.
+        >>> config = AutoConfig.from_pretrained("./test/bert_saved_model/my_configuration.json")
+        >>> # Change some config attributes when loading a pretrained config.
+        >>> config = AutoConfig.from_pretrained("bert-base-uncased", output_attentions=True, foo=False)
+        >>> config.output_attentions
+        True
+        >>> config, unused_kwargs = AutoConfig.from_pretrained(
+        ...     "bert-base-uncased", output_attentions=True, foo=False, return_unused_kwargs=True
+        ... )
+        >>> config.output_attentions
+        True
+        >>> config.unused_kwargs
+        {'foo': False}
+        ```"""
+        kwargs["name_or_path"] = finetuned_model_name_or_path
 
-
-def insert_head_doc(docstring, head_doc=""):
-    if len(head_doc) > 0:
-        return docstring.replace(
-            "one of the model classes of the library ",
-            f"one of the model classes of the library (with a {head_doc} head) ",
-        )
-    return docstring.replace(
-        "one of the model classes of the library ", "one of the base model classes of the library "
-    )
-
-
-def auto_class_update(cls, checkpoint_for_example="bert-base-cased", head_doc=""):
-    # Create a new class with the right name from the base class
-    model_mapping = cls._model_mapping
-    name = cls.__name__
-    class_docstring = insert_head_doc(CLASS_DOCSTRING, head_doc=head_doc)
-    cls.__doc__ = class_docstring.replace("BaseAutoModelClass", name)
-
-    # Now we need to copy and re-register `from_config` and `from_pretrained` as class methods otherwise we can't
-    # have a specific docstrings for them.
-    from_config = copy_func(_BaseAutoModelClass.from_config)
-    from_config_docstring = insert_head_doc(FROM_CONFIG_DOCSTRING, head_doc=head_doc)
-    from_config_docstring = from_config_docstring.replace("BaseAutoModelClass", name)
-    from_config_docstring = from_config_docstring.replace("checkpoint_placeholder", checkpoint_for_example)
-    from_config.__doc__ = from_config_docstring
-    from_config = replace_list_option_in_docstrings(model_mapping._model_mapping, use_model_types=False)(from_config)
-    cls.from_config = classmethod(from_config)
-
-    if name.startswith("TF"):
-        from_pretrained_docstring = FROM_PRETRAINED_TF_DOCSTRING
-    elif name.startswith("Flax"):
-        from_pretrained_docstring = FROM_PRETRAINED_FLAX_DOCSTRING
-    else:
-        from_pretrained_docstring = FROM_PRETRAINED_TORCH_DOCSTRING
-    from_pretrained = copy_func(_BaseAutoModelClass.from_pretrained)
-    from_pretrained_docstring = insert_head_doc(from_pretrained_docstring, head_doc=head_doc)
-    from_pretrained_docstring = from_pretrained_docstring.replace("BaseAutoModelClass", name)
-    from_pretrained_docstring = from_pretrained_docstring.replace("checkpoint_placeholder", checkpoint_for_example)
-    shortcut = checkpoint_for_example.split("/")[-1].split("-")[0]
-    from_pretrained_docstring = from_pretrained_docstring.replace("shortcut_placeholder", shortcut)
-    from_pretrained.__doc__ = from_pretrained_docstring
-    from_pretrained = replace_list_option_in_docstrings(model_mapping._model_mapping)(from_pretrained)
-    cls.from_pretrained = classmethod(from_pretrained)
-    return cls
-
-
-def get_values(model_mapping):
-    result = []
-    for model in model_mapping.values():
-        if isinstance(model, (list, tuple)):
-            result += list(model)
+        config_dict, _ = BaseDeltaConfig.get_config_dict(finetuned_model_name_or_path, **kwargs)
+        if "delta_type" in config_dict:
+            config_class = LAZY_CONFIG_MAPPING[config_dict["delta_type"]]
+            return config_class.from_dict(config_dict, **kwargs)
         else:
-            result.append(model)
+            # Fallback: use pattern matching on the string.
+            for pattern, config_class in LAZY_CONFIG_MAPPING.items():
+                if pattern in str(finetuned_model_name_or_path):
+                    return config_class.from_dict(config_dict, **kwargs)
 
-    return result
+        raise ValueError(
+            f"Unrecognized model in {finetuned_model_name_or_path}. "
+            f"Should have a `delta_type` key in the loaded config, or contain one of the following strings "
+            f"in its name: {', '.join(LAZY_CONFIG_MAPPING.keys())}"
+        )
 
-
-def getattribute_from_module(module, attr):
-    if attr is None:
-        return None
-    if isinstance(attr, tuple):
-        return tuple(getattribute_from_module(module, a) for a in attr)
-    if hasattr(module, attr):
-        return getattr(module, attr)
-    # Some of the mappings have entries model_type -> object of another model type. In that case we try to grab the
-    # object at the top level.
-    transformers_module = importlib.import_module("transformers")
-    return getattribute_from_module(transformers_module, attr)
-
+### AutoModels below 
 
 class _LazyAutoMapping(OrderedDict):
     """
@@ -219,10 +206,9 @@ class _LazyAutoMapping(OrderedDict):
         return self._load_attr_from_module(model_type, model_name)
 
     def _load_attr_from_module(self, model_type, attr):
-        module_name = model_type_to_module_name(model_type)
-        if module_name not in self._modules:
-            self._modules[module_name] = importlib.import_module(f".{module_name}", "transformers.models")
-        return getattribute_from_module(self._modules[module_name], attr)
+        if model_type not in self._modules:
+            self._modules[model_type] = importlib.import_module(f".{model_type}", "opendelta.delta_models")
+        return getattribute_from_module(self._modules[model_type], attr)
 
     def keys(self):
         mapping_keys = [
@@ -283,38 +269,122 @@ class _LazyAutoMapping(OrderedDict):
         self._extra_content[key] = value
 
 
-class AutoDeltaConfig():
+
+LAZY_DELTA_MAPPING = _LazyAutoMapping(DELTA_CONFIG_MAPPING, DELTA_MODEL_MAPPING)
+
+
+
+def get_values(model_mapping):
+    result = []
+    for model in model_mapping.values():
+        if isinstance(model, (list, tuple)):
+            result += list(model)
+        else:
+            result.append(model)
+
+    return result
+
+
+def getattribute_from_module(module, attr):
+    if attr is None:
+        return None
+    if isinstance(attr, tuple):
+        return tuple(getattribute_from_module(module, a) for a in attr)
+    if hasattr(module, attr):
+        return getattr(module, attr)
+    # Some of the mappings have entries model_type -> object of another model type. In that case we try to grab the
+    # object at the top level.
+    transformers_module = importlib.import_module("transformers")
+    return getattribute_from_module(transformers_module, attr)
+
+
+
+class AutoDeltaModel:
     r"""
     """
-    def __init__(self, ):
-        pass
+    _delta_model_mapping = LAZY_DELTA_MAPPING
+    def __init__(self, *args, **kwargs):
+        raise EnvironmentError(
+            f"{self.__class__.__name__} is designed to be instantiated "
+            f"using the `{self.__class__.__name__}.from_pretrained(pretrained_model_name_or_path)` or "
+            f"`{self.__class__.__name__}.from_config(config)` methods."
+        )
+    
+    @classmethod
+    def from_config(cls, config, backbone_model, **kwargs):
+        r"""Automatically instantiates a delta model based on the :obj:`config`. The delta model correspond to the delta
+        :obj:`config` will be loaded and initialized using the arguments in :obj:`config`. 
+
+        .. note::
+            Only using :meth:`from_config` method will not load the finetuned weight file (e.g., pytorch_model.bin). 
+            Please use from_finetuned directly. 
+
+        Args:
+            config (:obj:`BaseDeltaConfig`）
+            backbone_model (:obj:`nn.Module`)
+    
+        >>> config = AutoDeltaConfig.from_finetuned("DeltaHub/lora_t5")
+        >>> delta_model = AutoDeltaModel.from_config(config, backbone_model)
+
+        """
+        if type(config) in cls._delta_model_mapping.keys():
+            model_class = cls._delta_model_mapping[type(config)]
+            return model_class.from_config(config, backbone_model, **kwargs)
+
+        raise ValueError(
+            f"Unrecognized configuration class {config.__class__} for this kind of AutoModel: {cls.__name__}.\n"
+            f"Model type should be one of {', '.join(c.__name__ for c in cls._delta_model_mapping.keys())}."
+        )
+
+    @classmethod
+    def from_finetuned(cls, finetuned_model_name_or_path, backbone_model, *model_args, **kwargs):
+        r""" Automatically instantiated a delta model and load the finetuned checkpoints based on the 
+        :obj:`finetuned_model_name_or_path`, which can either be a string pointing to a local path or a url pointint to 
+        the delta hub. It will check the hash after loading the delta model to see whether the correct backbone and 
+        delta checkpoint are used. 
+
+        Args:
+            config (:obj:`BaseDeltaConfig`）
+            backbone_model (:obj:`nn.Module`)
+    
+        >>> delta_model = AutoDeltaModel.from_finetuned("DeltaHub/lora_t5", backbone_model)
+
+
+        """
+        config = kwargs.pop("config", None)
+
+        if not isinstance(config, BaseDeltaConfig):
+            config, kwargs = AutoDeltaConfig.from_finetuned(
+                finetuned_model_name_or_path, return_unused_kwargs=True, **kwargs
+            )
+        if type(config) in cls._delta_model_mapping.keys():
+            model_class = cls._delta_model_mapping[type(config)]
+            return model_class.from_finetuned(finetuned_model_name_or_path, backbone_model, *model_args, **kwargs)
+        raise ValueError(
+            f"Unrecognized configuration class {config.__class__} for this kind of AutoModel: {cls.__name__}.\n"
+            f"Model type should be one of {', '.join(c.__name__ for c in cls._model_mapping.keys())}."
+        )
         
 
 
-
-class AutoDelta(nn.Module):
-    def __init__(self, ):
-
-        pass
-
-    def from_config(cls, config: DeltaArguments = None, **kwargs):
-        if config is None:
-            try:
-                delta_type = kwargs.pop("delta_type")
-            except:
-
-
-        elif isinstance(config, DeltaArguments):
-            pass
-        else:
-            raise NotImplementedError
-
-        pass
-
-    def from_pretrained(self, ):
-        pass
+    
 
 if __name__ == "__main__":
+    from transformers import AutoModelForSequenceClassification
+    model = AutoModelForSequenceClassification.from_pretrained("../../plm_cache/roberta-base/", num_labels=2)
+    from IPython import embed
+    embed(header="fafa")
+    config = AutoDeltaConfig.from_finetuned("ShengdingHu/delta_models", use_auth_token=True)
+    delta_model = AutoDeltaModel.from_config(config, model)
+    delta_model.freeze_module(exclude = ['deltas','classifier'], set_state_dict = True)
+    from IPython import embed
+    embed(header="fafa")
 
-    AutoDelta.from_config()
+    # delta_model.save_finetuned("autodelta_try", push_to_hub=True, private=True)
+    delta_model = AutoDeltaModel.from_finetuned("ShengdingHu/autodelta_try", model, use_auth_token=True)
+    from IPython import embed
+    embed(header="fafa")
+
+
+    # AutoDelta.from_config()
 

@@ -25,6 +25,7 @@ OpenDelta is a library of the parameter-efficient fine-tuning technology for pre
 
    modules/base
    modules/deltas
+   modules/auto_delta
 
 
 Indices and tables

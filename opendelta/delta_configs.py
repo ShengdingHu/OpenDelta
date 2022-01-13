@@ -79,7 +79,7 @@ class BaseDeltaConfig(PushToHubMixin):
         backbone_class (:obj:`str`, *optional*, default to :obj:`None`): The name of backbone model's class, e.g.
                 :string:`RobertaForMaskedLM`. Saving this infomation let the users explicitly know on which backbone the 
                 delta model is trained. 
-        backbone_checkpoints (:obj:`str`, *optional*, default to :obj:`None`): The specific checkpoint of the model.
+        backbone_checkpoint_name (:obj:`str`, *optional*, default to :obj:`None`): The specific checkpoint of the model.
                 In ideal case, it should be the url to download the checkpoint. However, we do not force the user to 
                 specify a downloadable url here.
         backbone_hash (:obj:`str`, *optional*, default to :obj:`None`): The md5-hash of the backbone model. It is 
@@ -96,7 +96,7 @@ class BaseDeltaConfig(PushToHubMixin):
                  registration_name = "deltas",
                  common_structure=False,
                  backbone_class = None,
-                 backbone_checkpoints = None,
+                 backbone_checkpoint_name = None,
                  backbone_hash = None,
                  ):
         arg_names = get_arg_names(BaseDeltaConfig.__init__)

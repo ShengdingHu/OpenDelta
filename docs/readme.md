@@ -1,6 +1,6 @@
 # OpenDelta Documentation
 
-To build this doc locally, please firstly install sphix packages.
+To build this doc locally, please firstly install [sphinx](https://www.sphinx-doc.org/en/master/) packages.
 
 ```
 pip install sphinx

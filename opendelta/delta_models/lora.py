@@ -49,8 +49,6 @@ class LoraModel(DeltaBase):
                            registration_name=registration_name
                            )
         arg_names = get_arg_names_inside_func(self.__init__)
-        from IPython import embed
-        embed(header= "in lora")
         for arg_name in arg_names:
             if not hasattr(self, arg_name): # not registered in parent class
                 setattr(self, arg_name, locals()[arg_name])

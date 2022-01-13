@@ -3,6 +3,7 @@ from io import RawIOBase
 from tarfile import HeaderError
 from typing import Union, Optional, Callable
 from opendelta.delta_configs import BaseDeltaConfig
+from opendelta.utils.model_md5 import gen_model_hash
 import torch
 import os
 from opendelta import logging
@@ -23,8 +24,10 @@ logger = logging.get_logger(__name__)
 class SaveLoadMixin(PushToHubMixin):
     def add_configs_when_saving(self,):
         self.config.backbone_class = self.backbone_model.__class__.__name__
-        self.config.backbone_config = os.path.split(self.backbone_model.config._name_or_path)[-1]
-        self.config.backbone_hash = self.backbone_hash
+        self.config.backbone_checkpoint_name = os.path.split(self.backbone_model.config._name_or_path.strip("/"))[-1]
+        self.config.backbone_hash = gen_model_hash(self.backbone_model)
+        from IPython import embed
+        embed(header="in saving loading utils")
 
 
 
@@ -65,6 +68,17 @@ class SaveLoadMixin(PushToHubMixin):
                 </Tip>
             kwargs:
                 Additional key word arguments passed along to the [`~file_utils.PushToHubMixin.push_to_hub`] method.
+            
+        .. note::
+            You may need to install git-lfs on your machine. 
+            
+        .. code_block::
+
+            pip install git-lfs
+            export PATH=/PATH/TO/GIT_LFS:$PATH
+            git-lfs install
+
+
         """
         if os.path.isfile(save_directory):
             logger.error(f"Provided path ({save_directory}) should be a directory, not a file")
@@ -91,12 +105,6 @@ class SaveLoadMixin(PushToHubMixin):
             self.add_configs_when_saving()
             self.config.save_finetuned(save_directory)
 
-        # Handle the case where some state_dict keys shouldn't be saved
-        if self._keys_to_ignore_on_save is not None:
-            for ignore_key in self._keys_to_ignore_on_save:
-                if ignore_key in state_dict.keys():
-                    del state_dict[ignore_key]
-
         # If we save using the predefined names, we can load using `from_pretrained`
         output_model_file = os.path.join(save_directory, WEIGHTS_NAME)
         save_function(state_dict, output_model_file)
@@ -112,6 +120,7 @@ class SaveLoadMixin(PushToHubMixin):
                         finetuned_model_name_or_path: Optional[Union[str, os.PathLike]], 
                         backbone_model: nn.Module,
                         *model_args,
+                        check_hash: Optional[bool] = True,
                         **kwargs):
         r"""
         Instantiate a finetuned model from a finetuned model configuration.
@@ -395,10 +404,18 @@ class SaveLoadMixin(PushToHubMixin):
         # the state_dict will also be loaded into the delta model.
         delta_model._load_state_dict_into_backbone(backbone_model, state_dict)
 
+        backbone_hash = gen_model_hash(backbone_model)
+        if check_hash and hasattr(config, "backbone_hash") and \
+                          config.backbone_hash is not None and \
+                          config.backbone_hash != backbone_hash:
+            logger.warning("The config has an hash of the backbone model, and is"
+                            "different from the hash of the loaded model. This indicates a mismatch"
+                            "between the backbone model that the delta checkpoint is based on and"
+                            "the one you loaded. You propobability need to Train the model instead of"
+                            "directly inference. ")
+
         # Set model in evaluation mode to deactivate DropOut modules by default
         backbone_model.eval()
-        from IPython import embed
-        embed(header = "model loaded" )
 
         return delta_model
     

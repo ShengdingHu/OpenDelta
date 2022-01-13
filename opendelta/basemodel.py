@@ -79,7 +79,6 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                  ):
         nn.Module.__init__(self)
         self.__dict__["backbone_model"] = backbone_model
-        self.backbone_hash = gen_model_hash(backbone_model)
         if modified_modules  is None:
             self.modified_modules = self.default_modified_modules
             self.common_structure = True
@@ -123,14 +122,6 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                             backbone hash. 
             kwargs: Any configurations that are passed to update the config object. #TODO unit test needed.
         """
-        backbone_hash = gen_model_hash(backbone_model)
-        if check_hash and hasattr(config, "backbone_hash") and \
-                          config.backbone_hash is not None and \
-                          config.backbone_hash != backbone_hash:
-            raise RuntimeError("The config has an hash of the backbone model, and is \
-                            different from the hash of the loaded model. This indicates a mismatch \
-                            between the backbone model that the delta checkpoint is based on and \
-                            the one you loaded. ")
         supported_keys = get_arg_names(cls.__init__) + get_arg_names(DeltaBase.__init__)
         config_dict = config.to_dict()
         for key in list(config_dict.keys()):
@@ -469,6 +460,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             setattr(config, key, val)
         config.delta_type = self.delta_type
         self.config = config
+        
     
     def _load_state_dict_into_backbone(self, backbone_model: nn.Module = None, state_dict: dict = {}):
         r"""[NODOC]
