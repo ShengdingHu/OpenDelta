@@ -55,9 +55,9 @@ class LoraModel(DeltaBase):
 
         self.delta_modules = nn.ModuleList()
 
-        self.add_all_delta_to_backbone(backbone_model,
-                                   modified_modules,
-                                   registration_name)
+        self.add_all_delta_to_backbone(self.backbone_model,
+                                   self.modified_modules,
+                                   self.registration_name)
     
     # @classmethod
     # def from_config(cls, config: LoraConfig):

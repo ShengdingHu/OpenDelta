@@ -16,6 +16,7 @@ from transformers.file_utils import PushToHubMixin
 from transformers.deepspeed import deepspeed_config, is_deepspeed_zero3_enabled
 from opendelta import SaveLoadMixin
 from opendelta import logging
+from opendelta.utils.structure_mapping import CommonStructureMap
 
 logger = logging.get_logger(__name__)
 
@@ -32,10 +33,6 @@ def non_module_param(module: nn.Module):
             ret.append((n,p))
     return ret
 
-
-def load_structure_mapping_according_to_backbone(backbone_type):
-    # backbone_type = 
-    return None
 
 
 
@@ -61,13 +58,17 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         backbone_model (:obj:`nn.Module`, *required*)  backbone model that the delta models are build opon. The modification to the 
             backbone model are in place.
         modified_modules (:obj:`List[str]`, *optional*, default to :obj:`None`) The modules are subjected to update. 
-            leave this argument :obj:`None` will make the delta model return to the default setting, which add the delta
-            models to the position experimented the paper. In this setting, the common structure mapping is loaded to 
-            addressing the corresponding modules.
+            
+            .. note::
+                leave this argument :obj:`None` will make the delta model return to the default setting, which add the delta
+                models to the position experimented the paper. In this setting, the common structure mapping is loaded to 
+                addressing the corresponding modules.
+
         registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`) The root name of the delta models when
             attached to the backbone model. 
         common_structure (:obj:`bool`, *optional* ,default to :obj:`None`) Whether use the common structure mapping to 
-            specify the position of the delta modules. 
+
+
     """
     delta_type = ""
     config_class = BaseDeltaConfig
@@ -86,7 +87,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             self.modified_modules = modified_modules
             self.common_structure = common_structure
         if self.common_structure:
-            self.structure_mapping = load_structure_mapping_according_to_backbone(type(self.backbone_model))
+            self.structure_mapping = CommonStructureMap.load(self.backbone_model)
         else:
             self.structure_mapping = None
         self.registration_name = registration_name
@@ -246,19 +247,23 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             :obj:`bool` True if the key matchs the target list.
         """
         if self.common_structure:
-            key = transform(key, self.structure_mapping, strict=False)
-        if key is None:
+            key = self.structure_mapping.transform(key, strict=False)
+        if not key:
             return False
-        if isinstance(key, re.Pattern): # TODO: unit test needed ERROR
-            if only_tail:
-                return endswith_in_regex(key, target_list)
+        try:
+            if isinstance(key, re.Pattern): # TODO: unit test needed ERROR
+                if only_tail:
+                    return endswith_in_regex(key, target_list)
+                else:
+                    return substring_in_regex(key, target_list)
             else:
-                return substring_in_regex(key, target_list)
-        else:
-            if only_tail:
-                return endswith_in(key, target_list)
-            else:
-                return substring_in(key, target_list)
+                if only_tail:
+                    return endswith_in(key, target_list)
+                else:
+                    return substring_in(key, target_list)
+        except:
+            from IPython import embed
+            embed(header = "exception")
 
     def _pseudo_data_to_instantiate(self, module):
         r"""[NODOC] Create a pseudo_data into the module to know the dimemsion of each tensor in the computation graph.
@@ -416,36 +421,6 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
         module.state_dict = decorate(module.state_dict, _caller, extras=(excludes,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
     
-
-
-
-    # @classmethod
-    # def _from_config(cls, config, **kwargs):
-    #     r"""[NODOC] initialize a delta model given a config 
-    #     """
-    #     torch_dtype = kwargs.pop("torch_dtype", None)
-
-    #     # override default dtype if needed
-    #     dtype_orig = None
-    #     if torch_dtype is not None:
-    #         dtype_orig = cls._set_default_torch_dtype(torch_dtype)
-
-    #     if is_deepspeed_zero3_enabled(): # TODO: to check compatibility with deepspeed
-    #         import deepspeed
-
-    #         logger.info("Detected DeepSpeed ZeRO-3: activating zero.init() for this model")
-    #         # this immediately partitions the model across all gpus, to avoid the overhead in time
-    #         # and memory copying it on CPU or each GPU first
-    #         with deepspeed.zero.Init(config_dict_or_path=deepspeed_config()):
-    #             model = cls(config, **kwargs)
-    #     else:
-    #         model = cls(config, **kwargs)
-
-    #     # restore default dtype if it was modified
-    #     if dtype_orig is not None:
-    #         torch.set_default_dtype(dtype_orig)
-
-    #     return model
 
     def create_config_from_model(self, ):
         r"""[NODOC] If the delta model was built by directly passing arguments, instead of passing a config object.

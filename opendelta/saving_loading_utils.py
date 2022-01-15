@@ -26,8 +26,6 @@ class SaveLoadMixin(PushToHubMixin):
         self.config.backbone_class = self.backbone_model.__class__.__name__
         self.config.backbone_checkpoint_name = os.path.split(self.backbone_model.config._name_or_path.strip("/"))[-1]
         self.config.backbone_hash = gen_model_hash(self.backbone_model)
-        from IPython import embed
-        embed(header="in saving loading utils")
 
 
 

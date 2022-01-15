@@ -1,4 +1,11 @@
 
+from asyncio.log import logger
+from os import popen
+from typing import OrderedDict
+import copy
+
+from opendelta.utils.visualization import Visualization
+
 t5_mapping = {
     "shared": {"__name__":"embeddings"},
     "lm_head": {"__name__":"lm_head.proj"},
@@ -71,11 +78,11 @@ roberta_mapping = {
                     "output.dense": {"__name__":"proj"},
                     "output.LayerNorm": {"__name__":"layer_norm"},
                 },
-                "output": {"__name__":"ff"},
-                "intermediate": {"__name__":"ff"},
+                "output": {"__name__":"ff",
+                            "dense": {"__name__":"w2"},
+                            "LayerNorm": {"__name__":"layer_norm"}
+                },
                 "intermediate.dense": {"__name__":"ff.w1"},
-                "output.dense": {"__name__":"ff.w2"},
-                "output.LayerNorm": {"__name__":"ff.layer_norm"},
             }
         }
     },
@@ -83,8 +90,10 @@ roberta_mapping = {
         "dense": {"__name__":""},
         "layer_norm": {"__name__":""},
         "decoder": {"__name__":"proj"},
-    }
+    },
 }
+
+
 
 bert_mapping = {
     "bert.embeddings.word_embeddings": {"__name__":"embeddings"},
@@ -101,11 +110,11 @@ bert_mapping = {
                     "output.dense": {"__name__":"proj"},
                     "output.LayerNorm": {"__name__":"layer_norm"},
                 },
-                "output": {"__name__":"ff"},  # TODO: can't handle multiple structure correspond to one common structure
-                "intermediate": {"__name__":"ff"},
+                "output": {"__name__":"ff",
+                            "dense": {"__name__":"w2"},
+                            "LayerNorm": {"__name__":"layer_norm"}
+                },
                 "intermediate.dense": {"__name__":"ff.w1"},
-                "output.dense": {"__name__":"ff.w2"},
-                "output.LayerNorm": {"__name__":"ff.layer_norm"},
             }
         }
     },
@@ -202,14 +211,133 @@ def transform(org_key, mapping, strict=True, warning=False):
     return new_key
     
 
-Mappings = {
-    "t5-lm": t5_mapping,
-    "t5": t5_mapping,
-    "gpt2": gpt2_mapping,
-    "bert": bert_mapping,
-    "roberta": roberta_mapping,
-    "distilbert": distilbert_mapping
-}
+# class _LazyStructureMapping(OrderedDict):
+#     """
+#     A dictionary that lazily load its values when they are requested.
+#     """
+
+#     def __init__(self, mapping):
+#         self._mapping = mapping
+#         self._extra_content = {}
+#         self._modules = {}
+
+#     def __getitem__(self, key):
+#         if key in self._extra_content:
+#             return self._extra_content[key]
+#         if key not in self._mapping:
+#             raise KeyError(key)
+#         value = self._mapping[key]
+#         module_name = key #model_type_to_module_name(key)
+#         # if module_name not in self._modules:
+#         self._modules[module_name] = importlib.import_module(f".{module_name}", "opendelta.delta_models")
+#         return getattr(self._modules[module_name], value)
+
+#     def keys(self):
+#         return list(self._mapping.keys()) + list(self._extra_content.keys())
+
+#     def values(self):
+#         return [self[k] for k in self._mapping.keys()] + list(self._extra_content.values())
+
+#     def items(self):
+#         return [(k, self[k]) for k in self._mapping.keys()] + list(self._extra_content.items())
+
+#     def __iter__(self):
+#         return iter(list(self._mapping.keys()) + list(self._extra_content.keys()))
+
+#     def __contains__(self, item):
+#         return item in self._mapping or item in self._extra_content
+
+#     def register(self, key, value):
+#         """
+#         Register a new configuration in this mapping.
+#         """
+#         if key in self._mapping.keys():
+#             raise ValueError(f"'{key}' is already used by a Transformers config, pick another name.")
+#         self._extra_content[key] = value
+
+def mapping_for_SequenceClassification(mapping, type):
+    mapping = copy.deepcopy(mapping)
+    if type == "roberta":
+        mapping.pop("lm_head")
+        mapping['classifier'] = {"__name__":"classifier",
+            "dense": {"__name__": "dense"},
+            "out_proj": {"__name__":"out_proj"}
+        }
+    elif type == "bert":
+        mapping.pop("lm_head")
+        mapping["classifier"] = {"__name__": "classifier"}
+    else:
+        raise NotImplementedError
+    return mapping
+
+
+class _LazyLoading(OrderedDict):
+    def __init__(self, mapping):
+        self._mapping_string = mapping
+        self._mapping = {}
+    
+    def __getitem__(self, key):
+        if key not in self._mapping_string:
+            raise KeyError(key)
+        value = self._mapping_string[key]
+        self._mapping[key] = eval(value)
+        return self._mapping[key] 
+    
+    def keys(self):
+        return list(self._mapping_string.keys())
+    
+    def __contains__(self, item):
+
+        return item in self._mapping_string
+
+
+class CommonStructureMap(object):
+    # Mappings = {
+    #     "t5": t5_mapping,
+    #     "gpt2": gpt2_mapping,
+    #     "bert": bert_mapping,
+    #     "roberta": roberta_mapping,
+    #     "distilbert": distilbert_mapping
+    # }
+    Mappings = _LazyLoading({
+        "RobertaForSequenceClassification": """mapping_for_SequenceClassification(roberta_mapping, "roberta")""",
+        "RobertaForMaskedLM": "roberta_mapping",
+        "BertForMaskedLM": "bert_mapping",
+        "BertForSequenceClassification": """mapping_for_SequenceClassification(bert_mapping, "bert")""",
+        # "gpt2": gpt2_mapping,
+        # "bert": bert_mapping,
+        # "roberta": roberta_mapping,
+        # "distilbert": distilbert_mapping
+    })
+
+    SpecialModelInverseMaps = {
+    }
+    def __init__(self, mapping):
+        if not isinstance(mapping, dict):
+            raise TypeError(f"Initial a {CommonStructureMap.__name__} using a non-dict object. Consider using `load` instead.")
+        self.mapping = mapping
+
+
+    @classmethod
+    def load(cls, backbone_model, strict=True, warining=False, visualize=True):
+        backbone_class = type(backbone_model).__name__
+        if backbone_class not in cls.Mappings:
+            raise KeyError(backbone_class)
+        mapping = cls.Mappings[backbone_class]
+        if visualize:
+            logger.info("Since you are using the common structure mapping, draw the transformed parameter structure for checking.")
+            vis = Visualization(backbone_model)
+            vis.structure_graph(common_structure=True, mapping=mapping)
+        return cls(mapping)
+
+    def __repr__(self,):
+        return self.mapping
+
+
+    def transform(self, org_key, strict=True, warning=False):
+        return transform(org_key, self.mapping, strict, warning)
+
+
 
 if __name__ == "__main__":
     from openprompt.plms import load_plm

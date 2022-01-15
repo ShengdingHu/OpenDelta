@@ -1,6 +1,6 @@
-from typing import OrderedDict
+from copy import deepcopy
+from typing import Any, Dict, OrderedDict
 from opendelta.utils.visualization import Visualization
-from opendelta.utils.structure_mapping import Mappings
 import torch.nn as nn
 from transformers.file_utils import PushToHubMixin
 from opendelta.utils.logging import get_logger
@@ -79,16 +79,29 @@ class AutoDeltaConfig:
             "AutoConfig is designed to be instantiated "
             "using the `AutoConfig.from_pretrained(pretrained_model_name_or_path)` method."
         )
-
-    @classmethod
-    def for_model(cls, model_type: str, *args, **kwargs):
-        if model_type in LAZY_CONFIG_MAPPING:
-            config_class = LAZY_CONFIG_MAPPING[model_type]
-            return config_class(*args, **kwargs)
-        raise ValueError(
-            f"Unrecognized model identifier: {model_type}. Should contain one of {', '.join(CONFIG_MAPPING.keys())}"
-        )
     
+    @classmethod
+    def from_dict(cls, config_dict: Dict[str, Any], **kwargs):
+        r""" Instantiate a DeltaConfig according to the dict. Automatically load the config specified by 
+        :obj:`delta_type`.
+
+        Args:
+            config_dict (:obj:`dict`): The dict of configs of delta model.
+            kwargs: Other keyword argument pass to initialize the config. 
+
+        >>> config = AutoDeltaConfig.from_dict({"delta_type":"lora"}) # This will load the dault lora config.
+        >>> config = AutoDeltaConfig.from_dict({"delta_type":"lora", "lora_r":5}) # Will load the default lora config 
+            # , except that lora_r = 5 
+
+        """
+        config_dict = deepcopy(config_dict)
+        delta_type = config_dict.pop("delta_type", None)
+        if delta_type is None:
+            raise RuntimeError("Do not specify a delta type, cannot load the default config")
+        config_class = LAZY_CONFIG_MAPPING[delta_type]
+        return config_class.from_dict(config_dict, **kwargs)
+
+
     @classmethod
     def from_finetuned(cls, finetuned_model_name_or_path, **kwargs):
         r"""
@@ -139,26 +152,9 @@ class AutoDeltaConfig:
         Examples:
         ```python
         >>> from transformers import AutoConfig
-        >>> # Download configuration from huggingface.co and cache.
-        >>> config = AutoConfig.from_pretrained("bert-base-uncased")
-        >>> # Download configuration from huggingface.co (user-uploaded) and cache.
-        >>> config = AutoConfig.from_pretrained("dbmdz/bert-base-german-cased")
-        >>> # If configuration file is in a directory (e.g., was saved using *save_pretrained('./test/saved_model/')*).
-        >>> config = AutoConfig.from_pretrained("./test/bert_saved_model/")
-        >>> # Load a specific configuration file.
-        >>> config = AutoConfig.from_pretrained("./test/bert_saved_model/my_configuration.json")
-        >>> # Change some config attributes when loading a pretrained config.
-        >>> config = AutoConfig.from_pretrained("bert-base-uncased", output_attentions=True, foo=False)
-        >>> config.output_attentions
-        True
-        >>> config, unused_kwargs = AutoConfig.from_pretrained(
-        ...     "bert-base-uncased", output_attentions=True, foo=False, return_unused_kwargs=True
-        ... )
-        >>> config.output_attentions
-        True
-        >>> config.unused_kwargs
-        {'foo': False}
-        ```"""
+        >>> config = AutoDeltaConfig.from_finetuned("deltahub/lora_t5-large")
+        """
+
         kwargs["name_or_path"] = finetuned_model_name_or_path
 
         config_dict, _ = BaseDeltaConfig.get_config_dict(finetuned_model_name_or_path, **kwargs)
@@ -370,11 +366,16 @@ class AutoDeltaModel:
     
 
 if __name__ == "__main__":
+
+    config = AutoDeltaConfig.from_dict({"delta_type":"lora", "lora_r": 7})
+
+
+    # exit()
     from transformers import AutoModelForSequenceClassification
     model = AutoModelForSequenceClassification.from_pretrained("../../plm_cache/roberta-base/", num_labels=2)
-    from IPython import embed
-    embed(header="fafa")
-    config = AutoDeltaConfig.from_finetuned("ShengdingHu/delta_models", use_auth_token=True)
+    # from IPython import embed
+    # embed(header="fafa")
+    # config = AutoDeltaConfig.from_finetuned("ShengdingHu/delta_models", use_auth_token=True)
     delta_model = AutoDeltaModel.from_config(config, model)
     delta_model.freeze_module(exclude = ['deltas','classifier'], set_state_dict = True)
     from IPython import embed

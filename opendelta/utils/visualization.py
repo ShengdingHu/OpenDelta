@@ -122,15 +122,15 @@ class Visualization(object):
         self.mapping = mapping
         self.check_mode()
         # root_tree = self.build_tree(rootname)
-        root_tree = ModuleTree(self.rootname)
+        self.root_tree = ModuleTree(self.rootname)
         if common_structure:
-            self.build_common_tree(self.plm, mapping, root_tree)
+            self.build_common_tree(self.plm, mapping, self.root_tree)
         else:
-            self.build_tree(self.plm, root_tree)    
-        self.prune_tree(root_tree)
+            self.build_tree(self.plm, self.root_tree)    
+        self.prune_tree(self.root_tree)
         if not self.expand_params:
-            self.fold_param_node(root_tree)
-        richprint(root_tree)
+            self.fold_param_node(self.root_tree)
+        richprint(self.root_tree)
 
     
 
@@ -157,13 +157,15 @@ class Visualization(object):
         return len([p for p in module.parameters()])>0
 
 
-    def build_common_tree(self, module:nn.Module, mapping, tree:ModuleTree=None, query=""):
+    def build_common_tree(self, module:nn.Module, mapping, tree:ModuleTree=None, query="", key_to_root=""):
         r""" build the common tree structure
         """
         if self.is_leaf_module(module): 
             if len(query)>0: # the field is not in mapping
                 if self.has_parameter(module):
-                    print(f"Parameter node {query} not found under tree {tree.module_name}. Is your mapping correct?")  # WARNING
+                    from IPython import embed
+                    embed(header = "in leaf")
+                    print(f"Parameter node {query} not found under tree {tree.module_name} and module {module}. Is your mapping correct?")  # WARNING
             return 
         else:
             for n,m in module.named_children():
@@ -171,6 +173,9 @@ class Visualization(object):
                 type_info = re.search(r'(?<=\').*(?=\')', str(type(m))).group()
                 type_info = type_info.split(".")[-1]
                 if new_query in mapping or "$" in mapping:
+                    # print("query",new_query)
+                    # from IPython import embed
+                    # embed()
                     if new_query in mapping:
                         new_mapping = mapping[new_query]
                         name = new_mapping["__name__"]
@@ -196,11 +201,22 @@ class Visualization(object):
                         new_mapping = mapping["$"]
                         newnode = tree.add(n, info=type_info, type_color=self.type_color)
                     self.add_param_info_node(m, newnode)
-                    self.build_common_tree(module=m, tree=newnode, mapping=new_mapping)
+                    self.build_common_tree(module=m, tree=newnode, mapping=new_mapping, key_to_root=key_to_root+"."+new_query)
                 else: 
+                    # try to find from root
+                    # trsf_key = transform(key_to_root.strip("."), self.mapping)
+                    # parent_node = self.find_not_insert(self.root_tree, trsf_key.split(".")+[""])
+                    # if parent_node is not None:
+                    #     new_mapping = mapping[new_query]
+                    #     newnode = parent_node.add(name, info=type_info, type_color=self.type_color)
+                    #     self.build_common_tree(module=m, tree=parent_node, mapping )
+                    # print("notin query",new_query)
+                    # if new_query == "dense":
+                    #     from IPython import embed
+                    #     embed()
                     # print(f"::{query},,{new_query}, {list(mapping.keys())}")
                     new_query += "."
-                    self.build_common_tree(module=m, tree=tree, mapping=mapping, query=new_query)
+                    self.build_common_tree(module=m, tree=tree, mapping=mapping, query=new_query, key_to_root=key_to_root)
 
 
                 

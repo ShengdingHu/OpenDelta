@@ -267,3 +267,5 @@ def warning_advice(self, *args, **kwargs):
 
 
 logging.Logger.warning_advice = warning_advice
+
+set_verbosity_debug()

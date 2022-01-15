@@ -2,7 +2,6 @@
     "dataset_config_name": [
         "en"
     ],
-    "delta_lr": 0.0004,
     "delta_type": "lora",
     "do_eval": true,
     "do_test": true,

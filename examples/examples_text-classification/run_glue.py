@@ -16,9 +16,14 @@
 """ Finetuning the library models for sequence classification on GLUE."""
 # You can also adapt this script on your own text classification task. Pointers for this are left as comments.
 
+import argparse
+import dataclasses
+import json
 import logging
 import os
+from pathlib import Path
 import random
+import re
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
@@ -26,6 +31,7 @@ from typing import Optional
 import datasets
 import numpy as np
 from datasets import load_dataset, load_metric
+from opendelta.utils.delta_hub import create_hub_repo_name
 
 import transformers
 from transformers import (
@@ -187,16 +193,38 @@ class ModelArguments:
     )
 
 
+class RemainArgHfArgumentParser(HfArgumentParser):
+    def parse_json_file(self, json_file: str, return_remaining_args=True ):
+        """
+        Alternative helper method that does not use `argparse` at all, instead loading a json file and populating the
+        dataclass types.
+        """
+        data = json.loads(Path(json_file).read_text())
+        outputs = []
+        for dtype in self.dataclass_types:
+            keys = {f.name for f in dataclasses.fields(dtype) if f.init}
+            inputs = {k: data.pop(k) for k in list(data.keys()) if k in keys}
+            obj = dtype(**inputs)
+            outputs.append(obj)
+        
+        remain_args = argparse.ArgumentParser()
+        remain_args.__dict__.update(data)
+        if return_remaining_args:
+            return (*outputs, remain_args)
+        else:
+            return (*outputs,)
+
 def main():
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
 
-    parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments, DeltaArguments))
+    parser = RemainArgHfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
-        model_args, data_args, training_args, delta_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
+        json_file=os.path.abspath(sys.argv[1])
+        model_args, data_args, training_args, delta_args = parser.parse_json_file(json_file, return_remaining_args=True) #args = arg_string, return_remaining_strings=True) #parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
         model_args, data_args, training_args, delta_args = parser.parse_args_into_dataclasses()
 
@@ -341,8 +369,17 @@ def main():
         use_auth_token=True if model_args.use_auth_token else None,
     )
 
-    from examples.insert_deltas import insert_deltas
-    model = insert_deltas(model, model_args, delta_args)
+
+    from opendelta import AutoDeltaConfig
+    from opendelta.auto_delta import AutoDeltaModel
+    delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
+    delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
+    delta_model.freeze_module(exclude = delta_args.unfreeze_modules, set_state_dict = True)
+    from opendelta.utils.visualization import Visualization
+    Visualization(model).structure_graph()
+
+
+    
 
 
     # Preprocessing the raw_datasets
@@ -557,18 +594,24 @@ def main():
                             item = label_list[item]
                             writer.write(f"{index}\t{item}\n")
 
-    kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "text-classification"}
-    if data_args.task_name is not None:
-        kwargs["language"] = "en"
-        kwargs["dataset_tags"] = "glue"
-        kwargs["dataset_args"] = data_args.task_name
-        kwargs["dataset"] = f"GLUE {data_args.task_name.upper()}"
+    # kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "text-classification"}
+    # if data_args.task_name is not None:
+    #     kwargs["language"] = "en"
+    #     kwargs["dataset_tags"] = "glue"
+    #     kwargs["dataset_args"] = data_args.task_name
+    #     kwargs["dataset"] = f"GLUE {data_args.task_name.upper()}"
+    #     kwargs["delta_type"] = delta_args.delta_type
 
-    if training_args.push_to_hub:
-        trainer.push_to_hub(**kwargs)
+    repo_name = create_hub_repo_name(root="DeltaHub",
+                         dataset=data_args.task_name, 
+                         delta_type = delta_args.delta_type,
+                         model_name_or_path= model_args.model_name_or_path)
+
+    if training_args.push_to_hub: # TODO add description here
+        delta_model.save_finetuned(push_to_hub=True, save_directory=repo_name, use_auth_token=True)
+        # trainer.push_to_hub(**kwargs)
     else:
-        trainer.create_model_card(**kwargs)
-
+        delta_model.save_finetuned(push_to_hub=False, save_directory=repo_name, use_auth_token=True)
 
 def _mp_fn(index):
     # For xla_spawn (TPUs)
