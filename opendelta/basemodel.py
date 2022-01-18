@@ -198,7 +198,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                       module: Optional[nn.Module] = None, 
                       exclude=["deltas"], 
                       set_state_dict: Optional[bool]=True, 
-                      prefix=""):
+                      ):
         r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
         deltas module is filtered with `_is_delta` attributes because it may have parameter sharing to the main 
         model, (e.g., bias term)
@@ -216,6 +216,31 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         """
         if module is None:
             module = self.backbone_model
+        self._freeze_module_recursive(module, exclude, set_state_dict, "")           # modify the active state dict that still need grad
+        if set_state_dict:
+            self.set_active_state_dict(module)
+
+    def _freeze_module_recursive(self,
+                      module: Optional[nn.Module] = None, 
+                      exclude=["deltas"], 
+                      set_state_dict: Optional[bool]=True, 
+                      prefix=""):
+        r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
+        deltas module is filtered with `_is_delta` attributes because it may have parameter sharing to the main 
+        model, (e.g., bias term)
+
+        Args:
+            module (:obj:`nn.Module`, *optional*, default to :obj:`None`) The module of which some parts are frozen.
+                If left with :obj:`None`, the function will the self.backbone_model as the module to be frozen. 
+            exclude (:obj:`List[str]`, *optional*, default to :string:`["deltas"]`) The parameters that don't need to 
+                be freezed. Default to all the delta parameters.
+            set_state_dict (:obj:`bool`, *optional*, default to :obj:`True`) Whether setting the backbone model's state
+                dict to all the parameters that still need grad.
+            prefix (:obj:`str`, *optional*, default to :string:`""`) A parameters that are used for recursive frozen. 
+                Should not be changed by passing argument other than :string:`""`.
+        
+        """
+
         if is_leaf_module(module):
             for n, p in module.named_parameters():
                 if self.find_key(".".join([prefix,n]), exclude, only_tail=True):
@@ -232,11 +257,9 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                     for n, p in params:
                         if "deltas" not in exclude or (not (hasattr(p, "_is_delta") and getattr(p, "_is_delta"))):
                             p.requires_grad = False
-                    self.freeze_module(c, prefix=".".join([prefix,n]), exclude=exclude)
+                    self._freeze_module_recursive(c, prefix=".".join([prefix,n]), exclude=exclude)
         
-        # modify the active state dict that still need grad
-        if set_state_dict:
-            self.set_active_state_dict(module)
+
 
 
 
@@ -408,18 +431,19 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         Args:
             module (:obj:`nn.Module`): The module modified. The modification is in-place.
         """
-        def _caller(_org_func, excludes,  *args, **kwargs):
+        def _caller(_org_func, includes,  *args, **kwargs):
             state_dict = _org_func(*args, **kwargs)
             keys = list(state_dict.keys())
             for n  in keys:
-                if n in excludes:
+                if n not in includes:
                     state_dict.pop(n)
             return state_dict
-        excludes = self.frozen_parameters_names(module)
-        
+        includes = self.trainable_parameters_names(module) # use excludes will have trouble when the model have shared weights
+        # print(includes, "grad:",self.backbone_model.plm.lm_head.weight.requires_grad)
+        # exit()
         if hasattr(module.state_dict, "__wrapped__"):
             raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
-        module.state_dict = decorate(module.state_dict, _caller, extras=(excludes,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
+        module.state_dict = decorate(module.state_dict, _caller, extras=(includes,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
     
 
     def create_config_from_model(self, ):
