@@ -15,6 +15,8 @@
 # limitations under the License.
 """ Finetuning the library models for sequence classification on GLUE."""
 # You can also adapt this script on your own text classification task. Pointers for this are left as comments.
+import sys
+sys.path.append("/home/hx/OpenDelta")
 
 import argparse
 import dataclasses
@@ -36,7 +38,7 @@ from opendelta.utils.delta_hub import create_hub_repo_name
 import transformers
 from transformers import (
     AutoConfig,
-    AutoModelForSequenceClassification,
+    AutoModelForMaskedLM,
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
@@ -94,7 +96,7 @@ class DataTrainingArguments:
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
     )
     max_seq_length: int = field(
-        default=128,
+        default=400,
         metadata={
             "help": "The maximum total input sequence length after tokenization. Sequences longer "
             "than this will be truncated, sequences shorter will be padded."
@@ -284,7 +286,7 @@ def main():
         
         # raw_datasets = load_dataset("glue", data_args.task_name, cache_dir=model_args.cache_dir)
         from datasets import load_from_disk
-        raw_datasets = load_from_disk(f"../../../../huggingface_datasets/saved_to_disk/glue.{data_args.task_name}")
+        raw_datasets = load_from_disk(f"/home/hx/huggingface_datasets/saved_to_disk/glue.{data_args.task_name}")
     
     elif data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
@@ -360,7 +362,7 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
-    model = AutoModelForSequenceClassification.from_pretrained(
+    model = AutoModelForMaskedLM.from_pretrained(
         model_args.model_name_or_path,
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
         config=config,
@@ -373,11 +375,16 @@ def main():
     from opendelta import AutoDeltaConfig
     from opendelta.auto_delta import AutoDeltaModel
     delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
-    delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
-    delta_model.freeze_module(exclude = delta_args.unfreeze_modules, set_state_dict = True)
+    verbalizer = [
+        tokenizer.encode(" Yes", add_special_tokens = False)[0],
+        tokenizer.encode(" No", add_special_tokens = False)[0],
+    ]
+    mask_id = tokenizer.mask_token_id
+
+    delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model, verbalizer=verbalizer, mask_id=mask_id)
+    delta_model.freeze_module(exclude = delta_args.unfreeze_modules, set_state_dict = True) # TODO freeze PLM or not
     from opendelta.utils.visualization import Visualization
     Visualization(model).structure_graph()
-
 
     
 
@@ -439,10 +446,12 @@ def main():
 
     def preprocess_function(examples):
         # Tokenize the texts
+        for i in range(len(examples[sentence1_key])):
+            examples[sentence1_key][i] = f"Sentence 1: {examples[sentence1_key][i]} Sentence 2: {examples[sentence2_key][i]} Does sentence 1 entails sentence 2? {tokenizer.mask_token}"
         args = (
-            (examples[sentence1_key],) if sentence2_key is None else (examples[sentence1_key], examples[sentence2_key])
+            (examples[sentence1_key],)
         )
-        result = tokenizer(*args, padding=padding, max_length=max_seq_length, truncation=True)
+        result = tokenizer(*args, padding=padding, max_length=max_seq_length, truncation=False)
 
         # Map labels to IDs (not necessary for GLUE tasks)
         if label_to_id is not None and "label" in examples:

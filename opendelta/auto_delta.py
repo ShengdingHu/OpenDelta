@@ -12,10 +12,12 @@ logger = get_logger(__name__)
 
 DELTA_CONFIG_MAPPING = {
     "lora": "LoraConfig", 
+    "soft_prompt": "SoftPromptConfig",
 }
 
 DELTA_MODEL_MAPPING = {
-    "lora": "LoraModel"
+    "lora": "LoraModel",
+    "soft_prompt": "SoftPromptModel",
 }
 
 class _LazyConfigMapping(OrderedDict):

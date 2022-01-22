@@ -128,6 +128,9 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         for key in list(config_dict.keys()):
             if key not in supported_keys:
                 config_dict.pop(key)
+        for key, value in kwargs.items():
+            if key in supported_keys:
+                config_dict[key] = value
         return cls(backbone_model, **config_dict)
 
 

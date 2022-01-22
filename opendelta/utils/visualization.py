@@ -131,8 +131,7 @@ class Visualization(object):
         if not self.expand_params:
             self.fold_param_node(self.root_tree)
         richprint(self.root_tree)
-
-    
+        return self.root_tree
 
         
     def is_leaf_module(self, module):
