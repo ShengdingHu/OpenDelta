@@ -1,5 +1,7 @@
 from functools import partial
+from random import random
 from typing import Optional
+from opendelta.utils.signature import get_arg_names_inside_func
 from opendelta.utils.utils import *
 from opendelta.utils.cuda import get_device
 from opendelta.basemodel import DeltaBase
@@ -9,20 +11,33 @@ import torch
 import math
 from opendelta.delta_models.layers.activations import Activations
 import inspect
-
-
-
+from opendelta import BaseDeltaConfig
+  
 
 
 class AdapterLayer(nn.Module):
     r"""A layer of adapter tuning module. 
     """
+    layer_count = 0
+
+    @classmethod
+    def count_layer(cls):
+        cls.layer_count += 1
+    
+    @classmethod
+    def get_layer_count(cls):
+        return cls.layer_count
+
     def __init__(self, bottleneck_dim=32, non_linearity='relu', device=None):
         super().__init__()
         self.bottleneck_dim = bottleneck_dim
         self.device = device
         self.instantiated = False
         self.non_linearity = non_linearity
+        
+        self.layer_id = AdapterLayer.get_layer_count()
+        AdapterLayer.count_layer()
+        
     
     def instantiate(self, hidden_dim):
         self.modulelist = nn.Sequential()
@@ -48,7 +63,8 @@ class AdapterLayer(nn.Module):
         then combined with the main hidden_states. Finally pass it into the subsequent layer.
 
         """
-
+        if self.instantiated and self.layer_id == 0 and random() < 0.01:
+            print(self.modulelist[0].weight)
         if isinstance(output, tuple):
             hiddens = output[0]
         elif isinstance(output, torch.Tensor):
@@ -60,7 +76,7 @@ class AdapterLayer(nn.Module):
             self.hidden_dim = hiddens.shape[-1]
             print(f"Got hidden dim hidden_dim {self.hidden_dim}")
             self.instantiate(hidden_dim=self.hidden_dim)
-            
+
 
         adapter_output = self.modulelist(hiddens)
         modified_output = adapter_output + hiddens # residual_connection
@@ -74,42 +90,75 @@ class AdapterLayer(nn.Module):
     
   
 
-class AdapterModel(DeltaBase, nn.Module):
+class AdapterConfig(BaseDeltaConfig):
     r"""
+    This is the configuration class to store the configuration of a [`LoraModel`]
+
     """
-    def __init__(self, 
+    def __init__(
+        self, 
+        bottleneck_dim: Optional[int]=32, 
+        non_linearity: Optional[str]='relu',
+        sequential: Optional[str] = True,
+        **kwargs
+    ): 
+        super().__init__(**kwargs)
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # the arg has not been registered in parent config
+                setattr(self, arg_name, locals()[arg_name])
+
+
+
+class AdapterModel(DeltaBase):
+
+    config_class = AdapterConfig
+    delta_type = "adapter"
+    default_modified_modules = ["attn", "ff"]
+    def __init__(self,
+                 backbone_model: nn.Module, 
                  bottleneck_dim: Optional[int]=32, 
                  non_linearity: Optional[str]='relu',
                  sequential: Optional[str] = True,
-                 common_structure = False,
-                 structure_mapping = None,
-                ):
-        DeltaBase.__init__(self, common_structure=common_structure, structure_mapping=structure_mapping)
-        nn.Module.__init__(self)
-        self.bottleneck_dim = bottleneck_dim
-        self.non_linearity = non_linearity
-        self.sequential = sequential
+                 modified_modules: Optional[bool] = None,
+                 common_structure: Optional[bool] = None,
+                 registration_name: Optional[str] = "deltas",
+                 ):
+        DeltaBase.__init__(self, 
+                           backbone_model, 
+                           modified_modules=modified_modules,
+                           common_structure=common_structure,
+                           registration_name=registration_name
+                           )
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # not registered in parent class
+                setattr(self, arg_name, locals()[arg_name])
+
         self.delta_modules = nn.ModuleList()
+
+        self.add_all_delta_to_backbone(self.backbone_model,
+                                   self.modified_modules,
+                                   self.registration_name)
+  
         
-    def __call__(self, 
+    def add_all_delta_to_backbone(self, 
                  module: nn.Module, 
-                 modified_keys: List[str],
-                 is_regex: Optional[bool]=False,
+                 modified_modules: List[str],
                  registration_name: Optional[str] = "deltas"
                 ) -> nn.Module:
         for key, _ in module.named_modules():
-            if self.find_key(key, modified_keys, is_regex):
-                # print("find key",key)
+            if self.find_key(key, modified_modules):
                 self.update_module(module, key)
         self._pseudo_data_to_instantiate(module)
-        setattr(module, registration_name, self)
+        # self.register_delta_if_new(module, registration_name)
         self.mark_as_delta()
         return module
     
     def update_module(self, module: nn.Module, key: str):
         _, _, ref = self.find_module(module, key)
         adapterlayer = self.new_module_like(ref)
-        self.insert_sequential_module(ref, pre_caller=None, post_caller=adapterlayer.forward)
+        self.insert_sequential_module(ref, pre_caller=None, post_caller=adapterlayer.forward, delta_module=adapterlayer, name="adapter")
     
     def new_module_like(self, module):
         module_device = get_device(module)

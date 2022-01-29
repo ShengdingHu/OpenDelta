@@ -69,11 +69,18 @@ class SaveLoadMixin(PushToHubMixin):
             
         .. note::
             You may need to install git-lfs on your machine. 
+            Follow the instructions in 
             
+            In Linux machine, download the tar.gz file to your machine from 
+            https://github.com/git-lfs/git-lfs/releases, then add it to your path,
+            as last running git-lfs install 
+        
+        Example:
+        
         .. code_block::
-
-            pip install git-lfs
-            export PATH=/PATH/TO/GIT_LFS:$PATH
+            wget -P ~ https://github.com/git-lfs/git-lfs/releases/download/v3.0.2/git-lfs-linux-amd64-v3.0.2.tar.gz
+            tar -xvzf git-lfs-linux-amd64-v3.0.2.tar.gz
+            export PATH=~:$PATH
             git-lfs install
 
 

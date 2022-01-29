@@ -79,6 +79,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                  common_structure=False,
                  ):
         nn.Module.__init__(self)
+        # register the backbone model after init using self.__dict__ method to avoid adding backbone_model
+        # to the modules of the delta model.
         self.__dict__["backbone_model"] = backbone_model
         if modified_modules  is None:
             self.modified_modules = self.default_modified_modules
@@ -136,7 +138,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                  modified_modules: List[str],
                  registration_name: Optional[str] = "deltas",
                 ) -> nn.Module:
-        r"""The main function to add delta models to the backbone model based on the modification modules.
+        r"""The main function to add delta models to the backbone model based on the :obj:`modified_modules`.
         If the delta models is added as a new module (e.g., adapter) instead of a existing module (e.g, Lora, BitFit)
         the root name of the delta model in the backbone is named as :string:`registration_name`.
 
@@ -177,14 +179,15 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
     
     def mark_as_delta(self, module: nn.Module=None,):
-        r""" Mark a model's all parameters as delta parameters by setting a "_is_delta"  attribute to each of them.
-        Generally, it is used after creating the delta modules.
+        r""" Mark :obj:`module`'s all parameters as delta parameters by setting a :string:`_is_delta`  attribute to each of them.
+        Generally, it is used after creating the delta modules. By leaving module to :obj:`None`, it will mark all the parameters in the 
+        delta model as :string:`_is_delta`.
 
         Args:
             module (:obj:`nn.Module`): The module to mark as delta.
         """
         if module is None:
-            module=self
+            module=self # all the parameters in the delta model.
         for p in module.parameters():
             setattr(p, "_is_delta", True)
     
@@ -401,7 +404,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         """
         raise NotImplementedError
 
-    def insert_sequential_module(self, module, pre_caller=None, post_caller=None):
+    def insert_sequential_module(self, module, pre_caller=None, post_caller=None, delta_module=None, name='delta'):
         r"""insert a module (previous not exists in the code base) before a module. Specifically, it modifies the forward 
         function of the original module to  firstly pass the arguments into the new module's forward function and then pass
         it into the original ones. The new module can also be inserted after the original module with similar mechanism. 
@@ -419,6 +422,9 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         if hasattr(module.forward, "__wrapped__"):
             raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
         module.forward = decorate(module.forward, _caller, extras=(pre_caller, post_caller), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
+        if delta_module is not None:
+            setattr(module, name, delta_module)
+
     
 
     def insert_parrellel_module(self, ):

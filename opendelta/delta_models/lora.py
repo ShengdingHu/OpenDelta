@@ -59,9 +59,6 @@ class LoraModel(DeltaBase):
                                    self.modified_modules,
                                    self.registration_name)
     
-    # @classmethod
-    # def from_config(cls, config: LoraConfig):
-
     
     
     def update_module(self, module: nn.Module, key: str):

@@ -1,2 +1,2 @@
 from .lora import LoraModel, LoraConfig
-from .bias import BiasModel
+from .bitfit import BitFitModel

@@ -1,6 +1,8 @@
 from functools import partial
 from typing import Optional
+from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.delta_models.adapter import AdapterLayer
+from opendelta.utils.signature import get_arg_names_inside_func
 from opendelta.utils.utils import *
 from opendelta.utils.cuda import get_device
 from opendelta.basemodel import DeltaBase
@@ -11,6 +13,7 @@ import math
 from opendelta.delta_models.layers.activations import Activations
 import inspect
 from opendelta.delta_models.layers.hypercomplex_linear import PHMLinear
+
 
 class HyperComplexAdapterLayer(nn.Module):
     """Hypercomplex Adapter layer, in which the weights of up and down sampler modules
@@ -122,13 +125,47 @@ class HyperComplexAdapterLayer(nn.Module):
             raise TypeError
         return output
 
+class CompactorConfig(BaseDeltaConfig):
+    r"""
+    This is the configuration class to store the configuration of a [`LoraModel`]
+
+    """
+    def __init__(
+        self, 
+        bottleneck_dim: Optional[int]=32, 
+        non_linearity: Optional[str]='relu',
+        sequential: Optional[str] = True,
+        reduction_factor=16, 
+        phm_c_init="normal", 
+        hypercomplex_division=4,
+        learn_phm=True,
+        hypercomplex_nonlinearity="glorot-uniform",
+        shared_phm_rule=False,
+        factorized_phm=True,
+        shared_W_phm=False,
+        factorized_phm_rule=False,
+        phm_rank=1,
+        phm_init_range=0.0001,
+        kronecker_prod=None,
+        **kwargs
+    ): 
+        super().__init__(**kwargs)
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # the arg has not been registered in parent config
+                setattr(self, arg_name, locals()[arg_name])
+
 
 
 class CompactorModel(DeltaBase, nn.Module):
-    r"""
-    """
+    config_class = CompactorConfig
+    delta_type = "compactor"
+    default_modified_modules = ["attn", "ff"]
     def __init__(self, 
-                 common_structure=False,
+                 backbone_model,
+                 modified_modules: Optional[bool] = None,
+                 common_structure: Optional[bool] = None,
+                 registration_name: Optional[str] = "deltas",
                  structure_mapping=None,
                  reduction_factor=16, 
                  non_linearity="gelu_new", 
@@ -143,44 +180,48 @@ class CompactorModel(DeltaBase, nn.Module):
                  phm_rank=1,
                  phm_init_range=0.0001,
                  kronecker_prod=None,
+
                 ):
-        DeltaBase.__init__(self, common_structure=common_structure, structure_mapping=structure_mapping)
-        nn.Module.__init__(self)
-        self.reduction_factor = reduction_factor
-        self.non_linearity = non_linearity
-        self.phm_c_init = phm_c_init
-        self.hypercomplex_division = hypercomplex_division
-        self.learn_phm = learn_phm
-        self.hypercomplex_nonlinearity = hypercomplex_nonlinearity
-        self.shared_phm_rule = shared_phm_rule
-        self.factorized_phm = factorized_phm
-        self.shared_W_phm = shared_W_phm
-        self.factorized_phm_rule = factorized_phm_rule
-        self.phm_rank = phm_rank
-        self.phm_init_range = phm_init_range
-        self.kronecker_prod = kronecker_prod
+        DeltaBase.__init__(self, 
+                           backbone_model, 
+                           modified_modules=modified_modules,
+                           common_structure=common_structure,
+                           registration_name=registration_name
+                           )
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # not registered in parent class
+                setattr(self, arg_name, locals()[arg_name])
 
         self.delta_modules = nn.ModuleList()
 
-    def __call__(self, 
+        self.add_all_delta_to_backbone(self.backbone_model,
+                                   self.modified_modules,
+                                   self.registration_name)
+  
+
+    def add_all_delta_to_backbone(self, 
                  module: nn.Module, 
-                 modified_keys: List[str],
-                 is_regex: Optional[bool]=False,
+                 modified_modules: List[str],
                  registration_name: Optional[str] = "deltas"
                 ) -> nn.Module:
         for key, _ in module.named_modules():
-            if self.find_key(key, modified_keys, is_regex):
+            if self.find_key(key, modified_modules):
                 # print("find key",key)
                 self.update_module(module, key)
         self._pseudo_data_to_instantiate(module)
-        setattr(module, registration_name, self)
+        # setattr(module, registration_name, self)
         self.mark_as_delta()
         return module
     
     def update_module(self, module: nn.Module, key: str):
         _, _, ref = self.find_module(module, key)
         adapterlayer = self.new_module_like(ref)
-        self.insert_sequential_module(ref, pre_caller=None, post_caller=adapterlayer.forward)
+        self.insert_sequential_module(ref, 
+                                      pre_caller=None, 
+                                      post_caller=adapterlayer.forward, 
+                                      delta_module=adapterlayer,
+                                      name="compactor")
     
     def new_module_like(self, module):
         module_device = get_device(module)

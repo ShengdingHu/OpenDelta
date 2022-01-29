@@ -2,7 +2,7 @@
     "dataset_config_name": [
         "en"
     ],
-    "delta_type": "low_rank_adapter",
+    "delta_type": "bitfit",
     "do_eval": true,
     "do_test": true,
     "do_train": true,

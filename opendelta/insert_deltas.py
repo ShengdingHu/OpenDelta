@@ -28,7 +28,7 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
             delta_model.freeze_module(model, exclude=["qa_outputs", "deltas"])
 
     elif delta_args.delta_type == "bias":
-        from opendelta.delta_models.bias import BiasModel
+        from opendelta.delta_models.bitfit import BiasModel
         if not delta_args.common_structure: 
             delta_model = BiasModel()
             delta_model(model, modified_keys=delta_args.modified_modules)

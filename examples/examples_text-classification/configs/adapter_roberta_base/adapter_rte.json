@@ -2,7 +2,7 @@
     "dataset_config_name": [
         "en"
     ],
-    "delta_type": "low_rank_adapter",
+    "delta_type": "adapter",
     "do_eval": true,
     "do_test": true,
     "do_train": true,
@@ -13,13 +13,11 @@
     "evaluation_strategy": "epoch",
     "greater_is_better": true,
     "metric_for_best_model": "eval_accuracy",
-    "learning_rate": 0.0005,
+    "learning_rate": 0.003,
     "load_best_model_at_end": true,
-    "lora_alpha": 8,
-    "lora_rank": 8,
     "max_source_length": 512,
     "model_name": "roberta",
-    "model_name_or_path": "../../../../plm_cache/roberta-base",
+    "model_name_or_path": "../../../../plm_cache/roberta-large",
     "non_linearity": "gelu_new",
     "num_train_epochs": 10,
     "output_dir": "outputs/lora/roberta-base/v2/rte",
@@ -34,7 +32,7 @@
         "en"
     ],
     "test_dataset_name": "rte",
-    "tokenizer_name": "../../../../plm_cache/roberta-base",
+    "tokenizer_name": "../../../../plm_cache/roberta-large",
     "unfreeze_modules": [
         "classifier",
         "deltas"

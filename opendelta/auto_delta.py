@@ -12,10 +12,20 @@ logger = get_logger(__name__)
 
 DELTA_CONFIG_MAPPING = {
     "lora": "LoraConfig", 
+    "low_rank_adapter": "LowRankAdapterConfig",
+    "bitfit": "BitFitConfig",
+    "adapter":"AdapterConfig",
+    "compactor":"CompactorConfig",
+    "prefix": "PrefixConfig",
 }
 
 DELTA_MODEL_MAPPING = {
-    "lora": "LoraModel"
+    "lora": "LoraModel",
+    "low_rank_adapter": "LowRankAdapterModel",
+    "bitfit": "BitFitModel",
+    "adapter":"AdapterModel",
+    "compactor": "CompactorModel",
+    "prefix": "PrefixModel",
 }
 
 class _LazyConfigMapping(OrderedDict):

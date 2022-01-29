@@ -8,7 +8,6 @@ from opendelta.utils.visualization import Visualization
 
 t5_mapping = {
     "shared": {"__name__":"embeddings"},
-    "lm_head": {"__name__":"lm_head.proj"},
     "encoder": {"__name__":"encoder",
         "embed_tokens": {"__name__":"embeddings"},
         "block": {"__name__":"block",
@@ -22,8 +21,7 @@ t5_mapping = {
                     "layer_norm": {"__name__":"layer_norm"},
                 },
                 "layer.1": {"__name__":"ff",
-                    "DenseReluDense.wi_0": {"__name__":""},
-                    "DenseReluDense.wi_1": {"__name__":"w1"},
+                    "DenseReluDense.wi": {"__name__":"w1"},
                     "layer_norm": {"__name__":"layer_norm"},
                     "DenseReluDense.wo": {"__name__":"w2"},
                 }
@@ -51,8 +49,7 @@ t5_mapping = {
                     "layer_norm": {"__name__":"layer_norm"},
                 },
                 "layer.2": {"__name__":"ff",
-                    "DenseReluDense.wi_0": {"__name__":""},
-                    "DenseReluDense.wi_1": {"__name__":"w1"},
+                    "DenseReluDense.wi": {"__name__":"w1"},
                     "layer_norm": {"__name__":"layer_norm"},
                     "DenseReluDense.wo": {"__name__":"w2"},
                 }
@@ -270,6 +267,13 @@ def mapping_for_SequenceClassification(mapping, type):
         raise NotImplementedError
     return mapping
 
+def mapping_for_ConditionalGeneration(mapping, type):
+    mapping = copy.deepcopy(mapping)
+    if type == "t5":
+        mapping["lm_head"] = {"__name__":"lm_head.proj"}
+    else:
+        raise NotImplementedError
+    return mapping
 
 class _LazyLoading(OrderedDict):
     def __init__(self, mapping):
@@ -304,6 +308,7 @@ class CommonStructureMap(object):
         "RobertaForMaskedLM": "roberta_mapping",
         "BertForMaskedLM": "bert_mapping",
         "BertForSequenceClassification": """mapping_for_SequenceClassification(bert_mapping, "bert")""",
+        "T5ForConditionalGeneration": """mapping_for_ConditionalGeneration(t5_mapping, "t5")"""
         # "gpt2": gpt2_mapping,
         # "bert": bert_mapping,
         # "roberta": roberta_mapping,

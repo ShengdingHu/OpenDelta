@@ -1,11 +1,13 @@
 from functools import partial
-from opendelta.utils.signature import signature
+from opendelta.delta_configs import BaseDeltaConfig
+from opendelta.utils.signature import get_arg_names_inside_func, signature
 from typing import Optional
 from transformers.models.distilbert.modeling_distilbert import MultiHeadSelfAttention
 from transformers.models.t5.modeling_t5 import T5Attention
 from transformers.models.bert.modeling_bert import BertSelfAttention
 from transformers.models.gpt2.modeling_gpt2 import GPT2Attention
 from transformers.models.bart.modeling_bart import BartAttention
+from transformers.models.roberta.modeling_roberta import RobertaAttention
 from opendelta.utils.utils import *
 from opendelta.utils.cuda import get_device
 from opendelta.basemodel import DeltaBase
@@ -262,7 +264,62 @@ class PrefixLayerDistilBert(nn.Module):
         return output
     
 
+class PrefixLayerRoberta(nn.Module):
+    r"""A layer of prefix tuning module. The layer's forward function pass (or concatenate) the additional past_key_value
+    into the original attention layer's forward function.
+    """
+    def __init__(self, prefix_token_num, num_heads, device,):
+        super().__init__()
+        self.prefix_token_num = prefix_token_num
+        self.num_heads = num_heads
+        self.device = device
+        self.instantiated = False
+    
+    def instantiate(self, hidden_dim):
+        self.past_key = nn.Parameter(torch.randn(self.prefix_token_num, hidden_dim, device=self.device), requires_grad=True)
+        self.past_value = nn.Parameter(torch.randn(self.prefix_token_num, hidden_dim, device=self.device), requires_grad=True)
+        self.past_key_reparam = None
+        self.past_value_reparam = None
+        self.instantiated = True
+        
+    
+    def forward(self, *args, **kwargs):
+        r"""The args and kwargs are inherited from the T5Attention's forward function.
+        """
+        batch_size = args[0].shape[0]
+        if not self.instantiated:
+            self.hidden_dim = args[0].shape[-1]
+            self.instantiate(hidden_dim=self.hidden_dim)
+        if self.past_key_reparam is None:
+            past_key = self.past_key.data
+        else:
+            past_key = self.past_key_reparam
+        if self.past_value_reparam is None:
+            past_value = self.past_value.data
+        else:
+            past_value = self.past_value_reparam
 
+        # from IPython import embed
+        # embed()
+        def expand_batchsize(x):
+            x = x.reshape(self.prefix_token_num, self.num_heads, -1).transpose(0,1)
+            x = x.unsqueeze(0).expand(batch_size, *x.shape)
+            return x
+        # from IPython import embe
+    
+        if 'past_key_value' not in kwargs or kwargs['past_key_value'] is None:
+            kwargs['past_key_value'] = (expand_batchsize(past_key), expand_batchsize(past_value))
+        
+        if 'attention_mask' in kwargs and kwargs['attention_mask'] is not None:
+            am = kwargs['attention_mask']  # Should check the format of the attention_mask when moving to a new plm.
+            kwargs['attention_mask'] = torch.cat([-torch.zeros((*am.shape[:-1],self.prefix_token_num), dtype = am.dtype,device=am.device), am], dim=-1)
+        elif len(args) >1: # attention mask is passed via positional argument
+            am = args[1]
+            am = torch.cat([-torch.zeros((*am.shape[:-1],self.prefix_token_num), dtype = am.dtype,device=am.device), am], dim=-1)
+            args = (args[0], am) + args[2:]
+        # from IPython import embed
+        # embed(header = "Herein prefixroberta")
+        return args, kwargs
 
 
     
@@ -345,6 +402,23 @@ class ReparameterizeFunction(nn.Module):
         )
 
 
+class PrefixConfig(BaseDeltaConfig):
+    def __init__(
+        self, 
+        prefix_token_num=6,
+        reparameterize=False,
+        embed_dim: Optional[int]=512,
+        mid_dim: Optional[int]=512,
+        **kwargs
+    ): 
+        super().__init__(**kwargs)
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # the arg has not been registered in parent config
+                setattr(self, arg_name, locals()[arg_name])
+
+    
+
 
 
 class PrefixModel(DeltaBase, nn.Module):
@@ -354,42 +428,58 @@ class PrefixModel(DeltaBase, nn.Module):
         emb_dim (:obj:`int`) The embedding dim of the reparameterization model.
 
     """
-    supported_slots = [r"encoder.*SelfAttention", r"decoder.*SelfAttention"]
-    def __init__(self, 
+    config_class = PrefixConfig
+    delta_type = "prefix"
+    default_modified_modules = ['attn']
+    def __init__(self,
+                 backbone_model: nn.Module, 
                  prefix_token_num=6,
                  reparameterize=True,
                  embed_dim: Optional[int]=512,
                  mid_dim: Optional[int]=512,
-                 common_structure = False,
-                 structure_mapping = None,
-                ):
-        DeltaBase.__init__(self, common_structure=common_structure, structure_mapping=structure_mapping)
-        nn.Module.__init__(self)
-        self.prefix_token_num = prefix_token_num
-        self.reparameterize = reparameterize
-        self.mid_dim = mid_dim
-        self.embed_dim = embed_dim
+                 modified_modules: Optional[bool] = None,
+                 common_structure: Optional[bool] = None,
+                 registration_name: Optional[str] = "deltas",
+                 ):
+        DeltaBase.__init__(self, 
+                           backbone_model, 
+                           modified_modules=modified_modules,
+                           common_structure=common_structure,
+                           registration_name=registration_name
+                           )
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # not registered in parent class
+                setattr(self, arg_name, locals()[arg_name])
+
         self.delta_modules = nn.ModuleList()
 
-    def __call__(self, 
+        self.add_all_delta_to_backbone(self.backbone_model,
+                                   self.modified_modules,
+                                   self.registration_name)
+
+    def add_all_delta_to_backbone(self, 
                  module: nn.Module, 
-                 modified_keys: List[str],
-                 is_regex: Optional[bool]=False,
+                 modified_modules: List[str],
                  registration_name: Optional[str] = "deltas"
                 ) -> nn.Module:
         for key, _ in module.named_modules():
-            if self.find_key(key, modified_keys, is_regex):
+            if self.find_key(key, modified_modules):
                 print("find key",key)
                 self.update_module(module, key)
         
         self._pseudo_data_to_instantiate(module)
         # exit()
         if self.reparameterize:
-            reparams = ReparameterizeFunction(prefix_token_num=self.prefix_token_num, embed_dim=self.embed_dim, mid_dim=self.mid_dim, module_list=self.delta_modules)
+            reparams = ReparameterizeFunction(prefix_token_num=self.prefix_token_num, 
+                                              embed_dim=self.embed_dim, 
+                                              mid_dim=self.mid_dim, 
+                                              module_list=self.delta_modules)
             self.delta_modules = None
             self.reparams = reparams
             self.insert_sequential_module(module, pre_caller=reparams.forward)
-        setattr(module, registration_name, self)
+        if self.reparameterize:
+            setattr(module, registration_name, self)
         self.mark_as_delta()
         return module
     
@@ -398,9 +488,9 @@ class PrefixModel(DeltaBase, nn.Module):
     def update_module(self, module: nn.Module, key: str):
         _, _, ref = self.find_module(module, key)
         print("matched_key:", key)
-        self.new_module_like(ref)
-        # self.insert_sequential_module(ref, pre_caller=None, post_caller=prefixlayer.forward)
-        
+        prefixlayer = self.new_module_like(ref)
+        self.insert_sequential_module(ref, pre_caller=prefixlayer.forward, post_caller=None, delta_module=prefixlayer, name="prefix")
+        self.delta_modules.append(prefixlayer)  
     
     def new_module_like(self, module):
         # TODO: support more Attention modules
@@ -408,34 +498,25 @@ class PrefixModel(DeltaBase, nn.Module):
         if isinstance(module, T5Attention):
             module_device = get_device(module)
             prefixlayer = PrefixLayerT5(prefix_token_num=self.prefix_token_num, num_heads=module.n_heads ,device=module_device)
-            self.insert_sequential_module(module, pre_caller=prefixlayer.forward, post_caller=prefixlayer.post_forward)
-            self.delta_modules.append(prefixlayer)  
-            
         elif isinstance(module, MultiHeadSelfAttention):  # MultiHeadSelfAttention didn't provide past_key_value in the interface of the forward function.
             module_device = get_device(module)
             prefixlayer = PrefixLayerDistilBert(prefix_token_num=self.prefix_token_num, device=module_device)
             self.insert_sequential_module(getattr(module, "k_lin"), pre_caller=prefixlayer.key_pre_forward, post_caller=prefixlayer.key_forward)
             self.insert_sequential_module(getattr(module, "v_lin"), pre_caller=prefixlayer.value_pre_forward, post_caller=prefixlayer.value_forward)
-            self.insert_sequential_module(module,  pre_caller=prefixlayer.forward)
-            self.delta_modules.append(prefixlayer)
-
         elif isinstance(module, BertSelfAttention):
             raise NotImplementedError
-
+        elif isinstance(module, RobertaAttention):
+            module_device = get_device(module)
+            prefixlayer = PrefixLayerRoberta(prefix_token_num=self.prefix_token_num, num_heads=module.self.num_attention_heads,device=module_device)
         elif isinstance(module, GPT2Attention):
             module_device = get_device(module)
             prefixlayer = PrefixLayerGPT2(prefix_token_num=self.prefix_token_num, num_heads=module.num_heads ,device=module_device)
-            self.insert_sequential_module(module, pre_caller=prefixlayer.forward, post_caller=None)
-            self.delta_modules.append(prefixlayer)
-
         elif isinstance(module, BartAttention):
             module_device = get_device(module)
             prefixlayer = PrefixLayerBart(prefix_token_num=self.prefix_token_num, num_heads=module.num_heads ,device=module_device)
-            self.insert_sequential_module(module, pre_caller=prefixlayer.forward, post_caller=None)
-            self.delta_modules.append(prefixlayer)
-
         else:
             raise NotImplementedError(type(module))
+        return prefixlayer
 
             
  

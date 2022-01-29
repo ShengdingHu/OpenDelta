@@ -29,7 +29,7 @@ from transformers.optimization import Adafactor, AdafactorSchedule  # use Adafac
 from openprompt.data_utils.data_sampler import FewShotSampler
 from openprompt.data_utils import PROCESSORS
 from yacs.config import CfgNode
-from opendelta.delta_models.bias import BiasModel
+from opendelta.delta_models.bitfit import BiasModel
 
 
 def get_dataset_specific_config(args):  

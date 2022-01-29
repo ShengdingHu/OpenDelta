@@ -1,8 +1,10 @@
 
 from opendelta.basemodel import DeltaBase
+from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.delta_models.layers.low_rank_linear import LowRankLinear
 from opendelta.delta_models.layers.activations import Activations
 from typing import Optional
+from opendelta.utils.signature import get_arg_names_inside_func
 import torch.nn as nn
 import torch
 from functools import partial
@@ -14,6 +16,28 @@ import loralib as lora
 import torch.nn as nn
 import torch
 import math
+
+
+
+class LowRankAdapterConfig(BaseDeltaConfig):
+    r"""
+    This is the configuration class to store the configuration of a [`LoraModel`]
+
+    """
+    def __init__(
+        self, 
+        reduction_factor=32,
+        non_linearity="gelu_new",
+        low_rank_w_init="glorot-uniform",
+        low_rank_rank=1,
+        **kwargs
+    ): 
+        super().__init__(**kwargs)
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # the arg has not been registered in parent config
+                setattr(self, arg_name, locals()[arg_name])
+
 
 
 class LowRankAdapter(nn.Module):
@@ -85,44 +109,56 @@ class LowRankAdapter(nn.Module):
 
 
 class LowRankAdapterModel(DeltaBase, nn.Module):
-    r"""
-    """
-    def __init__(self, 
-                 common_structure = False,
-                 structure_mapping = None,
+
+    config_class = LowRankAdapterConfig
+    delta_type = "lowrankadapter"
+    default_modified_modules = ['attn', 'ff']
+    def __init__(self,
+                 backbone_model: nn.Module, 
                  reduction_factor = 32,
                  non_linearity = "gelu_new",
                  low_rank_w_init = "glorot-uniform", 
                  low_rank_rank = 1,
+                 modified_modules: Optional[bool] = None,
+                 common_structure: Optional[bool] = None,
+                 registration_name: Optional[str] = "deltas",
                  ):
-            
-        DeltaBase.__init__(self, common_structure=common_structure, structure_mapping=structure_mapping)
-        nn.Module.__init__(self)
-        self.reduction_factor = reduction_factor
-        self.non_linearity = non_linearity
-        self.low_rank_w_init = low_rank_w_init
-        self.low_rank_rank = low_rank_rank
+        DeltaBase.__init__(self, 
+                           backbone_model, 
+                           modified_modules=modified_modules,
+                           common_structure=common_structure,
+                           registration_name=registration_name
+                           )
+        arg_names = get_arg_names_inside_func(self.__init__)
+        for arg_name in arg_names:
+            if not hasattr(self, arg_name): # not registered in parent class
+                setattr(self, arg_name, locals()[arg_name])
+
         self.delta_modules = nn.ModuleList()
+
+        self.add_all_delta_to_backbone(self.backbone_model,
+                                   self.modified_modules,
+                                   self.registration_name)
+    
         
-    def __call__(self, 
+    def add_all_delta_to_backbone(self, 
                  module: nn.Module, 
-                 modified_keys: List[str],
-                 is_regex: Optional[bool]=False,
+                 modified_modules: List[str],
                  registration_name: Optional[str] = "deltas"
                 ) -> nn.Module:
         for key, _ in module.named_modules():
-            if self.find_key(key, modified_keys, is_regex):
+            if self.find_key(key, modified_modules):
                 # print("find key",key)
                 self.update_module(module, key)
         self._pseudo_data_to_instantiate(module)
-        setattr(module, registration_name, self)
+        # setattr(module, registration_name, self)
         self.mark_as_delta()
         return module
     
     def update_module(self, module: nn.Module, key: str):
         _, _, ref = self.find_module(module, key)
         adapterlayer = self.new_module_like(ref)
-        self.insert_sequential_module(ref, pre_caller=None, post_caller=adapterlayer.forward)
+        self.insert_sequential_module(ref, pre_caller=None, post_caller=adapterlayer.forward, delta_module=adapterlayer, name="low_rank_adapter")
     
     def new_module_like(self, module):
         module_device = get_device(module)

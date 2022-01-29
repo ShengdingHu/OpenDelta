@@ -61,7 +61,7 @@ if args.delta_model == "lora":
         delta_model.freeze_module(model, exclude=["qa_outputs", "deltas"])
 
 elif args.delta_model == "bias":
-    from opendelta.delta_models.bias import BiasModel
+    from opendelta.delta_models.bitfit import BiasModel
     if not args.common_structure:
         if 'distilbert' == args.model_name:
             delta_model = BiasModel()
