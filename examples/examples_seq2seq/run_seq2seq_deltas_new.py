@@ -209,10 +209,13 @@ def main():
 
 
     from opendelta import AutoDeltaConfig,AutoDeltaModel, Visualization
+    # from IPython import embed
+    # embed()
     delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
     delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
     delta_model.freeze_module(set_state_dict = True)
-    Visualization(model).structure_graph()
+    delta_model.log(delta_ratio=True, trainable_ratio=True, visualization=True)
+
 
 
 
@@ -350,7 +353,8 @@ def main():
 
 
 
-
+    from IPython import embed
+    embed()
 
 
 

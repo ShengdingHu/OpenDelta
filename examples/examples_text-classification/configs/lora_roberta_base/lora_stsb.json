@@ -36,7 +36,7 @@
     ],
     "test_dataset_name": "stsb",
     "tokenizer_name": "../../../../plm_cache/roberta-base",
-    "unfreeze_modules": [
+    "unfrozen_modules": [
         "classifier",
         "deltas"
     ],

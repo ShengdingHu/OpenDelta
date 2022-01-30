@@ -376,7 +376,7 @@ def main():
     from opendelta.auto_delta import AutoDeltaModel
     delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
     delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
-    delta_model.freeze_module(exclude = delta_args.unfreeze_modules, set_state_dict = True)
+    delta_model.freeze_module(exclude = delta_args.unfrozen_modules, set_state_dict = True)
     from opendelta.utils.visualization import Visualization
     Visualization(model).structure_graph()
 

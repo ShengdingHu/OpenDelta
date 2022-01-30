@@ -23,7 +23,11 @@ logger = logging.get_logger(__name__)
 def is_leaf_module(module):
     r"""Whether the module is a leaf module
     """
-    return len([n for n,_ in module.named_children()]) == 0
+    try:
+        return len([n for n,_ in module.named_children()]) == 0
+    except:
+        from IPython import embed
+        embed()
 
 def non_module_param(module: nn.Module):
     module_names = [n for n, _ in module.named_modules()]
@@ -72,9 +76,11 @@ class DeltaBase(nn.Module, SaveLoadMixin):
     """
     delta_type = ""
     config_class = BaseDeltaConfig
+    default_unfrozen_modules = ["deltas"]
     def __init__(self, 
                  backbone_model: nn.Module,
                  modified_modules: Optional[List[str]] = None,
+                 unfrozen_modules: Optional[List[str]] = None,
                  registration_name: Optional[str] = "deltas",
                  common_structure=False,
                  ):
@@ -92,6 +98,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             self.structure_mapping = CommonStructureMap.load(self.backbone_model)
         else:
             self.structure_mapping = None
+        if unfrozen_modules is None:
+            self.unfrozen_modules = self.default_unfrozen_modules
         self.registration_name = registration_name
         if self.common_structure and self.structure_mapping is None:
             raise RuntimeError("Using common structure but the structure mapping is None")
@@ -199,7 +207,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
     
     def freeze_module(self,
                       module: Optional[nn.Module] = None, 
-                      exclude=["deltas"], 
+                      exclude: Optional[List[str]] = None, 
                       set_state_dict: Optional[bool]=True, 
                       ):
         r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
@@ -217,16 +225,17 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                 Should not be changed by passing argument other than :string:`""`.
         
         """
+        if exclude is None:
+            exclude = self.unfrozen_modules
         if module is None:
             module = self.backbone_model
-        self._freeze_module_recursive(module, exclude, set_state_dict, "")           # modify the active state dict that still need grad
+        self._freeze_module_recursive(module, exclude, "")           # modify the active state dict that still need grad
         if set_state_dict:
             self.set_active_state_dict(module)
 
     def _freeze_module_recursive(self,
                       module: Optional[nn.Module] = None, 
-                      exclude=["deltas"], 
-                      set_state_dict: Optional[bool]=True, 
+                      exclude: Optional[List[str]] = None,
                       prefix=""):
         r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
         deltas module is filtered with `_is_delta` attributes because it may have parameter sharing to the main 
@@ -260,7 +269,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                     for n, p in params:
                         if "deltas" not in exclude or (not (hasattr(p, "_is_delta") and getattr(p, "_is_delta"))):
                             p.requires_grad = False
-                    self._freeze_module_recursive(c, prefix=".".join([prefix,n]), exclude=exclude)
+                    self._freeze_module_recursive(c, exclude=exclude, prefix=".".join([prefix,n]) )
         
 
 
@@ -358,6 +367,23 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         for param in module.parameters():
             if param.requires_grad:
                 pnum_tot += param.numel()
+        return pnum_tot
+    
+    def num_total_parameters(self, module: Optional[nn.Module]=None):
+        r"""A small sugar function to get the number of trainable parameter in the backbone model. Often used to 
+        compute the trainable rate.
+
+        Args: 
+            module (:obj:`nn.Module`): of which module we want to know the number of trainable paramemters.
+        
+        Returns:
+            :obj:`List[nn.Parameter]` 
+        """
+        if module is None:
+            module = self
+        pnum_tot = 0
+        for param in module.parameters():
+            pnum_tot += param.numel()
         return pnum_tot
     
     # def num_frozen_parameters(self, module: Optional[nn.Module]=None):
@@ -473,6 +499,27 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         if backbone_model is None:
             backbone_model = self.backbone_model
         self.backbone_model.load_state_dict(state_dict, strict=False)
+    
+    def log(self, delta_ratio=False, trainable_ratio=True, visualization=True):
+        r"""Log the result of applying delta. Possible Options are :string:`trainable_ratio`,
+        :string:`visualization`, :string:`delta_ratio`.
+        """
+
+        if visualization:
+            from opendelta import Visualization
+            Visualization(self.backbone_model).structure_graph()
+        if trainable_ratio:
+            n_trainable = self.num_trainable_parameters(self.backbone_model)
+            n_total = self.num_total_parameters(self.backbone_model)
+            logger.info("Trainable Ratio: {:2f}%".format(n_trainable/n_total*100))
+        if delta_ratio:
+            n_delta = self.num_trainable_parameters()
+            n_total = self.num_total_parameters(self.backbone_model)
+            logger.info("Delta Parameter Ratio: {:2f}%".format(n_delta/n_total*100))
+
+        
+
+
 
 
 

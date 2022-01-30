@@ -22,7 +22,7 @@ class Activations(nn.Module):
                 return x * torch.sigmoid(x)
 
             self.f = swish
-        elif activation_type.lower() == "gelu":
+        elif activation_type.lower() == "gelu_new":
 
             def gelu_new(x):
                 """

@@ -120,12 +120,14 @@ class LowRankAdapterModel(DeltaBase, nn.Module):
                  low_rank_w_init = "glorot-uniform", 
                  low_rank_rank = 1,
                  modified_modules: Optional[bool] = None,
+                 unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
                  registration_name: Optional[str] = "deltas",
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
+                           unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
                            registration_name=registration_name
                            )

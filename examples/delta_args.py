@@ -20,7 +20,7 @@ class DeltaArguments:
                                       metadata={"help": "Learning rate of delta parameters"})
     modified_modules: Optional[List[str]] = field(default=None,
                                       metadata={"help": "The list of names of the modules that need to insert deltas."})
-    unfreeze_modules: Optional[List[str]] = field(default_factory=lambda : ["deltas"],
+    unfrozen_modules: Optional[List[str]] = field(default_factory=lambda : ["deltas"],
                                       metadata={"help": "The list of names of the unfreeze modules"})
     lora_alpha: Optional[int] = field(default=8, 
                                       metadata={"help": "The scaling parameter in lora model"})

@@ -164,6 +164,7 @@ class CompactorModel(DeltaBase, nn.Module):
     def __init__(self, 
                  backbone_model,
                  modified_modules: Optional[bool] = None,
+                 unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
                  registration_name: Optional[str] = "deltas",
                  structure_mapping=None,
@@ -185,6 +186,7 @@ class CompactorModel(DeltaBase, nn.Module):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
+                           unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
                            registration_name=registration_name
                            )

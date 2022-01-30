@@ -48,6 +48,6 @@ for filename in filenames:
     baseconfig["per_device_train_batch_size"] = CONFIGS[dataset_name][1] if dataset_name in CONFIGS else 16
     baseconfig["max_source_length"] = CONFIGS[dataset_name][2]  if dataset_name in CONFIGS else 512
     baseconfig["output_dir"] = f"outputs/lora/roberta-base/v2/{dataset_name}"
-    baseconfig["unfreeze_modules"] = ["classifier", "deltas"]
+    baseconfig["unfrozen_modules"] = ["classifier", "deltas"]
     json.dump(baseconfig, open(f"lora_{dataset_name}.json",'w'), indent=4,sort_keys=True)
 

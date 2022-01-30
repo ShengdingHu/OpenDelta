@@ -168,7 +168,7 @@ distilbert_mapping = {
     }
 }
 
-def transform(org_key, mapping, strict=True, warning=False):
+def transform(org_key, mapping, strict=True, warning=False, verbose=False):
     
     chain = org_key.split(".")
     query = ""
@@ -204,7 +204,8 @@ def transform(org_key, mapping, strict=True, warning=False):
         else:
             new_chain.append(query.strip(".")) # tailing query
     new_key = ".".join(new_chain)
-    print(f"{org_key} => {new_key}")
+    if verbose:
+        print(f"{org_key} => {new_key}")
     return new_key
     
 

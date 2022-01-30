@@ -130,7 +130,7 @@ class SaveLoadMixin(PushToHubMixin):
         r"""
         Instantiate a finetuned model from a finetuned model configuration.
         The model is set in evaluation mode by default using `model.eval()` (Dropout modules are deactivated). 
-        To further train the model, you can use the `unfreeze_modules` method.
+        To further train the model, you can use the `unfrozen_modules` method.
         you should first set it back in training mode with `model.train()`.
         The warning *Weights from XXX not initialized from pretrained model* means that the weights of XXX do not come
         pretrained with the rest of the model. It is up to you to train those weights with a downstream fine-tuning

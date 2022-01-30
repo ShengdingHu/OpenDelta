@@ -25,11 +25,11 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
             elif ckpt_name.startswith("roberta"):
                 delta_model = LoraModel(lora_alpha=delta_args.lora_alpha, lora_r=delta_args.lora_rank, lora_dropout=delta_args.lora_dropout)
                 delta_model(model, modified_keys=["attention.self.query", "attention.self.value"])
-                delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules)
+                delta_model.freeze_module(model, exclude=delta_args.unfrozen_modules)
             else:
                 delta_model = LoraModel(lora_alpha=delta_args.lora_alpha, lora_r=delta_args.lora_rank, lora_dropout=delta_args.lora_dropout)
                 delta_model(model, modified_keys=delta_args.modified_modules)
-                delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules)
+                delta_model.freeze_module(model, exclude=delta_args.unfrozen_modules)
         else:
             delta_model = LoraModel(common_structure=True, structure_mapping=Mappings[model_args.model_name])
             delta_model(model, modified_keys=["attn.k", "attn.v"])
@@ -137,7 +137,7 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
             elif ckpt_name.startswith('roberta'):
                 delta_model = LowRankAdapterModel()
                 delta_model(model, modified_keys=["intermediate", "output"], registration_name="deltas")
-                delta_model.freeze_module(model, exclude=delta_args.unfreeze_modules) 
+                delta_model.freeze_module(model, exclude=delta_args.unfrozen_modules) 
             else:
                 raise NotImplementedError
 

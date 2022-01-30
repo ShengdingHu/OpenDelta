@@ -28,7 +28,7 @@ class AdapterLayer(nn.Module):
     def get_layer_count(cls):
         return cls.layer_count
 
-    def __init__(self, bottleneck_dim=32, non_linearity='relu', device=None):
+    def __init__(self, bottleneck_dim=24, non_linearity='gelu_new', device=None):
         super().__init__()
         self.bottleneck_dim = bottleneck_dim
         self.device = device
@@ -54,8 +54,15 @@ class AdapterLayer(nn.Module):
         # if self.add_layer_norm_after:
         #     self.adapter_norm_after = nn.LayerNorm(self.input_size)
 
-        # if we want to initialize with the bert strategy then this function is called for all the linear layers
         self.instantiated = True
+        # initialize the weight, which is important for fast convergence and better performance. 
+        self.apply(self._init_weight)
+    
+    def _init_weight(self, module):
+        if isinstance(module, nn.Linear):
+            module.weight.data.normal_(mean=0.0, std=0.01) 
+            if module.bias is not None:
+                module.bias.data.zero_()
         
     
     def forward(self, output):
@@ -63,8 +70,8 @@ class AdapterLayer(nn.Module):
         then combined with the main hidden_states. Finally pass it into the subsequent layer.
 
         """
-        if self.instantiated and self.layer_id == 0 and random() < 0.01:
-            print(self.modulelist[0].weight)
+        # if self.instantiated and self.layer_id == 0 and random() < 0.01:
+        #     print(self.modulelist[0].weight)
         if isinstance(output, tuple):
             hiddens = output[0]
         elif isinstance(output, torch.Tensor):
@@ -79,7 +86,7 @@ class AdapterLayer(nn.Module):
 
 
         adapter_output = self.modulelist(hiddens)
-        modified_output = adapter_output + hiddens # residual_connection
+        modified_output = adapter_output + hiddens # TODO option: disable residual_connection
         if isinstance(output, tuple):
             output = (modified_output,) + output[1:]
         elif isinstance(output, torch.Tensor):
@@ -97,8 +104,8 @@ class AdapterConfig(BaseDeltaConfig):
     """
     def __init__(
         self, 
-        bottleneck_dim: Optional[int]=32, 
-        non_linearity: Optional[str]='relu',
+        bottleneck_dim: Optional[int]=24, 
+        non_linearity: Optional[str]='gelu_new',
         sequential: Optional[str] = True,
         **kwargs
     ): 
@@ -117,16 +124,18 @@ class AdapterModel(DeltaBase):
     default_modified_modules = ["attn", "ff"]
     def __init__(self,
                  backbone_model: nn.Module, 
-                 bottleneck_dim: Optional[int]=32, 
-                 non_linearity: Optional[str]='relu',
+                 bottleneck_dim: Optional[int]=24, 
+                 non_linearity: Optional[str]='gelu_new',
                  sequential: Optional[str] = True,
                  modified_modules: Optional[bool] = None,
+                 unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
                  registration_name: Optional[str] = "deltas",
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
+                           unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
                            registration_name=registration_name
                            )

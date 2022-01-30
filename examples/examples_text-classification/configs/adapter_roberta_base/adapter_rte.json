@@ -33,7 +33,7 @@
     ],
     "test_dataset_name": "rte",
     "tokenizer_name": "../../../../plm_cache/roberta-large",
-    "unfreeze_modules": [
+    "unfrozen_modules": [
         "classifier",
         "deltas"
     ],

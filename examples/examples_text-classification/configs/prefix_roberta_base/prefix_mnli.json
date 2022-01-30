@@ -35,7 +35,7 @@
     ],
     "test_dataset_name": "mnli",
     "tokenizer_name": "../../../../plm_cache/roberta-base",
-    "unfreeze_modules": [
+    "unfrozen_modules": [
         "classifier",
         "deltas"
     ],

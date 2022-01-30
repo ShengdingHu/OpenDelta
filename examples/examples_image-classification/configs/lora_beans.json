@@ -20,7 +20,7 @@
         "attention.query",
         "attention.value"
     ],
-    "unfreeze_modules": [
+    "unfrozen_modules": [
         "classifier",
         "deltas"
     ],
