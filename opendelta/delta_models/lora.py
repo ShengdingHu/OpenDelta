@@ -67,6 +67,9 @@ class LoraModel(DeltaBase):
         parent_ref, children_name, child_ref = self.find_module(module, key)
         self.replace_module(parent_ref, children_name, child_ref)
         
+    def _pseudo_data_to_instantiate(self, module):
+        # no need to pass pseudo input, so overwrite it
+        pass
     
     def replace_module(self,
                       parent_module: nn.Module, 

@@ -326,6 +326,10 @@ class CommonStructureMap(object):
 
     @classmethod
     def load(cls, backbone_model, strict=True, warining=False, visualize=True):
+        from IPython import embed
+        embed()
+
+
         backbone_class = type(backbone_model).__name__
         if backbone_class not in cls.Mappings:
             raise KeyError(backbone_class)

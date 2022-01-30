@@ -165,13 +165,17 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
         """
         self.plm_total_params = sum(p.numel() for p in backbone.parameters())
-        for key, _ in backbone.named_modules():
-            if self.find_key(key, modified_modules):
-                # print("find key",key)
+        # create a new key list to avoid recursion.
+        backbone_key_list = [key for key, _ in backbone.named_modules()] 
+        print(backbone_key_list)
+        for key in backbone_key_list:
+            if self.find_key(key, modified_modules): #TODO have bugs when commonstructure has a virtual node and it's refered
+                print("find key",key)
                 self.update_module(backbone, key)
+        self._pseudo_data_to_instantiate(backbone)
         # if the delta parameters are not contained in the original models parameters
         # we need to register it to the module
-        self.register_delta_if_new(backbone, registration_name)
+        # self.register_delta_if_new(backbone, registration_name)
         # mark the paratmers that are the delta parameters for easily 
         # extracting the delta_paramters.
         # This is important if the delta parameters are contained in the
