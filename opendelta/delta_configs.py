@@ -201,19 +201,21 @@ class BaseDeltaConfig(PushToHubMixin):
                 config_dict.pop(config_key)
                 unused_config_keys.append(config_key)
         logger.warning(f"The following keys are not used by {cls}.__init__ function: {unused_config_keys}")
-            
         config = cls(**config_dict)
+
 
         # Update config with kwargs if needed
         to_remove = []
         for key, value in kwargs.items():
             if hasattr(config, key):
+                
                 setattr(config, key, value)
                 if key != "torch_dtype":
                     to_remove.append(key)
         for key in to_remove:
             kwargs.pop(key, None)
         logger.info(f"Model config {config}")
+
         if return_unused_kwargs:
             return config, kwargs
         else:
@@ -407,7 +409,6 @@ class BaseDeltaConfig(PushToHubMixin):
         # Transformers version when serializing the model
         output["transformers_version"] = transformers_version
         output["opendelta_version"] = opendelta_version
-
 
         self.dict_torch_dtype_to_str(output)
 

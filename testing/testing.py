@@ -131,10 +131,10 @@ elif args.delta_model == "adapter":
         delta_model.freeze_module(model, exclude=["qa_outputs", "deltas"])
         
 elif args.delta_model == "compactor":
-    from opendelta.delta_models.compactor import CompactorModel
+    from opendelta.delta_models.compacter import CompacterModel
     if not args.common_structure:
         if 't5' == args.model_name:
-            delta_model = CompactorModel()
+            delta_model = CompacterModel()
             delta_model(model, modified_keys=["SelfAttention", "DenseReluDense"], registration_name="deltas")
             delta_model.freeze_module(model, exclude=["deltas"]) 
         else:

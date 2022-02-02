@@ -11,7 +11,7 @@ class Activations(nn.Module):
     """
 
     def __init__(self, activation_type):
-
+        self.activation_type = activation_type
         if activation_type.lower() == "relu":
             self.f = nn.functional.relu
         elif activation_type.lower() == "tanh":
@@ -43,5 +43,8 @@ class Activations(nn.Module):
 
     def forward(self, x):
         return self.f(x)
+    
+    def __repr__(self):
+        return self.activation_type
 
 

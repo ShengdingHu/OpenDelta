@@ -18,6 +18,7 @@ Fine-tuning the library models for sequence to sequence.
 # You can also adapt this script on your own sequence to sequence task. Pointers for this are left as comments.
 import functools
 import logging
+from opendelta.utils.delta_hub import create_hub_repo_name
 import torch 
 import os
 os.environ['MKL_THREADING_LAYER'] = 'GNU' 
@@ -352,12 +353,6 @@ def main():
         return result
 
 
-
-    from IPython import embed
-    embed()
-
-
-
     # Initialize our Trainer
     trainer = Seq2SeqTrainer(
         model=model,
@@ -432,6 +427,7 @@ def main():
             )
             trainer.log_metrics("eval", metrics)
             trainer.save_metrics("eval", metrics)
+        results['evaluate'] = metrics
 
     # Test
     if training_args.do_test:
@@ -443,13 +439,28 @@ def main():
             )
             trainer.log_metrics("test", metrics)
             trainer.save_metrics("test", metrics)
+        results['test'] = metrics
+    
+    repo_name = create_hub_repo_name(root="DeltaHub",
+                         dataset=data_args.task_name, 
+                         delta_type = delta_args.delta_type,
+                         model_name_or_path= model_args.model_name_or_path)
+    results['repo_name'] = repo_name
+    if training_args.push_to_hub: # TODO add description here
+        delta_model.save_finetuned(push_to_hub=True, save_directory=repo_name, use_auth_token=True)
+        # trainer.push_to_hub(**kwargs)
+    else:
+        delta_model.save_finetuned(push_to_hub=False, save_directory=repo_name, use_auth_token=True)
+
     return results
 
 
-def _mp_fn(index):
-    # For xla_spawn (TPUs)
-    main()
 
 
 if __name__ == "__main__":
-    main()
+    result = main()
+    import json
+    with open("collect_result.jsonl", 'a') as fout:
+        string = json.dumps(result, indent=4,sort_keys=True)
+        fout.write(string+"\n")
+    print(result)

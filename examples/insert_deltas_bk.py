@@ -117,10 +117,10 @@ def insert_deltas(model, model_args: ModelArguments, delta_args: DeltaArguments)
             delta_model.freeze_module(model, exclude=["deltas"])
             
     elif delta_args.delta_type == "compactor":
-        from opendelta.delta_models.compactor import CompactorModel
+        from opendelta.delta_models.compacter import CompacterModel
         if not delta_args.common_structure:
             if ckpt_name.startswith('t5'):
-                delta_model = CompactorModel()
+                delta_model = CompacterModel()
                 delta_model(model, modified_keys=["SelfAttention", "DenseReluDense"], registration_name="deltas")
                 delta_model.freeze_module(model, exclude=["deltas"]) 
             else:

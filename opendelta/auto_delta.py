@@ -15,7 +15,7 @@ DELTA_CONFIG_MAPPING = {
     "low_rank_adapter": "LowRankAdapterConfig",
     "bitfit": "BitFitConfig",
     "adapter":"AdapterConfig",
-    "compactor":"CompactorConfig",
+    "compacter":"CompacterConfig",
     "prefix": "PrefixConfig",
 }
 
@@ -24,7 +24,7 @@ DELTA_MODEL_MAPPING = {
     "low_rank_adapter": "LowRankAdapterModel",
     "bitfit": "BitFitModel",
     "adapter":"AdapterModel",
-    "compactor": "CompactorModel",
+    "compacter": "CompacterModel",
     "prefix": "PrefixModel",
 }
 
@@ -100,8 +100,7 @@ class AutoDeltaConfig:
             kwargs: Other keyword argument pass to initialize the config. 
 
         >>> config = AutoDeltaConfig.from_dict({"delta_type":"lora"}) # This will load the dault lora config.
-        >>> config = AutoDeltaConfig.from_dict({"delta_type":"lora", "lora_r":5}) # Will load the default lora config 
-            # , except that lora_r = 5 
+        >>> config = AutoDeltaConfig.from_dict({"delta_type":"lora", "lora_r":5}) # Will load the default lora config, with lora_r = 5 
 
         """
         config_dict = deepcopy(config_dict)

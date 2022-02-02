@@ -2,37 +2,45 @@
     "dataset_config_name": [
         "en"
     ],
-    "delta_type": "bitfit",
+    "delta_type": "lora",
     "do_eval": true,
     "do_test": true,
     "do_train": true,
     "eval_dataset_config_name": [
         "en"
     ],
-    "eval_dataset_name": "mrpc",
-    "evaluation_strategy": "epoch",
+    "eval_dataset_name": "stsb",
+    "eval_steps": 100,
+    "evaluation_strategy": "steps",
     "greater_is_better": true,
-    "learning_rate": 0.003,
+    "learning_rate": 0.0003,
     "load_best_model_at_end": true,
+    "lora_r": 8,
     "max_source_length": 128,
     "metric_for_best_model": "average_metrics",
     "model_name_or_path": "../../../../plm_cache/t5-base",
-    "non_linearity": "gelu_new",
     "num_train_epochs": 20,
-    "output_dir": "outputs/bitfit/mrpc",
-    "per_device_eval_batch_size": 100,
-    "per_device_train_batch_size": 100,
+    "output_dir": "outputs/bitfit/t5-base/stsb",
+    "overwrite_output_dir": true,
+    "per_device_eval_batch_size": 32,
+    "per_device_train_batch_size": 32,
     "predict_with_generate": true,
-    "save_strategy": "epoch",
+    "push_to_hub": true,
+    "save_steps": 100,
+    "save_strategy": "steps",
     "save_total_limit": 1,
+    "seed": 42,
     "split_validation_test": true,
-    "task_name": "mrpc",
+    "task_name": "stsb",
     "test_dataset_config_name": [
         "en"
     ],
-    "test_dataset_name": "mrpc",
+    "test_dataset_name": "stsb",
     "tokenizer_name": "../../../../plm_cache/t5-base",
-    "warmup_steps": 0,
-    "overwrite_output_dir": true,
-    "push_to_hub": true
+    "unfrozen_modules": [
+        "deltas",
+        "layer_norm",
+        "final_layer_norm"
+    ],
+    "warmup_steps": 0
 }

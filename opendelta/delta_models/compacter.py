@@ -10,6 +10,7 @@ import loralib as lora
 import torch.nn as nn
 import torch
 import math
+import opendelta
 from opendelta.delta_models.layers.activations import Activations
 import inspect
 from opendelta.delta_models.layers.hypercomplex_linear import PHMLinear
@@ -21,21 +22,23 @@ class HyperComplexAdapterLayer(nn.Module):
     hypercomplex division number."""
 
     def __init__(self, 
-                 reduction_factor=32, 
-                 non_linearity="", 
-                 phm_c_init=None, 
-                 hypercomplex_division=None,
+                 reduction_factor=16, 
+                 non_linearity="relu", 
+                 phm_c_init="normal", 
+                 hypercomplex_division=4,
                  learn_phm=True,
-                 hypercomplex_nonlinearity=None,
-                 shared_phm_rule=None,
-                 factorized_phm=None,
-                 phm_rule=None,
-                 shared_W_phm=None,
-                 factorized_phm_rule=None,
-                 phm_rank=None,
-                 phm_init_range=None,
+                 hypercomplex_nonlinearity="glorot-uniform",
+                 shared_phm_rule=False,
+                 factorized_phm=True,
+                 phm_rule: Optional[torch.Tensor]=None,
+                 shared_W_phm=False,
+                 factorized_phm_rule=False,
+                 phm_rank=1,
+                 phm_init_range=0.0001,
                  kronecker_prod=None,
-                 device=None, 
+                 device=None,
+                 use_bias_up_sampler=True,
+                 use_bias_down_sampler=True,
                  ):
         super().__init__()
         self.reduction_factor = reduction_factor
@@ -52,6 +55,8 @@ class HyperComplexAdapterLayer(nn.Module):
         self.phm_rank = phm_rank
         self.phm_init_range = phm_init_range
         self.kronecker_prod = kronecker_prod
+        self.use_bias_up_sampler=use_bias_up_sampler
+        self.use_bias_down_sampler=use_bias_down_sampler
         self.device = device
 
         self.instantiated = False
@@ -62,7 +67,7 @@ class HyperComplexAdapterLayer(nn.Module):
         self.activation = Activations(self.non_linearity.lower()).to(self.device)
         self.down_sampler = PHMLinear(in_features=hidden_dim,
                                       out_features=self.down_sample_size,
-                                      bias=True,
+                                      bias=self.use_bias_down_sampler,
                                       c_init=self.phm_c_init,
                                       phm_dim=self.hypercomplex_division,
                                       phm_rule=self.phm_rule,
@@ -77,7 +82,7 @@ class HyperComplexAdapterLayer(nn.Module):
                                       kronecker_prod=self.kronecker_prod).to(self.device)
         self.up_sampler = PHMLinear(in_features=self.down_sample_size,
                                     out_features=hidden_dim, 
-                                    bias=True,
+                                    bias=self.use_bias_up_sampler,
                                     c_init=self.phm_c_init,
                                     phm_dim=self.hypercomplex_division,
                                     phm_rule=self.phm_rule,
@@ -125,7 +130,7 @@ class HyperComplexAdapterLayer(nn.Module):
             raise TypeError
         return output
 
-class CompactorConfig(BaseDeltaConfig):
+class CompacterConfig(BaseDeltaConfig):
     r"""
     This is the configuration class to store the configuration of a [`LoraModel`]
 
@@ -147,6 +152,8 @@ class CompactorConfig(BaseDeltaConfig):
         phm_rank=1,
         phm_init_range=0.0001,
         kronecker_prod=None,
+        use_bias_up_sampler=True,
+        use_bias_down_sampler=True,
         **kwargs
     ): 
         super().__init__(**kwargs)
@@ -157,9 +164,9 @@ class CompactorConfig(BaseDeltaConfig):
 
 
 
-class CompactorModel(DeltaBase, nn.Module):
-    config_class = CompactorConfig
-    delta_type = "compactor"
+class CompacterModel(DeltaBase, nn.Module):
+    config_class = CompacterConfig
+    delta_type = "compacter"
     default_modified_modules = ["attn", "ff"]
     def __init__(self, 
                  backbone_model,
@@ -181,7 +188,8 @@ class CompactorModel(DeltaBase, nn.Module):
                  phm_rank=1,
                  phm_init_range=0.0001,
                  kronecker_prod=None,
-
+                 use_bias_up_sampler=True,
+                 use_bias_down_sampler=True,
                 ):
         DeltaBase.__init__(self, 
                            backbone_model, 
@@ -190,6 +198,12 @@ class CompactorModel(DeltaBase, nn.Module):
                            common_structure=common_structure,
                            registration_name=registration_name
                            )
+        assert shared_phm_rule == False, "In opendelta version {opendelta.__version__}, "\
+            "shared_phm_rule is not supported. Later, sharing parameters will be tackled using"\
+            "a unified paradigm."
+        assert shared_W_phm == False, "In opendelta version {opendelta.__version__}, "\
+            "shared_W_phm is not supported. Later, sharing parameters will be tackled using"\
+            "a unified paradigm."
         arg_names = get_arg_names_inside_func(self.__init__)
         for arg_name in arg_names:
             if not hasattr(self, arg_name): # not registered in parent class
@@ -227,7 +241,7 @@ class CompactorModel(DeltaBase, nn.Module):
     
     def new_module_like(self, module):
         module_device = get_device(module)
-        adapterlayer = HyperComplexAdapterLayer(reduction_factor=16, 
+        adapterlayer = HyperComplexAdapterLayer(reduction_factor=self.reduction_factor, 
                                                 non_linearity=self.non_linearity, 
                                                 phm_c_init=self.phm_c_init, 
                                                 hypercomplex_division=self.hypercomplex_division,
@@ -240,6 +254,8 @@ class CompactorModel(DeltaBase, nn.Module):
                                                 phm_rank=self.phm_rank,
                                                 phm_init_range=self.phm_init_range,
                                                 kronecker_prod=self.kronecker_prod,
+                                                use_bias_up_sampler=self.use_bias_up_sampler,
+                                                use_bias_down_sampler=self.use_bias_down_sampler,
                                                 device=module_device
                                                 )
         self.delta_modules.append(adapterlayer)  

@@ -1,0 +1,1026 @@
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 40.0,
+        "eval_average_metrics": 40.0,
+        "eval_loss": 0.2866286337375641,
+        "eval_runtime": 0.2884,
+        "eval_samples_per_second": 173.369
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-copa",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 44.0,
+        "test_average_metrics": 44.0,
+        "test_loss": 0.2718357443809509,
+        "test_runtime": 0.314,
+        "test_samples_per_second": 159.258
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 52.55846445665645,
+        "eval_loss": 0.22525694966316223,
+        "eval_matthews_correlation": 52.55846445665645,
+        "eval_runtime": 1.2083,
+        "eval_samples_per_second": 431.173
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_cola",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": 63.756766360647745,
+        "test_loss": 0.18106061220169067,
+        "test_matthews_correlation": 63.756766360647745,
+        "test_runtime": 1.2266,
+        "test_samples_per_second": 425.574
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 75.36231884057972,
+        "eval_average_metrics": 75.36231884057972,
+        "eval_loss": 0.2184353768825531,
+        "eval_runtime": 0.505,
+        "eval_samples_per_second": 273.265
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_rte",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 69.06474820143885,
+        "test_average_metrics": 69.06474820143885,
+        "test_loss": 0.26203805208206177,
+        "test_runtime": 0.5052,
+        "test_samples_per_second": 275.13
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 96.7,
+        "eval_average_metrics": 96.7,
+        "eval_loss": 0.044097092002630234,
+        "eval_runtime": 2.8834,
+        "eval_samples_per_second": 346.813
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_sst2",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 93.34862385321101,
+        "test_average_metrics": 93.34862385321101,
+        "test_loss": 0.0836009681224823,
+        "test_runtime": 2.7323,
+        "test_samples_per_second": 319.145
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 40.0,
+        "eval_average_metrics": 40.0,
+        "eval_loss": 0.2866286337375641,
+        "eval_runtime": 0.1713,
+        "eval_samples_per_second": 291.946
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-copa",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 44.0,
+        "test_average_metrics": 44.0,
+        "test_loss": 0.2718357443809509,
+        "test_runtime": 0.15,
+        "test_samples_per_second": 333.351
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 89.30256169796215,
+        "eval_loss": 0.8872480988502502,
+        "eval_pearson": 89.49792307719518,
+        "eval_runtime": 2.7224,
+        "eval_samples_per_second": 275.492,
+        "eval_spearmanr": 89.10720031872911
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_stsb",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": 90.79137097057375,
+        "test_loss": 0.8804214000701904,
+        "test_pearson": 90.90568048271486,
+        "test_runtime": 2.8444,
+        "test_samples_per_second": 263.679,
+        "test_spearmanr": 90.67706145843265
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 40.0,
+        "eval_average_metrics": 40.0,
+        "eval_loss": 0.2866286337375641,
+        "eval_runtime": 0.149,
+        "eval_samples_per_second": 335.514
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-copa",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 44.0,
+        "test_average_metrics": 44.0,
+        "test_loss": 0.2718357443809509,
+        "test_runtime": 0.1482,
+        "test_samples_per_second": 337.428
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_average_metrics": 58.41817631314976,
+        "eval_em": 49.88986784140969,
+        "eval_f1": 66.94648478488982,
+        "eval_loss": 0.2216569185256958,
+        "eval_runtime": 9.9222,
+        "eval_samples_per_second": 244.301
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-multirc",
+    "test": {
+        "epoch": 3.0,
+        "test_average_metrics": 59.672400265556156,
+        "test_em": 51.55555555555556,
+        "test_f1": 67.78924497555676,
+        "test_loss": 0.20578201115131378,
+        "test_runtime": 10.0457,
+        "test_samples_per_second": 241.296
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 80.30581039755351,
+        "eval_average_metrics": 80.30581039755351,
+        "eval_loss": 0.19154316186904907,
+        "eval_runtime": 17.148,
+        "eval_samples_per_second": 95.346
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-boolq",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 79.7553516819572,
+        "test_average_metrics": 79.7553516819572,
+        "test_loss": 0.195680171251297,
+        "test_runtime": 16.947,
+        "test_samples_per_second": 96.477
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 85.71428571428571,
+        "eval_average_metrics": 73.0,
+        "eval_f1_multiclass": 60.285714285714285,
+        "eval_loss": 0.18336069583892822,
+        "eval_runtime": 0.35,
+        "eval_samples_per_second": 80.007
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-cb",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 78.57142857142857,
+        "test_average_metrics": 66.48351648351648,
+        "test_f1_multiclass": 54.395604395604394,
+        "test_loss": 0.2799363434314728,
+        "test_runtime": 0.3233,
+        "test_samples_per_second": 86.617
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 85.93368592351506,
+        "eval_average_metrics": 85.93368592351506,
+        "eval_loss": 0.17226365208625793,
+        "eval_runtime": 30.5086,
+        "eval_samples_per_second": 322.27
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_mnli",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 85.43046357615894,
+        "test_average_metrics": 85.43046357615894,
+        "test_loss": 0.17781256139278412,
+        "test_runtime": 30.4602,
+        "test_samples_per_second": 322.224
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 87.74509803921569,
+        "eval_average_metrics": 89.42415044309539,
+        "eval_f1": 91.1032028469751,
+        "eval_loss": 0.16199710965156555,
+        "eval_runtime": 0.7045,
+        "eval_samples_per_second": 289.552
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_mrpc",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 89.70588235294117,
+        "test_average_metrics": 91.19440459110473,
+        "test_f1": 92.6829268292683,
+        "test_loss": 0.14617003500461578,
+        "test_runtime": 0.6901,
+        "test_samples_per_second": 295.608
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 95.5,
+        "eval_average_metrics": 95.5,
+        "eval_loss": 0.05094675347208977,
+        "eval_runtime": 3.1216,
+        "eval_samples_per_second": 320.346
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_qnli",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 92.97089511257552,
+        "test_average_metrics": 92.97089511257552,
+        "test_loss": 0.08156996220350266,
+        "test_runtime": 17.4225,
+        "test_samples_per_second": 313.56
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_average_metrics": 90.63138686131387,
+        "eval_em": 90.36496350364963,
+        "eval_f1": 90.89781021897811,
+        "eval_loss": 0.2141435146331787,
+        "eval_runtime": 15.7609,
+        "eval_samples_per_second": 86.924
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-record",
+    "test": {
+        "epoch": 3.0,
+        "test_average_metrics": 74.47490712152019,
+        "test_em": 73.99182920400632,
+        "test_f1": 74.95798503903406,
+        "test_loss": 0.48021578788757324,
+        "test_runtime": 161.768,
+        "test_samples_per_second": 93.813
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 71.47335423197492,
+        "eval_average_metrics": 71.47335423197492,
+        "eval_loss": 0.2988086938858032,
+        "eval_runtime": 0.8126,
+        "eval_samples_per_second": 392.589
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-wic",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 69.27899686520375,
+        "test_average_metrics": 69.27899686520375,
+        "test_loss": 0.2875460088253021,
+        "test_runtime": 0.8027,
+        "test_samples_per_second": 397.401
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 94.89999999999999,
+        "eval_average_metrics": 94.05452729693741,
+        "eval_f1": 93.20905459387484,
+        "eval_loss": 0.057457663118839264,
+        "eval_runtime": 2.733,
+        "eval_samples_per_second": 365.895
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_qqp",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 90.31659658669305,
+        "test_average_metrics": 88.64653887083897,
+        "test_f1": 86.97648115498488,
+        "test_loss": 0.09569031745195389,
+        "test_runtime": 106.5499,
+        "test_samples_per_second": 379.447
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 75.36231884057972,
+        "eval_average_metrics": 75.36231884057972,
+        "eval_loss": 0.2184353768825531,
+        "eval_runtime": 0.5022,
+        "eval_samples_per_second": 274.794
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_rte",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 69.06474820143885,
+        "test_average_metrics": 69.06474820143885,
+        "test_loss": 0.26203805208206177,
+        "test_runtime": 0.504,
+        "test_samples_per_second": 275.803
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 55.769230769230774,
+        "eval_average_metrics": 55.769230769230774,
+        "eval_loss": 0.26899516582489014,
+        "eval_runtime": 0.2241,
+        "eval_samples_per_second": 232.063
+    },
+    "repo_name": "DeltaHub/bitfit_t5-base_superglue-wsc.fixed",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 61.53846153846154,
+        "test_average_metrics": 61.53846153846154,
+        "test_loss": 0.2528702914714813,
+        "test_runtime": 0.2148,
+        "test_samples_per_second": 242.088
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 44.0,
+        "eval_average_metrics": 44.0,
+        "eval_loss": 0.28644633293151855,
+        "eval_runtime": 0.3326,
+        "eval_samples_per_second": 150.31
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-copa",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 44.0,
+        "test_average_metrics": 44.0,
+        "test_loss": 0.2822103500366211,
+        "test_runtime": 0.5342,
+        "test_samples_per_second": 93.601
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 57.99999999999999,
+        "eval_average_metrics": 57.99999999999999,
+        "eval_loss": 0.2818337678909302,
+        "eval_runtime": 0.316,
+        "eval_samples_per_second": 158.207
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-copa",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 54.0,
+        "test_average_metrics": 54.0,
+        "test_loss": 0.2671838104724884,
+        "test_runtime": 0.2712,
+        "test_samples_per_second": 184.354
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 81.15942028985508,
+        "eval_average_metrics": 81.15942028985508,
+        "eval_loss": 0.18789426982402802,
+        "eval_runtime": 0.6932,
+        "eval_samples_per_second": 199.08
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_rte",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 69.7841726618705,
+        "test_average_metrics": 69.7841726618705,
+        "test_loss": 0.23357094824314117,
+        "test_runtime": 0.4076,
+        "test_samples_per_second": 340.999
+    }
+}
+{
+    "evaluate": {
+        "epoch": 40.0,
+        "eval_accuracy": 54.0,
+        "eval_average_metrics": 54.0,
+        "eval_loss": 0.29293137788772583,
+        "eval_runtime": 0.3662,
+        "eval_samples_per_second": 136.552
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-copa",
+    "test": {
+        "epoch": 40.0,
+        "test_accuracy": 52.0,
+        "test_average_metrics": 52.0,
+        "test_loss": 0.28209835290908813,
+        "test_runtime": 0.3997,
+        "test_samples_per_second": 125.094
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 84.05797101449275,
+        "eval_average_metrics": 84.05797101449275,
+        "eval_loss": 0.16963252425193787,
+        "eval_runtime": 0.8933,
+        "eval_samples_per_second": 154.483
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_rte",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 73.38129496402878,
+        "test_average_metrics": 73.38129496402878,
+        "test_loss": 0.26427963376045227,
+        "test_runtime": 1.0271,
+        "test_samples_per_second": 135.33
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_average_metrics": 62.27396685546466,
+        "eval_em": 52.6431718061674,
+        "eval_f1": 71.90476190476191,
+        "eval_loss": 0.22205480933189392,
+        "eval_runtime": 24.5121,
+        "eval_samples_per_second": 98.89
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-multirc",
+    "test": {
+        "epoch": 3.0,
+        "test_average_metrics": 63.46612466124662,
+        "test_em": 54.44444444444444,
+        "test_f1": 72.48780487804879,
+        "test_loss": 0.19974233210086823,
+        "test_runtime": 25.265,
+        "test_samples_per_second": 95.943
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 57.44529093644265,
+        "eval_loss": 0.3295034170150757,
+        "eval_matthews_correlation": 57.44529093644265,
+        "eval_runtime": 2.7455,
+        "eval_samples_per_second": 189.766
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_cola",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": 65.53508820181627,
+        "test_loss": 0.24821974337100983,
+        "test_matthews_correlation": 65.53508820181627,
+        "test_runtime": 2.6525,
+        "test_samples_per_second": 196.792
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 97.5,
+        "eval_average_metrics": 97.5,
+        "eval_loss": 0.03714486584067345,
+        "eval_runtime": 5.7314,
+        "eval_samples_per_second": 174.477
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_sst2",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 93.34862385321101,
+        "test_average_metrics": 93.34862385321101,
+        "test_loss": 0.07569558918476105,
+        "test_runtime": 5.6934,
+        "test_samples_per_second": 153.159
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 89.89082639431217,
+        "eval_loss": 0.8983659148216248,
+        "eval_pearson": 90.00270057438823,
+        "eval_runtime": 3.833,
+        "eval_samples_per_second": 195.668,
+        "eval_spearmanr": 89.77895221423611
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_stsb",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": 90.99334935734049,
+        "test_loss": 0.8893818259239197,
+        "test_pearson": 91.06607647471132,
+        "test_runtime": 3.8231,
+        "test_samples_per_second": 196.177,
+        "test_spearmanr": 90.92062223996967
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 82.01834862385321,
+        "eval_average_metrics": 82.01834862385321,
+        "eval_loss": 0.4259894788265228,
+        "eval_runtime": 9.9487,
+        "eval_samples_per_second": 164.342
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-boolq",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 81.71253822629969,
+        "test_average_metrics": 81.71253822629969,
+        "test_loss": 0.40663307905197144,
+        "test_runtime": 9.8165,
+        "test_samples_per_second": 166.557
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 100.0,
+        "eval_average_metrics": 100.0,
+        "eval_f1_multiclass": 100.0,
+        "eval_loss": 0.007105956319719553,
+        "eval_runtime": 0.2511,
+        "eval_samples_per_second": 111.49
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-cb",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 82.14285714285714,
+        "test_average_metrics": 76.00732600732601,
+        "test_f1_multiclass": 69.87179487179488,
+        "test_loss": 0.1506887525320053,
+        "test_runtime": 0.2093,
+        "test_samples_per_second": 133.792
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_average_metrics": 91.36131386861314,
+        "eval_em": 91.0948905109489,
+        "eval_f1": 91.62773722627739,
+        "eval_loss": 0.21504777669906616,
+        "eval_runtime": 32.7505,
+        "eval_samples_per_second": 41.831
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-record",
+    "test": {
+        "epoch": 3.0,
+        "test_average_metrics": 75.00792291086177,
+        "test_em": 74.50579862941487,
+        "test_f1": 75.51004719230866,
+        "test_loss": 0.48300713300704956,
+        "test_runtime": 342.8147,
+        "test_samples_per_second": 44.269
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 70.84639498432603,
+        "eval_average_metrics": 70.84639498432603,
+        "eval_loss": 0.4690648913383484,
+        "eval_runtime": 1.8144,
+        "eval_samples_per_second": 175.82
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-wic",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 67.7115987460815,
+        "test_average_metrics": 67.7115987460815,
+        "test_loss": 0.48792609572410583,
+        "test_runtime": 1.6468,
+        "test_samples_per_second": 193.706
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 59.61538461538461,
+        "eval_average_metrics": 59.61538461538461,
+        "eval_loss": 0.2665896713733673,
+        "eval_runtime": 0.3622,
+        "eval_samples_per_second": 143.571
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_superglue-wsc.fixed",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 67.3076923076923,
+        "test_average_metrics": 67.3076923076923,
+        "test_loss": 0.25851768255233765,
+        "test_runtime": 0.3561,
+        "test_samples_per_second": 146.039
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 86.3506916192026,
+        "eval_average_metrics": 86.3506916192026,
+        "eval_loss": 0.16203464567661285,
+        "eval_runtime": 45.0247,
+        "eval_samples_per_second": 218.369
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_mnli",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 85.93988792664288,
+        "test_average_metrics": 85.93988792664288,
+        "test_loss": 0.1660582423210144,
+        "test_runtime": 45.3162,
+        "test_samples_per_second": 216.589
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 88.72549019607843,
+        "eval_average_metrics": 90.18092691622104,
+        "eval_f1": 91.63636363636364,
+        "eval_loss": 0.3694871664047241,
+        "eval_runtime": 1.0502,
+        "eval_samples_per_second": 194.246
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_mrpc",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 89.70588235294117,
+        "test_average_metrics": 91.19440459110473,
+        "test_f1": 92.6829268292683,
+        "test_loss": 0.2836102843284607,
+        "test_runtime": 1.0233,
+        "test_samples_per_second": 199.347
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 96.2,
+        "eval_average_metrics": 96.2,
+        "eval_loss": 0.04570974037051201,
+        "eval_runtime": 4.807,
+        "eval_samples_per_second": 208.03
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_qnli",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 93.3919092073952,
+        "test_average_metrics": 93.3919092073952,
+        "test_loss": 0.07689828425645828,
+        "test_runtime": 25.7399,
+        "test_samples_per_second": 212.239
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 95.0,
+        "eval_average_metrics": 94.22774869109946,
+        "eval_f1": 93.45549738219894,
+        "eval_loss": 0.055720701813697815,
+        "eval_runtime": 4.796,
+        "eval_samples_per_second": 208.506
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_qqp",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 90.3141231758595,
+        "test_average_metrics": 88.72727044120705,
+        "test_f1": 87.14041770655459,
+        "test_loss": 0.09215616434812546,
+        "test_runtime": 180.597,
+        "test_samples_per_second": 223.869
+    }
+}
+{
+    "evaluate": {
+        "epoch": 40.0,
+        "eval_accuracy": 56.00000000000001,
+        "eval_average_metrics": 56.00000000000001,
+        "eval_loss": 0.2841435670852661,
+        "eval_runtime": 0.1691,
+        "eval_samples_per_second": 295.754
+    },
+    "repo_name": "DeltaHub/lora_t5-base_superglue-copa",
+    "test": {
+        "epoch": 40.0,
+        "test_accuracy": 46.0,
+        "test_average_metrics": 46.0,
+        "test_loss": 0.28717461228370667,
+        "test_runtime": 0.1705,
+        "test_samples_per_second": 293.321
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 79.71014492753623,
+        "eval_average_metrics": 79.71014492753623,
+        "eval_loss": 0.197319895029068,
+        "eval_runtime": 0.4864,
+        "eval_samples_per_second": 283.724
+    },
+    "repo_name": "DeltaHub/lora_t5-base_rte",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 74.10071942446042,
+        "test_average_metrics": 74.10071942446042,
+        "test_loss": 0.26827195286750793,
+        "test_runtime": 0.5298,
+        "test_samples_per_second": 262.364
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_average_metrics": 60.857599011286666,
+        "eval_em": 51.43171806167401,
+        "eval_f1": 70.28347996089931,
+        "eval_loss": 0.22655807435512543,
+        "eval_runtime": 10.1047,
+        "eval_samples_per_second": 239.889
+    },
+    "repo_name": "DeltaHub/lora_t5-base_superglue-multirc",
+    "test": {
+        "epoch": 3.0,
+        "test_average_metrics": 63.215277777777786,
+        "test_em": 54.55555555555556,
+        "test_f1": 71.87500000000001,
+        "test_loss": 0.203966423869133,
+        "test_runtime": 9.7935,
+        "test_samples_per_second": 247.511
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 57.902262138819246,
+        "eval_loss": 0.2198752462863922,
+        "eval_matthews_correlation": 57.902262138819246,
+        "eval_runtime": 1.3277,
+        "eval_samples_per_second": 392.409
+    },
+    "repo_name": "DeltaHub/lora_t5-base_cola",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": 61.27027027626618,
+        "test_loss": 0.1835356056690216,
+        "test_matthews_correlation": 61.27027027626618,
+        "test_runtime": 1.3239,
+        "test_samples_per_second": 394.284
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 97.6,
+        "eval_average_metrics": 97.6,
+        "eval_loss": 0.03748689219355583,
+        "eval_runtime": 2.6703,
+        "eval_samples_per_second": 374.495
+    },
+    "repo_name": "DeltaHub/lora_t5-base_sst2",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 93.92201834862385,
+        "test_average_metrics": 93.92201834862385,
+        "test_loss": 0.08110664039850235,
+        "test_runtime": 2.2836,
+        "test_samples_per_second": 381.859
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 89.90408584602017,
+        "eval_loss": 0.914948582649231,
+        "eval_pearson": 90.04884073691129,
+        "eval_runtime": 2.1319,
+        "eval_samples_per_second": 351.799,
+        "eval_spearmanr": 89.75933095512906
+    },
+    "repo_name": "DeltaHub/lora_t5-base_stsb",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": 91.27398913022981,
+        "test_loss": 0.8938188552856445,
+        "test_pearson": 91.4277941944004,
+        "test_runtime": 1.9799,
+        "test_samples_per_second": 378.807,
+        "test_spearmanr": 91.1201840660592
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 78.57142857142857,
+        "eval_average_metrics": 66.90057254573384,
+        "eval_f1_multiclass": 55.2297165200391,
+        "eval_loss": 0.2207871675491333,
+        "eval_runtime": 0.1861,
+        "eval_samples_per_second": 150.423
+    },
+    "repo_name": "DeltaHub/lora_t5-base_superglue-cb",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 75.0,
+        "test_average_metrics": 63.425925925925924,
+        "test_f1_multiclass": 51.85185185185185,
+        "test_loss": 0.3028513491153717,
+        "test_runtime": 0.1302,
+        "test_samples_per_second": 215.005
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_average_metrics": 91.5316301703163,
+        "eval_em": 91.31386861313868,
+        "eval_f1": 91.74939172749393,
+        "eval_loss": 0.21630385518074036,
+        "eval_runtime": 17.5426,
+        "eval_samples_per_second": 78.095
+    },
+    "repo_name": "DeltaHub/lora_t5-base_superglue-record",
+    "test": {
+        "epoch": 3.0,
+        "test_average_metrics": 74.69969814494064,
+        "test_em": 74.2488139167106,
+        "test_f1": 75.15058237317066,
+        "test_loss": 0.4815940260887146,
+        "test_runtime": 190.5907,
+        "test_samples_per_second": 79.626
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 87.74509803921569,
+        "eval_average_metrics": 89.45558788886581,
+        "eval_f1": 91.16607773851591,
+        "eval_loss": 0.17127306759357452,
+        "eval_runtime": 1.0366,
+        "eval_samples_per_second": 196.794
+    },
+    "repo_name": "DeltaHub/compacter_t5-base_mrpc",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 89.70588235294117,
+        "test_average_metrics": 91.21972318339101,
+        "test_f1": 92.73356401384083,
+        "test_loss": 0.15034113824367523,
+        "test_runtime": 1.0557,
+        "test_samples_per_second": 193.24
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 70.21943573667711,
+        "eval_average_metrics": 70.21943573667711,
+        "eval_loss": 0.377194344997406,
+        "eval_runtime": 1.4269,
+        "eval_samples_per_second": 223.566
+    },
+    "repo_name": "DeltaHub/lora_t5-base_superglue-wic",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 66.4576802507837,
+        "test_average_metrics": 66.4576802507837,
+        "test_loss": 0.3800888955593109,
+        "test_runtime": 1.4433,
+        "test_samples_per_second": 221.015
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 46.15384615384615,
+        "eval_average_metrics": 46.15384615384615,
+        "eval_loss": 0.27444738149642944,
+        "eval_runtime": 0.1862,
+        "eval_samples_per_second": 279.252
+    },
+    "repo_name": "DeltaHub/lora_t5-base_superglue-wsc.fixed",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 51.92307692307693,
+        "test_average_metrics": 51.92307692307693,
+        "test_loss": 0.26485979557037354,
+        "test_runtime": 0.1786,
+        "test_samples_per_second": 291.214
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 86.49308380797396,
+        "eval_average_metrics": 86.49308380797396,
+        "eval_loss": 0.16121388971805573,
+        "eval_runtime": 52.4458,
+        "eval_samples_per_second": 187.47
+    },
+    "repo_name": "DeltaHub/lora_t5-base_mnli",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 86.13346917982679,
+        "test_average_metrics": 86.13346917982679,
+        "test_loss": 0.16391275823116302,
+        "test_runtime": 54.1682,
+        "test_samples_per_second": 181.195
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 88.72549019607843,
+        "eval_average_metrics": 90.21112054930276,
+        "eval_f1": 91.69675090252709,
+        "eval_loss": 0.1689463108778,
+        "eval_runtime": 1.0999,
+        "eval_samples_per_second": 185.465
+    },
+    "repo_name": "DeltaHub/lora_t5-base_mrpc",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 89.70588235294117,
+        "test_average_metrics": 91.21972318339101,
+        "test_f1": 92.73356401384083,
+        "test_loss": 0.16021619737148285,
+        "test_runtime": 1.066,
+        "test_samples_per_second": 191.365
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 95.89999999999999,
+        "eval_average_metrics": 95.89999999999999,
+        "eval_loss": 0.047297026962041855,
+        "eval_runtime": 5.5306,
+        "eval_samples_per_second": 180.811
+    },
+    "repo_name": "DeltaHub/lora_t5-base_qnli",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 93.37360424675087,
+        "test_average_metrics": 93.37360424675087,
+        "test_loss": 0.07980198413133621,
+        "test_runtime": 29.6258,
+        "test_samples_per_second": 184.4
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 56.912064820367746,
+        "eval_loss": 0.24836312234401703,
+        "eval_matthews_correlation": 56.912064820367746,
+        "eval_runtime": 2.4811,
+        "eval_samples_per_second": 209.989
+    },
+    "repo_name": "DeltaHub/compacter_t5-base_cola",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": 61.73456736274097,
+        "test_loss": 0.20308539271354675,
+        "test_matthews_correlation": 61.73456736274097,
+        "test_runtime": 2.5471,
+        "test_samples_per_second": 204.939
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 94.8,
+        "eval_average_metrics": 93.91474530831098,
+        "eval_f1": 93.02949061662198,
+        "eval_loss": 0.05708872899413109,
+        "eval_runtime": 4.1367,
+        "eval_samples_per_second": 241.739
+    },
+    "repo_name": "DeltaHub/lora_t5-base_qqp",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 90.38585209003216,
+        "test_average_metrics": 88.69183890669864,
+        "test_f1": 86.99782572336511,
+        "test_loss": 0.09190108627080917,
+        "test_runtime": 189.6296,
+        "test_samples_per_second": 213.205
+    }
+}
