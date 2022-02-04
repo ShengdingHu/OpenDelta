@@ -1,4 +1,4 @@
-# Apping OpenDelta to GLUE/SuperGLUE tasks using Seq2Seq Paradigm
+# Appling OpenDelta to GLUE/SuperGLUE tasks using Seq2Seq Paradigm
 
 
 ## install the repo
@@ -11,10 +11,10 @@ This will add `examples_seq2seq` to the environment path of the python lib.
 ## Generating the json configuration file
 
 ```
-python config_gen --job $job_name
+python config_gen.py --job $job_name
 
 ```
-The available job configuration (e.g., `--job lora_t5-base`) can be seen from the file. You can also
+The available job configuration (e.g., `--job lora_t5-base`) can be seen from `config_gen.py`. You can also
 create your only configuration.
 
 

@@ -5,10 +5,10 @@ This repository contains the examples that uses OpenDelta to do text-classificat
 ## Generating the json configuration file
 
 ```
-python config_gen --job $job_name
+python config_gen.py --job $job_name
 
 ```
-The available job configuration (e.g., `--job lora_roberta-base`) can be seen from the file. You can also
+The available job configuration (e.g., `--job lora_roberta-base`) can be seen from `config_gen.py`. You can also
 create your only configuration.
 
 
