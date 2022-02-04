@@ -38,7 +38,7 @@ from transformers import (
 )
 from transformers.trainer_utils import is_main_process, get_last_checkpoint
 # from ..seq2seq.utils import get_adapter_config
-from examples_seq2seq.data import AutoTask, TaskDataCollatorForSeq2Seq, AutoPostProcessor
+from examples_seq2seq.data_processors import AutoTask, TaskDataCollatorForSeq2Seq, AutoPostProcessor
 from examples_seq2seq.seq2seq_trainer import Seq2SeqTrainer
 # from training_args import AdapterTrainingArguments
 from examples_seq2seq.trainers.trainer_utils import save_training_config 
@@ -186,9 +186,6 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
-    # config.train_task_adapters = False #adapter_args.train_task_adapters
-    # config.prefix_tuning = adapter_args.prefix_tuning
-    # adapter_config = get_adapter_config(adapter_args, data_args, training_args, config)
     tokenizer = AutoTokenizer.from_pretrained(
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
@@ -203,19 +200,15 @@ def main():
         cache_dir=model_args.cache_dir,
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
-        # adapter_config=adapter_config
     )
     model.resize_token_embeddings(len(tokenizer))
-    # model = modify_model_after_init(model, training_args, adapter_args)
 
-
-    from opendelta import AutoDeltaConfig,AutoDeltaModel, Visualization
-    # from IPython import embed
-    # embed()
-    delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
-    delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
-    delta_model.freeze_module(set_state_dict = True)
-    delta_model.log(delta_ratio=True, trainable_ratio=True, visualization=True)
+    if delta_args.delta_type.lower() != "none":
+        from opendelta import AutoDeltaConfig,AutoDeltaModel, Visualization
+        delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
+        delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
+        delta_model.freeze_module(set_state_dict = True)
+        delta_model.log(delta_ratio=True, trainable_ratio=True, visualization=True)
 
 
 

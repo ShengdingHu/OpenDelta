@@ -231,6 +231,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         """
         if exclude is None:
             exclude = self.unfrozen_modules
+
         if module is None:
             module = self.backbone_model
         self._freeze_module_recursive(module, exclude, "")           # modify the active state dict that still need grad

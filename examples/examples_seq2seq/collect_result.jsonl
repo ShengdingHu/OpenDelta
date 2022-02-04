@@ -1024,3 +1024,81 @@
         "test_samples_per_second": 213.205
     }
 }
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 5.2403792080191325,
+        "eval_loss": 1.1807892322540283,
+        "eval_matthews_correlation": 5.2403792080191325,
+        "eval_runtime": 1.7813,
+        "eval_samples_per_second": 292.475
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-base_cola",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": -0.096653682251481,
+        "test_loss": 1.1754359006881714,
+        "test_matthews_correlation": -0.096653682251481,
+        "test_runtime": 1.7308,
+        "test_samples_per_second": 301.593
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 60.099999999999994,
+        "eval_average_metrics": 60.099999999999994,
+        "eval_loss": 0.2783910036087036,
+        "eval_runtime": 3.2954,
+        "eval_samples_per_second": 303.458
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-base_sst2",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 58.142201834862384,
+        "test_average_metrics": 58.142201834862384,
+        "test_loss": 0.2752912938594818,
+        "test_runtime": 3.1391,
+        "test_samples_per_second": 277.783
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 90.60000000000001,
+        "eval_average_metrics": 90.60000000000001,
+        "eval_loss": 0.11301000416278839,
+        "eval_runtime": 3.3901,
+        "eval_samples_per_second": 294.978
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-base_sst2",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 86.23853211009175,
+        "test_average_metrics": 86.23853211009175,
+        "test_loss": 0.15222440659999847,
+        "test_runtime": 3.042,
+        "test_samples_per_second": 286.657
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 68.62745098039215,
+        "eval_average_metrics": 75.01139990880073,
+        "eval_f1": 81.3953488372093,
+        "eval_loss": 0.2730332911014557,
+        "eval_runtime": 0.6851,
+        "eval_samples_per_second": 297.77
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-base_mrpc",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 68.13725490196079,
+        "test_average_metrics": 74.59340879208827,
+        "test_f1": 81.04956268221575,
+        "test_loss": 0.2731962502002716,
+        "test_runtime": 0.9311,
+        "test_samples_per_second": 219.091
+    }
+}

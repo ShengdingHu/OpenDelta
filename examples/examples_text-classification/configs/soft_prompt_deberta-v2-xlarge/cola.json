@@ -1,0 +1,45 @@
+{
+    "dataset_config_name": [
+        "en"
+    ],
+    "delta_type": "soft_prompt",
+    "do_eval": true,
+    "do_test": true,
+    "do_train": true,
+    "eval_dataset_config_name": [
+        "en"
+    ],
+    "eval_dataset_name": "cola",
+    "eval_steps": 100,
+    "evaluation_strategy": "steps",
+    "gradient_accumulation_steps": 4,
+    "greater_is_better": true,
+    "learning_rate": 0.03,
+    "load_best_model_at_end": true,
+    "max_source_length": 128,
+    "metric_for_best_model": "eval_accuracy",
+    "model_name_or_path": "microsoft/deberta-v2-xlarge",
+    "num_train_epochs": 20,
+    "output_dir": "outputs/soft_prompt/deberta-v2-xlarge/cola",
+    "overwrite_output_dir": true,
+    "per_device_eval_batch_size": 16,
+    "per_device_train_batch_size": 16,
+    "predict_with_generate": true,
+    "push_to_hub": true,
+    "save_steps": 100,
+    "save_strategy": "steps",
+    "save_total_limit": 1,
+    "seed": 42,
+    "soft_token_num": 100,
+    "task_name": "cola",
+    "test_dataset_config_name": [
+        "en"
+    ],
+    "test_dataset_name": "cola",
+    "tokenizer_name": "microsoft/deberta-v2-xlarge",
+    "unfrozen_modules": [
+        "deltas",
+        "classifier"
+    ],
+    "warmup_steps": 0
+}

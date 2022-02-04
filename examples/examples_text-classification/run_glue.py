@@ -371,14 +371,18 @@ def main():
         use_auth_token=True if model_args.use_auth_token else None,
     )
 
+    if delta_args.delta_type.lower() != "none":
+        from opendelta import AutoDeltaConfig
+        from opendelta.auto_delta import AutoDeltaModel
+        delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
+        delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
+        delta_model.freeze_module(set_state_dict = True)
+        delta_model.log(delta_ratio=True, trainable_ratio=True, visualization=True)
 
-    from opendelta import AutoDeltaConfig
-    from opendelta.auto_delta import AutoDeltaModel
-    delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
-    delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
-    delta_model.freeze_module(exclude = delta_args.unfrozen_modules, set_state_dict = True)
-    from opendelta.utils.visualization import Visualization
-    Visualization(model).structure_graph()
+
+
+
+
 
 
     
@@ -546,6 +550,7 @@ def main():
         trainer.save_metrics("train", metrics)
         trainer.save_state()
 
+    results = {}
     # Evaluation
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
@@ -567,6 +572,7 @@ def main():
 
             trainer.log_metrics("eval", metrics)
             trainer.save_metrics("eval", metrics)
+        results.append(metrics)
 
     if training_args.do_predict:
         logger.info("*** Predict ***")
@@ -595,6 +601,7 @@ def main():
                         else:
                             item = label_list[item]
                             writer.write(f"{index}\t{item}\n")
+        
 
     # kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "text-classification"}
     # if data_args.task_name is not None:
