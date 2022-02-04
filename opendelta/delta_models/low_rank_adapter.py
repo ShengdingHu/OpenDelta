@@ -122,14 +122,12 @@ class LowRankAdapterModel(DeltaBase, nn.Module):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 registration_name: Optional[str] = "deltas",
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
-                           registration_name=registration_name
                            )
         arg_names = get_arg_names_inside_func(self.__init__)
         for arg_name in arg_names:
@@ -140,20 +138,17 @@ class LowRankAdapterModel(DeltaBase, nn.Module):
 
         self.add_all_delta_to_backbone(self.backbone_model,
                                    self.modified_modules,
-                                   self.registration_name)
+                                   )
     
         
     def add_all_delta_to_backbone(self, 
-                 module: nn.Module, 
-                 modified_modules: List[str],
-                 registration_name: Optional[str] = "deltas"
-                ) -> nn.Module:
+                                module: nn.Module, 
+                                modified_modules: List[str],
+                                ) -> nn.Module:
         for key, _ in module.named_modules():
             if self.find_key(key, modified_modules):
-                # print("find key",key)
                 self.update_module(module, key)
         self._pseudo_data_to_instantiate(module)
-        # setattr(module, registration_name, self)
         self.mark_as_delta()
         return module
     

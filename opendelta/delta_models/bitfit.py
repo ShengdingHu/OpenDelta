@@ -83,14 +83,12 @@ class BitFitModel(DeltaBase, nn.Module):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 registration_name: Optional[str] = "deltas",
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
-                           registration_name=registration_name
                            )
         arg_names = get_arg_names_inside_func(self.__init__)
         for arg_name in arg_names:
@@ -101,8 +99,8 @@ class BitFitModel(DeltaBase, nn.Module):
         self.delta_modules = nn.ModuleList()
 
         self.add_all_delta_to_backbone(self.backbone_model,
-                                   self.modified_modules,
-                                   self.registration_name)
+                                       self.modified_modules,
+                                   )
     
     
     def update_module(self, module: nn.Module, key: str):
@@ -149,9 +147,7 @@ class BitFitModel(DeltaBase, nn.Module):
         new_bias = BiasLayer()
         self.insert_sequential_module(c, pre_caller=None, post_caller=new_bias.forward, delta_module=new_bias, name="bias")
         self.delta_modules.append(new_bias)
-    # def _pseudo_data_to_instantiate(self, module):
-    #     # no need to pass pseudo input
-        
+
 
     
     @staticmethod
@@ -160,6 +156,3 @@ class BitFitModel(DeltaBase, nn.Module):
         bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
         init.uniform_(linear_module.bias, -bound, bound)
     
-    def register_delta_if_new(self, module: nn.Module, registration_name: Optional[str] = "deltas"):
-        # The BiasModel is not new to the backbone model. 
-        return

@@ -140,14 +140,12 @@ class SoftPromptModel(DeltaBase):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 registration_name: Optional[str] = "deltas",
                 ):
         DeltaBase.__init__(self, 
                            backbone_model = backbone_model,
                            modified_modules = ["root"],
                            unfrozen_modules = unfrozen_modules,
                            common_structure = False,
-                           registration_name = registration_name,
                           )
 
         arg_names = get_arg_names_inside_func(self.__init__)

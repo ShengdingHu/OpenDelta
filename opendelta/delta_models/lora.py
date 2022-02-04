@@ -41,14 +41,12 @@ class LoraModel(DeltaBase):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 registration_name: Optional[str] = "deltas",
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
-                           registration_name=registration_name
                            )
         arg_names = get_arg_names_inside_func(self.__init__)
         for arg_name in arg_names:
@@ -59,7 +57,7 @@ class LoraModel(DeltaBase):
 
         self.add_all_delta_to_backbone(self.backbone_model,
                                    self.modified_modules,
-                                   self.registration_name)
+                                   )
     
     
     
@@ -104,7 +102,5 @@ class LoraModel(DeltaBase):
             if "lora_A" in param_name or "lora_B" in param_name: # only lora_A, lora_B is the delta parameter.
                 setattr(p, "_is_delta", True)
     
-    def register_delta_if_new(self, module: nn.Module, registration_name: Optional[str] = "deltas"):
-        # Do nothing since lora modules is a part of the original module.
-        pass
+
         

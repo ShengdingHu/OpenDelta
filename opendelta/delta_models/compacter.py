@@ -173,7 +173,6 @@ class CompacterModel(DeltaBase, nn.Module):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 registration_name: Optional[str] = "deltas",
                  structure_mapping=None,
                  reduction_factor=16, 
                  non_linearity="gelu_new", 
@@ -196,7 +195,6 @@ class CompacterModel(DeltaBase, nn.Module):
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
-                           registration_name=registration_name
                            )
         assert shared_phm_rule == False, "In opendelta version {opendelta.__version__}, "\
             "shared_phm_rule is not supported. Later, sharing parameters will be tackled using"\
@@ -213,20 +211,17 @@ class CompacterModel(DeltaBase, nn.Module):
 
         self.add_all_delta_to_backbone(self.backbone_model,
                                    self.modified_modules,
-                                   self.registration_name)
+                                   )
   
 
     def add_all_delta_to_backbone(self, 
                  module: nn.Module, 
                  modified_modules: List[str],
-                 registration_name: Optional[str] = "deltas"
                 ) -> nn.Module:
         for key, _ in module.named_modules():
             if self.find_key(key, modified_modules):
-                # print("find key",key)
                 self.update_module(module, key)
         self._pseudo_data_to_instantiate(module)
-        # setattr(module, registration_name, self)
         self.mark_as_delta()
         return module
     

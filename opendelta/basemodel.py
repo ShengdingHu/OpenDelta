@@ -81,7 +81,6 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                  backbone_model: nn.Module,
                  modified_modules: Optional[List[str]] = None,
                  unfrozen_modules: Optional[List[str]] = None,
-                 registration_name: Optional[str] = "deltas",
                  common_structure=False,
                  ):
         nn.Module.__init__(self)
@@ -100,7 +99,6 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             self.structure_mapping = None
         if unfrozen_modules is None:
             self.unfrozen_modules = self.default_unfrozen_modules
-        self.registration_name = registration_name
         if self.common_structure and self.structure_mapping is None:
             raise RuntimeError("Using common structure but the structure mapping is None")
         
@@ -144,11 +142,9 @@ class DeltaBase(nn.Module, SaveLoadMixin):
     def add_all_delta_to_backbone(self, 
                  backbone: nn.Module, 
                  modified_modules: List[str],
-                 registration_name: Optional[str] = "deltas",
                 ) -> nn.Module:
         r"""The main function to add delta models to the backbone model based on the :obj:`modified_modules`.
-        If the delta models is added as a new module (e.g., adapter) instead of a existing module (e.g, Lora, BitFit)
-        the root name of the delta model in the backbone is named as :string:`registration_name`.
+        
 
         Args:
             backbone_model (:obj:`nn.Module`, *required*)  backbone model that the delta models are build opon. The 
@@ -157,8 +153,6 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                 leave this argument :obj:`None` will make the delta model return to the default setting, which add the delta
                 models to the position experimented the paper. In this setting, the common structure mapping is loaded to 
                 addressing the corresponding modules.
-            registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`) The root name of the delta models when
-                attached to the backbone model. 
 
         Returns:
             :obj:`nn.Module` The modified backbone model.
@@ -173,9 +167,6 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                 print("find key",key)
                 self.update_module(backbone, key)
         self._pseudo_data_to_instantiate(backbone)
-        # if the delta parameters are not contained in the original models parameters
-        # we need to register it to the module
-        # self.register_delta_if_new(backbone, registration_name)
         # mark the paratmers that are the delta parameters for easily 
         # extracting the delta_paramters.
         # This is important if the delta parameters are contained in the
@@ -183,11 +174,6 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         self.mark_as_delta()
         return backbone
     
-    def register_delta_if_new(self, module: nn.Module, registration_name: Optional[str] = "deltas"):
-        r"""[NODOC] register a delta if it is added as a new module (e.g., adapter) instead of a existing module 
-        (e.g, Lora, BitFit)
-        """
-        setattr(module, registration_name, self)
 
     
     def mark_as_delta(self, module: nn.Module=None,):

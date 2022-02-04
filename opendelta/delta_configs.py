@@ -71,9 +71,6 @@ class BaseDeltaConfig(PushToHubMixin):
                 the third layer's feed forward layer's send linear layer, the detla modules, and the classifiers modules
                 tunable.  
         
-        registration_name (:obj:`str`, *optional*, default to :obj:`"deltas"`): The name of the delta module when 
-                registered into the backbone model.
-        
         common_structure (:obj:`bool`, *optional*, default to :obj:`None`): Whether using the common structure mapping of
                 the transformer model when designating :obj:`modified_modules` and :obj:`unfrozen_modules`.
         backbone_class (:obj:`str`, *optional*, default to :obj:`None`): The name of backbone model's class, e.g.
@@ -93,7 +90,6 @@ class BaseDeltaConfig(PushToHubMixin):
     def __init__(self, 
                  modified_modules = None,
                  unfrozen_modules = ["deltas"],
-                 registration_name = "deltas",
                  common_structure=False,
                  backbone_class = None,
                  backbone_checkpoint_name = None,
