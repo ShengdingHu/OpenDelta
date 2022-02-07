@@ -24,7 +24,7 @@ import opendelta.delta_models
 # -- Project information -----------------------------------------------------
 
 project = 'OpenDelta'
-copyright = '2021, Shengding Hu, Ning Ding, Yujia Qin'
+copyright = '2021, Tsinghua NLP lab'
 author = 'THUNLP OpenDelta Team'
 
 # The full version, including alpha/beta/rc tags
@@ -56,6 +56,14 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx_copybutton',
     'myst_parser',
+]
+
+myst_enable_extensions = [
+    "html_image", 
+    "colon_fence", 
+    "html_admonition",
+    "amsmath",
+    "dollarmath",
 ]
 
 source_suffix = {

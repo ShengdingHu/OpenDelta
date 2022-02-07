@@ -14,9 +14,14 @@ OpenDelta is a library of the parameter-efficient fine-tuning technology for pre
    :caption: Getting Started
 
    notes/overview.md
+   notes/installation.md
    notes/basics.md
+   notes/keyfeature.md
    notes/visualization.md
+   notes/saveload.md
    notes/autodelta.md
+   notes/pluginunplug.md
+   notes/citation.md
 
 .. toctree::
    :maxdepth: 2

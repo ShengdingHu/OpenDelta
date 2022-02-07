@@ -1,0 +1,30 @@
+{
+  "backbone_checkpoint_name": "bert-base-uncased",
+  "backbone_class": "BertForMaskedLM",
+  "backbone_hash": "4fd86ebfdba82e4816c1706b2bb16f11",
+  "bottleneck_dim": null,
+  "common_structure": true,
+  "delta_type": "compacter",
+  "factorized_phm": true,
+  "factorized_phm_rule": false,
+  "hypercomplex_division": 4,
+  "hypercomplex_nonlinearity": "glorot-uniform",
+  "kronecker_prod": null,
+  "learn_phm": true,
+  "modified_modules": [
+    "attn",
+    "ff"
+  ],
+  "non_linearity": "gelu_new",
+  "opendelta_version": "0.0.1",
+  "phm_c_init": "normal",
+  "phm_init_range": 0.0001,
+  "phm_rank": 1,
+  "reduction_factor": 16,
+  "sequential": null,
+  "shared_W_phm": false,
+  "shared_phm_rule": false,
+  "transformers_version": "4.16.0.dev0",
+  "use_bias_down_sampler": true,
+  "use_bias_up_sampler": true
+}

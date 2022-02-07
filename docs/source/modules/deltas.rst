@@ -5,12 +5,36 @@ Delta Models
 Lora
 ---------------------------------------
 
-.. currentmodule:: opendelta.delta_models
-
-:obj:'LoraModel' is 
-
-.. autoclass:: opendelta.delta_models.lora.LoraModel
+.. autoclass:: opendelta.LoraModel
     :members:
 
-.. autoclass:: opendelta.delta_models.lora.LoraConfig
+
+BitFit
+---------------------------------------
+.. autoclass:: opendelta.BitFitModel
+    :members:
+
+Adapter
+---------------------------
+.. autoclass:: opendelta.AdapterModel
+    :members:
+
+LowRankAdapter
+---------------------------
+.. autoclass:: opendelta.LowRankModel
+    :members:
+
+Compacter
+----------------
+.. autoclass:: opendelta.CompacterModel
+    :members:
+
+Prefix tuning
+---------------
+.. autoclass:: opendelta.PrefixModel
+    :members:
+
+Soft Prompt Tuning
+---------------
+.. autoclass:: opendelta.PrefixModel
     :members:

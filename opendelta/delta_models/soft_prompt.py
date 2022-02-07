@@ -1,5 +1,3 @@
-
-from git import refresh
 from opendelta.utils.signature import get_arg_names, get_arg_names_inside_func
 from opendelta.utils.utils import *
 from opendelta.utils.cuda import get_device

@@ -177,7 +177,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
     
     def mark_as_delta(self, module: nn.Module=None,):
-        r""" Mark :obj:`module`'s all parameters as delta parameters by setting a :string:`_is_delta`  attribute to each of them.
+        r"""[NODOC] Mark :obj:`module`'s all parameters as delta parameters by setting a :string:`_is_delta`  attribute to each of them.
         Generally, it is used after creating the delta modules. By leaving module to :obj:`None`, it will mark all the parameters in the 
         delta model as :string:`_is_delta`.
 
@@ -200,7 +200,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                       exclude: Optional[List[str]] = None, 
                       set_state_dict: Optional[bool]=True, 
                       ):
-        r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
+        r"""(meth_freeze_module)=
+        Freeze the parameters of plm. Leave the parameters in exclude untouched.
         deltas module is filtered with `_is_delta` attributes because it may have parameter sharing to the main 
         model, (e.g., bias term)
 
@@ -228,7 +229,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                       module: Optional[nn.Module] = None, 
                       exclude: Optional[List[str]] = None,
                       prefix=""):
-        r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
+        r"""[NODOC] Freeze the parameters of plm. Leave the parameters in exclude untouched.
         deltas module is filtered with `_is_delta` attributes because it may have parameter sharing to the main 
         model, (e.g., bias term)
 
@@ -267,7 +268,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
 
     def find_key(self, key: Union[str, re.Pattern], target_list: List[str], only_tail=True):
-        r"""Check whether any target string is in the key or in the tail of the key, i.e., 
+        r"""[NODOC] Check whether any target string is in the key or in the tail of the key, i.e., 
 
         Returns: 
             :obj:`bool` True if the key matchs the target list.
@@ -292,7 +293,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             embed(header = "exception")
 
     def _pseudo_data_to_instantiate(self, module):
-        r"""[NODOC] Create a pseudo_data into the module to know the dimemsion of each tensor in the computation graph.
+        r"""Create a pseudo_data into the module to know the dimemsion of each tensor in the computation graph.
         #TODO: To test more data input format, i.e. may need to pass more than inputs/decoder_input_ids.
         """
         device = get_device(module)
@@ -303,7 +304,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             module(pseudo_input)
 
     def trainable_parameters_names(self, module: Optional[nn.Module]=None):
-        r"""A small sugar function to return all the trainable parameter's name in the (by default, backbone) model.
+        r"""[NODOC] A small sugar function to return all the trainable parameter's name in the (by default, backbone) model.
 
         Args: 
             module (:obj:`nn.Module`): of which module we want to know the trainable paramemters' name.
@@ -316,7 +317,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         return [n for n,p in module.named_parameters() if p.requires_grad]
     
     def frozen_parameters_names(self, module: Optional[nn.Module]=None):
-        r"""A small sugar function to return all the frozen parameters' name in the (by default, backbone) model.
+        r"""[NODOC] A small sugar function to return all the frozen parameters' name in the (by default, backbone) model.
 
         Args: 
             module (:obj:`nn.Module`): of which module we want to know the frozen paramemters' name.
@@ -329,7 +330,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         return [n for n,p in module.named_parameters() if not p.requires_grad]
 
     def trainable_parameters(self,module: Optional[nn.Module]=None):
-        r"""A small sugar function to return all the frozen parameters in the (by default, backbone) model.
+        r"""[NODOC] A small sugar function to return all the frozen parameters in the (by default, backbone) model.
 
         Args: 
             module (:obj:`nn.Module`): of which module we want to know the frozen paramemters.
@@ -343,7 +344,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
 
     def num_trainable_parameters(self, module: Optional[nn.Module]=None):
-        r"""A small sugar function to get the number of trainable parameter in the backbone model. Often used to 
+        r"""[NODOC] A small sugar function to get the number of trainable parameter in the backbone model. Often used to 
         compute the trainable rate.
 
         Args: 
@@ -361,7 +362,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         return pnum_tot
     
     def num_total_parameters(self, module: Optional[nn.Module]=None):
-        r"""A small sugar function to get the number of trainable parameter in the backbone model. Often used to 
+        r"""[NODOC] A small sugar function to get the number of trainable parameter in the backbone model. Often used to 
         compute the trainable rate.
 
         Args: 
@@ -422,7 +423,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         raise NotImplementedError
 
     def insert_sequential_module(self, module, pre_caller=None, post_caller=None, delta_module=None, name='delta'):
-        r"""insert a module (previous not exists in the code base) before a module. Specifically, it modifies the forward 
+        r"""insert a module (previous not exists in the code base) before/after a module. Specifically, it modifies the forward 
         function of the original module to  firstly pass the arguments into the new module's forward function and then pass
         it into the original ones. The new module can also be inserted after the original module with similar mechanism. 
 
@@ -444,9 +445,14 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
     
 
-    def insert_parrellel_module(self, ):
-        # TODO
-        pass
+    def insert_parrellel_module(self, module, pre_caller=None, post_caller=None, delta_module=None, name='delta'):
+        """insert a module (previous not exists in the code base) across a module. Specifically, it modifies the forward 
+        function of the original module to  firstly pass the arguments into the delta model's forward function and set 
+        aside the calculation result. Then combine it with the calculation result output from the backbone module.
+
+        When implementing the new module , researchers should be aware of the arguments and keywards of the original module's forward function.
+        """
+        raise NotImplementedError
 
     def set_active_state_dict(self, module: nn.Module):
         r"""modify the state_dict function of the model (by default, the backbone model) to return only the tunable part.

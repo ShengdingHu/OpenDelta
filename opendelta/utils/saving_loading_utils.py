@@ -283,8 +283,6 @@ class SaveLoadMixin(PushToHubMixin):
             logger.info("Offline mode: forcing local_files_only=True")
             local_files_only = True
 
-        from IPython import embed
-        embed(header = "before config loading")
         # Load config if we don't provide a configuration
         if not isinstance(config, BaseDeltaConfig):
             config_path = config if config is not None else finetuned_model_name_or_path
@@ -341,8 +339,6 @@ class SaveLoadMixin(PushToHubMixin):
                     use_auth_token=use_auth_token,
                     user_agent=user_agent,
                 )
-                from IPython import embed
-                embed(header = "after resolving file")
             except EnvironmentError as err:
                 logger.error(err)
                 msg = (
