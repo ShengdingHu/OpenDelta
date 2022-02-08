@@ -147,7 +147,7 @@ debertav2_mapping = {
         "conv": {"__name__": "",
             "conv": {"__name__": ""},
             "LayerNorm": {"__name__": ""}
-        }   
+        }
     },
     "lm_predictions.lm_head": {"__name__":"lm_head",
         "dense": {"__name__":""},
@@ -243,49 +243,7 @@ def transform(org_key, mapping, strict=True, warning=False, verbose=False):
     return new_key
     
 
-# class _LazyStructureMapping(OrderedDict):
-#     """
-#     A dictionary that lazily load its values when they are requested.
-#     """
 
-#     def __init__(self, mapping):
-#         self._mapping = mapping
-#         self._extra_content = {}
-#         self._modules = {}
-
-#     def __getitem__(self, key):
-#         if key in self._extra_content:
-#             return self._extra_content[key]
-#         if key not in self._mapping:
-#             raise KeyError(key)
-#         value = self._mapping[key]
-#         module_name = key #model_type_to_module_name(key)
-#         # if module_name not in self._modules:
-#         self._modules[module_name] = importlib.import_module(f".{module_name}", "opendelta.delta_models")
-#         return getattr(self._modules[module_name], value)
-
-#     def keys(self):
-#         return list(self._mapping.keys()) + list(self._extra_content.keys())
-
-#     def values(self):
-#         return [self[k] for k in self._mapping.keys()] + list(self._extra_content.values())
-
-#     def items(self):
-#         return [(k, self[k]) for k in self._mapping.keys()] + list(self._extra_content.items())
-
-#     def __iter__(self):
-#         return iter(list(self._mapping.keys()) + list(self._extra_content.keys()))
-
-#     def __contains__(self, item):
-#         return item in self._mapping or item in self._extra_content
-
-#     def register(self, key, value):
-#         """
-#         Register a new configuration in this mapping.
-#         """
-#         if key in self._mapping.keys():
-#             raise ValueError(f"'{key}' is already used by a Transformers config, pick another name.")
-#         self._extra_content[key] = value
 
 def mapping_for_SequenceClassification(mapping, type):
     mapping = copy.deepcopy(mapping)
