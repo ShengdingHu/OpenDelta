@@ -122,6 +122,40 @@ bert_mapping = {
     }
 }
 
+debertav2_mapping = {
+    "deberta.embeddings.word_embeddings": {"__name__":"embeddings"},
+    "deberta.embeddings.LayerNorm": {"__name__":""},
+    "deberta.encoder": {"__name__":"encoder",
+        "layer": {"__name__":"block",
+            "$": {"__name__":"$",
+                "attention": {"__name__":"attn",
+                    "self.query_proj": {"__name__":"q"},
+                    "self.key_proj": {"__name__":"k"},
+                    "self.value_proj": {"__name__":"v"},
+                    "output.dense": {"__name__":"proj"},
+                    "output.LayerNorm": {"__name__":"layer_norm"},
+                },
+                "output": {"__name__":"ff",
+                            "dense": {"__name__":"w2"},
+                            "LayerNorm": {"__name__":"layer_norm"}
+                },
+                "intermediate.dense": {"__name__":"ff.w1"},
+            }
+        },
+        "rel_embeddings": {"__name__": ""},
+        "LayerNorm": {"__name__": ""},
+        "conv": {"__name__": "",
+            "conv": {"__name__": ""},
+            "LayerNorm": {"__name__": ""}
+        }   
+    },
+    "lm_predictions.lm_head": {"__name__":"lm_head",
+        "dense": {"__name__":""},
+        "LayerNorm": {"__name__":""},
+        "bias": {"__name__": ""}
+    },
+}
+
 gpt2_mapping = {
     "transformer.wte": {"__name__":"embeddings"},
     "transformer.wpe": {"__name__":""},
@@ -264,6 +298,10 @@ def mapping_for_SequenceClassification(mapping, type):
     elif type == "bert":
         mapping.pop("lm_head")
         mapping["classifier"] = {"__name__": "classifier"}
+    elif type == "deberta":
+        mapping.pop("lm_predictions.lm_head")
+        mapping["pooler"] = {"__name__": "classifier"} 
+        mapping["classifier"] = {"__name__": "classifier"}
     else:
         raise NotImplementedError
     return mapping
@@ -309,7 +347,8 @@ class CommonStructureMap(object):
         "RobertaForMaskedLM": "roberta_mapping",
         "BertForMaskedLM": "bert_mapping",
         "BertForSequenceClassification": """mapping_for_SequenceClassification(bert_mapping, "bert")""",
-        "T5ForConditionalGeneration": """mapping_for_ConditionalGeneration(t5_mapping, "t5")"""
+        "T5ForConditionalGeneration": """mapping_for_ConditionalGeneration(t5_mapping, "t5")""",
+        "DebertaV2ForSequenceClassification": """mapping_for_SequenceClassification(debertav2_mapping, "deberta")"""
         # "gpt2": gpt2_mapping,
         # "bert": bert_mapping,
         # "roberta": roberta_mapping,
