@@ -21,20 +21,20 @@ Adapter
 
 LowRankAdapter
 ---------------------------
-.. autoclass:: opendelta.LowRankModel
+.. autoclass:: opendelta.LowRankAdapterModel
     :members:
 
 Compacter
-----------------
+--------------------------
 .. autoclass:: opendelta.CompacterModel
     :members:
 
 Prefix tuning
----------------
+---------------------------
 .. autoclass:: opendelta.PrefixModel
     :members:
 
 Soft Prompt Tuning
----------------
+-------------------------
 .. autoclass:: opendelta.PrefixModel
     :members:

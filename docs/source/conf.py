@@ -24,8 +24,9 @@ import opendelta.delta_models
 # -- Project information -----------------------------------------------------
 
 project = 'OpenDelta'
-copyright = '2021, Tsinghua NLP lab'
 author = 'THUNLP OpenDelta Team'
+copyright = '{}, {}, Licenced under the Apache License, Version 2.0'.format(datetime.datetime.now().year, author)
+
 
 # The full version, including alpha/beta/rc tags
 release = '0.1.1'
@@ -78,7 +79,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+# exclude_patterns = []
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -92,8 +93,8 @@ exclude_patterns = []
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_theme_options = {
-    #'collapse_navigation': False,
-    #'display_version': True,
+    # 'collapse_navigation': False,
+    # 'display_version': True,
     #'logo_only': False,
     'navigation_depth': 2,
 }
@@ -103,7 +104,7 @@ html_static_path = ['_static']
 html_css_files = ['css/custom.css']
 html_js_files = ['js/custom.js']
 rst_context = {'opendelta': opendelta}
-rst_epilog = "\n.. include:: .special.rst\n"
+# rst_epilog = "\n.. include:: .special.rst\n"
 add_module_names = False
 
 def include_only_tagged(app, what, name, obj, skip, options):

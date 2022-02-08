@@ -10,13 +10,14 @@ Existing open-source project to propogate this **``delta-tuning''** paradigm inc
 OpenDelta approaches this problem via a true plug-and-play fashion to the PLMs. To migrate from a full-model finetuning training scripts to a delta tuning training scripts, you **DO NOT**  need to change the backbone bone model code base. 
 :::
 
-## How we achieve "No backbone code modification"?
+How we achieve "No backbone code modification"?
 
 The key advantage of OpenDelta is **NO backbone modification**, thus are easy for migrating, and adaptation. Here is how we achieve it.
 
 **Read through it will also help you to implement your own delta models.**
 
-### 1. Name-based submodule addressing.
+(namebasedaddr)=
+## 1. Name-based submodule addressing.
 We locate the submodules that we want to apply a delta layer via name-based addressing.
 
 In pytorch fashion, a submodule can be accessed from a root model via 'dot' addressing. For example, we define a toy language model
@@ -63,9 +64,30 @@ Visualization(root).structure_graph()
 ```
 <img src="../imgs/toy-delta.png" alt="toy-delta" width="400px">
 
-For more about name-based addressing syntax and shortcuts, see [basics](basics).
+### Making the addressing more convient.
 
-### 2. Three basic submodule-level delta operations.
+Handcrafting the full names of submodules can be frustrating. We made some simplifications
+
+1. End-matching Rules.
+    OpenDelta will take every modules that 
+    **ends with** the provided name suffix as the modification target. 
+    
+    Taking DistilBertModel with an classifier on top as an example:
+    
+    .. note:: 
+        **Examples**: When adding delta to DistilBertModel,
+
+        1. set to :string:`["0.attention.out_lin"]` will add delta modules to the attention output of distilbert's 
+        ayer 0, i.e., :string:`distilbert.transformer.layer.0.attention.out_lin`.
+
+        2. set to :string:`["attention.out_lin"]` will add the delta modules in every layer's :string:`attention.out_lin`.
+
+
+2. Regular Expression.
+
+3. Interactive Selection.
+
+## 2. Three basic submodule-level delta operations.
 We use three key functions to achieve the modifications to the backbone model outside the backbone model's code.
 
 1. **unfreeze some paramters**
@@ -84,7 +106,7 @@ We use three key functions to achieve the modifications to the backbone model ou
     Most adapter model insert a new adapter layer after/before the original transformers blocks. For these methods, insert the adapter's forward function after/before the original layer's forward function using [insert_sequential_module](opendelta.basemodel.DeltaBase.insert_sequential_module) interface. 
    - **parallel insertion**
    
-    Adapters can also be used in a parallel fashion (see [Paper](some)).
+    Adapters can also be used in a parallel fashion (see [Paper](https://arxiv.org/abs/2110.04366)).
     For these methods, use [insert_parallel_module](opendelta.basemodel.DeltaBase.insert_parrellel_module) interface.
 
 
@@ -93,18 +115,20 @@ We use three key functions to achieve the modifications to the backbone model ou
 In the insertion operations, the replaced forward function will inherit the doc strings of the original functions. 
 :::
 
-### 3. Pseudo input to initialize.
+## 3. Pseudo input to initialize.
 Some delta models, especially the ones that is newly introduced into the backbone, will need to determine the parameters' shape. To get the shape, we pass a pseudo input to the backbone model and determine the shape of each delta layer according to the need of smooth tensor flow. 
 
 :::{admonition} Pseudo Input
 :class: warning
-We assume the pseudo input to the model is something like `input_id`, i.e., an integer tensor 
+Most models in [Huggingface Transformers](https://huggingface.co/docs/transformers/index) have an attribute [dummy_inputs](https://github.com/huggingface/transformers/blob/v4.16.2/src/transformers/modeling_utils.py#L464). This will create a nonsensical input with the correct format to pass into the model's forward function.
+
+For the models that doesn't inherit/implement this attributes, we assume the pseudo input to the model is something like `input_id`, i.e., an integer tensor.
 ```python
 pseudo_input = torch.tensor([[0,0,0]])
 # or 
 pseudo_input = torch.tensor([0,0,0])
 ```
-We will add interface to allow more pseudo input soon.
+<img src="../imgs/todo-icon.jpeg" height="30px"> We will add interface to allow more pseudo input in the future.
 :::
 
 

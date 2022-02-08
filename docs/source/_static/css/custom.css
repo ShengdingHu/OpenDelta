@@ -7,7 +7,7 @@ a,
 /* Colors and text decoration.
  For example, :black:`text in black` or :blink:`text blinking` in rST. */
 
- .black {
+ /* .black {
     color: black;
 }
 
@@ -48,14 +48,14 @@ a,
 }
 
 .orange {
-    color: orange;
-}
+    color: rgba(218, 135, 12, 0.897);
+} */
 
-.string {
-	color: rgb(240, 173, 49);
-}
+/* .string {
+	color: rgb(172, 51, 44);
+} */
 
-.yellow {
+/* .yellow {
     color: yellow;
 }
 
@@ -133,23 +133,24 @@ a,
 
 .smallpar {
     font-size: small;
-}
+} */
 
 .rst-content code.literal, .rst-content tt.literal
 
 {
-	color: #a55aee !important; 
+	color: #a153f0 !important; 
 }
 
 /* inspired by sphinx press theme */
 .wy-menu.wy-menu-vertical li.toctree-l1.current > a {
-	border-left: solid 8px #ad84f8 !important;
+	border-left: solid 15px rgb(150, 92, 232) !important;
+	text-indent: -15px;
 	border-top: none;
 	border-bottom: none;
 }
 
 .wy-menu.wy-menu-vertical li.toctree-l1.current > ul {
-	border-left: solid 8px #d5bcf8 !important;
+	border-left: solid 15px #ddcaf7 !important;
 }
 /* inspired by sphinx press theme */
 
@@ -211,22 +212,22 @@ dl.field-list > dt {
 	padding-right: 6px !important;
 	margin-bottom: 4px !important;
 	padding-bottom: 1px !important;
-	background: #f6ecd852;
-	border-left: solid 2px #ccc;
+	background: rgb(252, 237, 208);
+	border-left: solid 2px rgb(231, 181, 134);
 }
 
 
 dl.py.class>dt
 {
 	color: rgba(17, 16, 17, 0.822) !important;
-	background: rgba(248, 191, 224, 0.1) !important;
-	border-top: solid 2px #ba41cf !important;
+	background: rgb(247, 234, 252) !important;
+	border-top: solid 2px #b620d0 !important;
 }
 
 dl.py.method>dt
 {
-	background: rgba(248, 191, 224, 0.1) !important;
-	border-left: solid 2px #bcb3be !important;
+	background: rgb(250, 239, 241) !important;
+	border-left: solid 2px rgb(199, 83, 106) !important;
 }
 
 dl.py.attribute>dt,

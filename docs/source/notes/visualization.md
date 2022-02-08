@@ -24,7 +24,7 @@ The original presentation of models is **not tailored for repeated structures, b
 
 ## Using visualization from opendelta.
 
-First let's visualize all the parameters in the bert model. As we can see, structure inside a bert model, and the all the paramters location of the model are neatly represented in tree structure. (See <a href="#color_schema">color scheme</a> for the colors)
+First let's visualize all the parameters in the bert model. As we can see, structure inside a bert model, and the all the paramters location of the model are neatly represented in tree structure. (See [color scheme](color_schema) for the colors)
 
 ```python
 from opendelta import Visualization
@@ -59,18 +59,24 @@ Visualization(backbone_model).structure_graph()
 
 <img src="../imgs/bertdelta_vis.png" alt="bertdelta" width="600px">
 
-<a id="color_schema"></a>
-<div class="admonition tip"> 
-<p class="title">**Color Schema**</p>
-<p>
-- The <span style="font-weight:bold;color:white;">white</span> part is the name of the module.
-- The <span style="font-weight:bold;color:green;">green</span> part is the module's type.
-- The <span style="font-weight:bold;color:blue;">blue</span> part is the tunable parameters, i.e., the parameters that require grad computation.
-- The <span style="font-weight:bold;color:grey;">grey</span>  part is the frozen parameters, i.e., the parameters that do not require grad computation.
-- The <span style="font-weight:bold;color:red;">red</span> part is the structure that is repeated and thus folded.
-- The <span style="font-weight:bold;color:purple;">purple</span> part is the delta parameters inserted into the backbone model.
-</p>
+(color_schema)=
+<div class="admonition tip">
+<div class="title">**Color Schema**</div>
+<ul>
+<li> The <span style="font-weight:bold;color:white;">white</span> part is the name of the module.</li>
+<li> The <span style="font-weight:bold;color:green;">green</span> part is the module's type.</li> 
+<li> The <span style="font-weight:bold;color:blue;">blue</span> part is the tunable parameters, i.e., the parameters that require grad computation.</li> 
+<li>  The <span style="font-weight:bold;color:grey;">grey</span>  part is the frozen parameters, i.e., the parameters that do not require grad computation.</li> 
+<li> The <span style="font-weight:bold;color:red;">red</span> part is the structure that is repeated and thus folded.</li> 
+<li> The <span style="font-weight:bold;color:purple;">purple</span> part is the delta parameters inserted into the backbone model.</li> 
+</ul>
 </div>
+
+:::{admonition} PlatForm Sentivity
+:class: warning
+Depending on the platform the code is running on, the colors may vary slightly.
+:::
+
 
 
 

@@ -1,3 +1,0 @@
-(basics)=
-# Construct Your Delta
-

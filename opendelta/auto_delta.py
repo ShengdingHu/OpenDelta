@@ -120,17 +120,18 @@ class AutoDeltaConfig:
         The configuration class to instantiate is selected based on the `model_type` property of the config object that
         is loaded, or when it's missing, by falling back to using pattern matching on `pretrained_model_name_or_path`:
         List options
+
         Args:
             pretrained_model_name_or_path (`str` or `os.PathLike`):
                 Can be either:
-                    - A string, the *model id* of a pretrained model configuration hosted inside a model repo on
-                      huggingface.co. Valid model ids can be located at the root-level, like `bert-base-uncased`, or
-                      namespaced under a user or organization name, like `dbmdz/bert-base-german-cased`.
-                    - A path to a *directory* containing a configuration file saved using the
-                      [`~PretrainedConfig.save_pretrained`] method, or the [`~PreTrainedModel.save_pretrained`] method,
-                      e.g., `./my_model_directory/`.
-                    - A path or url to a saved configuration JSON *file*, e.g.,
-                      `./my_model_directory/configuration.json`.
+                - A string, the *model id* of a pretrained model configuration hosted inside a model repo on
+                    huggingface.co. Valid model ids can be located at the root-level, like `bert-base-uncased`, or
+                    namespaced under a user or organization name, like `dbmdz/bert-base-german-cased`.
+                - A path to a *directory* containing a configuration file saved using the
+                    [`~PretrainedConfig.save_pretrained`] method, or the [`~PreTrainedModel.save_pretrained`] method,
+                    e.g., `./my_model_directory/`.
+                - A path or url to a saved configuration JSON *file*, e.g.,
+                    `./my_model_directory/configuration.json`.
             cache_dir (`str` or `os.PathLike`, *optional*):
                 Path to a directory in which a downloaded pretrained model configuration should be cached if the
                 standard cache should not be used.
@@ -160,10 +161,12 @@ class AutoDeltaConfig:
                 The values in kwargs of any keys which are configuration attributes will be used to override the loaded
                 values. Behavior concerning key/value pairs whose keys are *not* configuration attributes is controlled
                 by the `return_unused_kwargs` keyword parameter.
+        
         Examples:
         ```python
         >>> from transformers import AutoConfig
         >>> config = AutoDeltaConfig.from_finetuned("deltahub/lora_t5-large")
+        ```
         """
 
         kwargs["name_or_path"] = finetuned_model_name_or_path

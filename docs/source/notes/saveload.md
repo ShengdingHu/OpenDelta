@@ -1,5 +1,5 @@
 (saveload)=
-# Save a delta model to local, or share with the community
+# Save and Share the Delta.
 
 ## Space efficient saving without changing the code.
 After a modified backbone model is trained, you can save only trained part without change to any code, because **the state dict of the backbone model has been changed to the trainable parts**
@@ -8,7 +8,7 @@ After a modified backbone model is trained, you can save only trained part witho
 from opendelta import CompacterModel
 from transformers import BertForMaskedLM
 backbone_model = BertForMaskedLM.from_pretrained("bert-base-uncased")
-delta_model = CompacterModel(backbone_model) # the modify the default modules.
+delta_model = CompacterModel(backbone_model) # modify the default modules.
 
 # freeze module
 delta_model.freeze_module(exclude=["deltas"], set_state_dict=True)

@@ -296,12 +296,17 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         r"""Create a pseudo_data into the module to know the dimemsion of each tensor in the computation graph.
         #TODO: To test more data input format, i.e. may need to pass more than inputs/decoder_input_ids.
         """
-        device = get_device(module)
-        pseudo_input = torch.tensor([[0,0]]).to(device)
-        if "decoder_input_ids" in  signature(module.forward).args:
-            module(pseudo_input, decoder_input_ids = pseudo_input)
-        else:
-            module(pseudo_input)
+        try:
+            dummy_inputs = module.dummy_inputs
+            module(**dummy_inputs)
+        except AttributeError:
+            device = get_device(module)
+            logger.warning("No dummy_inputs attributes, create a common input_ids for input.")
+            pseudo_input = torch.tensor([[0,0]]).to(device)
+            if "decoder_input_ids" in  signature(module.forward).args:
+                module(pseudo_input, decoder_input_ids = pseudo_input)
+            else:
+                module(pseudo_input)
 
     def trainable_parameters_names(self, module: Optional[nn.Module]=None):
         r"""[NODOC] A small sugar function to return all the trainable parameter's name in the (by default, backbone) model.
