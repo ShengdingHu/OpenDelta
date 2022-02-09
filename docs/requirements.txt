@@ -8,3 +8,4 @@ openprompt
 loralib
 decorator
 rich
+myst_parser
