@@ -51,7 +51,15 @@ We can visualize the model (For details, see [visualization](visualization))
 from opendelta import Visualization
 Visualization(root).structure_graph()
 ```
-<img src="../imgs/name_based_addressing.png" alt="name_based_addressing" width="400px">
+
+````{collapse} <span style="color:rgb(141, 99, 224);font-weight:bold;font-style:italic">Click to view output</span>
+```{figure} ../imgs/name_based_addressing.png
+---
+width: 500px
+name: name_based_addressing
+---
+```
+````
 
 In this case, string `"name_b.0.name_a"` will be the name to address the submodule from the root model. 
 
@@ -62,37 +70,44 @@ from opendelta import AdapterModel
 AdapterModel(backbone_model=root, modified_modules=['name_b.0.name_a'])
 Visualization(root).structure_graph()
 ```
-<img src="../imgs/toy-delta.png" alt="toy-delta" width="400px">
 
-### Making the addressing more convient.
+````{collapse} <span style="color:rgb(141, 99, 224);font-weight:bold;font-style:italic">Click to view output</span>
+```{figure} ../imgs/toy-delta.png
+---
+width: 500px
+name: toy-delta
+---
+```
+````
+
+### Makes addressing easier.
 
 Handcrafting the full names of submodules can be frustrating. We made some simplifications
 
 1. End-matching Rules.
     OpenDelta will take every modules that 
-    **ends with** the provided name suffix as the modification target. 
-    
-    Taking DistilBertModel with an classifier on top as an example:
-    
-    .. note:: 
-        **Examples**: When adding delta to DistilBertModel,
-
-        1. set to :string:`["0.attention.out_lin"]` will add delta modules to the attention output of distilbert's 
-        ayer 0, i.e., :string:`distilbert.transformer.layer.0.attention.out_lin`.
-
-        2. set to :string:`["attention.out_lin"]` will add the delta modules in every layer's :string:`attention.out_lin`.
+    **ends with** the provided name suffix as the modification [target module](target_module). 
+    :::{admonition} Example
+    :class: tip
+    Taking DistilBert with an classifier on top as an example:
+    - set to `["0.attention.out_lin"]` will add delta modules to the attention output of distilbert's 
+    ayer 0, i.e., `distilbert.transformer.layer.0.attention.out_lin`.
+    - set to `["attention.out_lin"]` will add the delta modules in every layer's :string:`attention.out_lin`. 
+    :::
 
 
 2. Regular Expression.
+ <img src="../imgs/todo-icon.jpeg" height="30px"> Unite test and Doc later.
 
 3. Interactive Selection.
+ <img src="../imgs/todo-icon.jpeg" height="30px"> Unite test and Doc later
 
 ## 2. Three basic submodule-level delta operations.
 We use three key functions to achieve the modifications to the backbone model outside the backbone model's code.
 
 1. **unfreeze some paramters**
 
-   Some delta models will unfreeze a part of the model parameters and freeze other parts of the model, e.g. [BitFit](https://arxiv.org/abs/2106.10199). For these methods, just use [freeze_module](opendelta.basemodel.DeltaBase.freeze_module) method and pass the delta parts into :string:`exclude`.
+   Some delta models will unfreeze a part of the model parameters and freeze other parts of the model, e.g. [BitFit](https://arxiv.org/abs/2106.10199). For these methods, just use [freeze_module](opendelta.basemodel.DeltaBase.freeze_module) method and pass the delta parts into `exclude`.
    
 2. **replace an module**
 

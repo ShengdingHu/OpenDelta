@@ -1,4 +1,4 @@
-a,
+/* a, */
 .wy-menu-vertical header,
 .wy-menu-vertical p.caption,
 .wy-nav-top .fa-bars,
@@ -135,12 +135,28 @@ a,
     font-size: small;
 } */
 
-.rst-content code.literal, .rst-content tt.literal
-
-{
-	color: #a153f0 !important; 
+a:link {
+	color: rgb(141, 99, 224)
 }
 
+a:visited {
+	color: rgb(141, 99, 224)
+}
+
+a:hover {
+	color: rgb(147, 47, 218)
+}
+.rst-content code.literal
+{
+	color: rgb(172, 49, 42) !important; 
+	/* #5360f0 */
+}
+
+.rst-content tt.literal
+{
+	color: #f06b53 !important; 
+}
+/* #a153f0  */
 /* inspired by sphinx press theme */
 .wy-menu.wy-menu-vertical li.toctree-l1.current > a {
 	border-left: solid 15px rgb(150, 92, 232) !important;
@@ -249,6 +265,4 @@ dl.py.property>dt
 	font-size: 120%;
 }
 
-a:link {
-	color: rgb(162, 67, 185)
-}
+

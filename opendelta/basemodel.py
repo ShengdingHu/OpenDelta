@@ -75,6 +75,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
     """
     delta_type = ""
+    default_modified_modules = []
     config_class = BaseDeltaConfig
     default_unfrozen_modules = ["deltas"]
     def __init__(self, 
@@ -502,7 +503,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             backbone_model = self.backbone_model
         self.backbone_model.load_state_dict(state_dict, strict=False)
     
-    def log(self, delta_ratio=False, trainable_ratio=True, visualization=True):
+    def log(self, delta_ratio=True, trainable_ratio=True, visualization=True):
         r"""Log the result of applying delta. Possible Options are :string:`trainable_ratio`,
         :string:`visualization`, :string:`delta_ratio`.
         """

@@ -17,7 +17,14 @@ backbone_model = BertForMaskedLM.from_pretrained("bert-base-uncased")
 print(backbone_model)
 ```
 
-<img src="../imgs/raw_print.png" alt="raw_print" width="600px">
+````{collapse} <span style="color:rgb(141, 99, 224);font-weight:bold;font-style:italic">Click to view output</span>
+```{figure} ../imgs/raw_print.png
+---
+width: 600px
+name: raw_print
+---
+```
+````
 
 The original presentation of models is **not tailored for repeated structures, big models, or parameters-centric tasks**.
 
@@ -32,7 +39,14 @@ model_vis = Visualization(backbone_model)
 model_vis.structure_graph()
 ```
 
-<img src="../imgs/bert_vis.png" alt="bert_vis" width="600px">
+<!-- ````{collapse} <span style="color:rgb(141, 99, 224);font-weight:bold;font-style:italic">Click to view output</span> -->
+```{figure} ../imgs/bert_vis.png
+---
+width: 600px
+name: bert_vis
+---
+```
+<!-- ```` -->
 
 
 <div class="admonition note">
@@ -57,7 +71,14 @@ delta_model.freeze_module(exclude=["cls", "intermediate", "LayerNorm"])
 Visualization(backbone_model).structure_graph()
 ```
 
-<img src="../imgs/bertdelta_vis.png" alt="bertdelta" width="600px">
+````{collapse} <span style="color:rgb(141, 99, 224);font-weight:bold;font-style:italic">Click to view output</span>
+```{figure} ../imgs/bertdelta_vis.png
+---
+width: 600px
+name: bertdelta_vis
+---
+```
+````
 
 (color_schema)=
 <div class="admonition tip">
@@ -88,4 +109,13 @@ Visualization(backbone_model).structure_graph(keep_non_params=True)
 
 Thus, the modules like dropout and activations are kept.
 
-<img src="../imgs/bertdelta_noparam.png" alt="bertdelta_noparam" width="600px">
+
+````{collapse} <span style="color:rgb(141, 99, 224);font-weight:bold;font-style:italic">Click to view output</span>
+```{figure} ../imgs/bertdelta_noparam.png
+---
+width: 600px
+name: bertdelta_noparam
+---
+```
+````
+

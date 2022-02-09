@@ -1,5 +1,6 @@
 sphinx_copybutton
 sphinx_rtd_theme
+sphinx_toolbox
 torch
 transformers
 sentencepiece==0.1.96

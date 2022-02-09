@@ -1,16 +1,16 @@
 OpenDelta's documentation!
 =====================================
 
-OpenDelta is a **Plug-and-play** Library of the parameter-efficient fine-tuning technology for pre-trained models.
+OpenDelta is a **Plug-and-play** Library of the parameter-efficient fine-tuning ([delta-tuning](WhatisDelta)) technology for pre-trained models.
 
 
 ## Essential Advantages:
 
-1. <span style="color:orange;font-weight:bold">Clean:</span> No need to edit the backbone PTM’s codes.
-2. <span style="color:green;font-weight:bold">Sustainable:</span> Most evolution in external library doesn’t require a new OpenDelta.
-3. <span style="color:red;font-weight:bold">Extendable:</span> Various PTMs can share the same PET codes.
-4. <span style="color:blue;font-weight:bold">Simple:</span> Applying Deltas to Huggingface examples needs as little as 2 lines of codes.
-5. <span style="color:purple;font-weight:bold">Flexible:</span> Able to apply PETs to (almost) any position of the PTMs.
+- <span style="color:rgb(81, 217, 245);font-weight:bold">Clean:</span> No need to edit the backbone PTM’s codes.
+- <span style="color:orange;font-weight:bold">Simple:</span> Migrating from full-model tuning to delta-tuning needs as little as 3 lines of codes.
+- <span style="color:green;font-weight:bold">Sustainable:</span> Most evolution in external library doesn’t require a new OpenDelta.
+- <span style="color:red;font-weight:bold">Extendable:</span> Various PTMs can share the same delta-tuning codes.
+- <span style="color:purple;font-weight:bold">Flexible:</span> Able to apply delta-tuning to (almost) any position of the PTMs.
 
 ```{eval-rst}
 .. toctree::
@@ -28,6 +28,7 @@ OpenDelta is a **Plug-and-play** Library of the parameter-efficient fine-tuning 
    :caption: Advanced Usage
 
    notes/keyfeature.md
+   notes/unifyname.md
    notes/autodelta.md
    notes/pluginunplug.md
    notes/acceleration.md

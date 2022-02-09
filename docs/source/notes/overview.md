@@ -1,6 +1,6 @@
 # What is Delta-tuning and Why OpenDelta?
 
-
+(WhatisDelta)=
 :::{admonition} What is Delta?
 :class: tip
 
@@ -21,15 +21,11 @@ This open-source project implement several delta-tuning methods, which allows re
 
 ## Why OpenDelta?
 
-1. <span style="color:orange;font-weight:bold">Clean:</span> No need to edit the backbone PTM’s codes.
-2. <span style="color:green;font-weight:bold">Sustainable:</span> Most evolution in external library doesn’t require a new OpenDelta.
-3. <span style="color:red;font-weight:bold">Extendable:</span> Various PTMs can share the same PET codes.
-4. <span style="color:blue;font-weight:bold">Simple:</span> Applying Deltas to Huggingface examples needs as little as 2 lines of codes.
-5. <span style="color:purple;font-weight:bold">Flexible:</span> Able to apply PETs to (almost) any position of the PTMs.
-
-
-## Comparison with AdapterHub
-<img src="../imgs/todo-icon.jpeg" height="30px">
+- <span style="color:rgb(81, 217, 245);font-weight:bold">Clean:</span> No need to edit the backbone PTM’s codes.
+- <span style="color:orange;font-weight:bold">Simple:</span> Migrating from full-model tuning to delta-tuning needs as little as 3 lines of codes.
+- <span style="color:green;font-weight:bold">Sustainable:</span> Most evolution in external library doesn’t require a new OpenDelta.
+- <span style="color:red;font-weight:bold">Extendable:</span> Various PTMs can share the same delta-tuning codes.
+- <span style="color:purple;font-weight:bold">Flexible:</span> Able to apply delta-tuning to (almost) any position of the PTMs.
 
 
 ## Delta-tuning papers
