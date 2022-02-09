@@ -1,2 +1,10 @@
 sphinx_copybutton
 sphinx_rtd_theme
+torch
+transformers
+sentencepiece==0.1.96
+tqdm==4.62.2
+openprompt
+loralib
+decorator
+rich
