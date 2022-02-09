@@ -36,5 +36,5 @@ Prefix tuning
 
 Soft Prompt Tuning
 -------------------------
-.. autoclass:: opendelta.PrefixModel
+.. autoclass:: opendelta.SoftPromptModel
     :members:

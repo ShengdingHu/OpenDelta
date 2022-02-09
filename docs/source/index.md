@@ -41,6 +41,7 @@ OpenDelta is a **Plug-and-play** Library of the parameter-efficient fine-tuning 
    modules/base
    modules/deltas
    modules/auto_delta
+   modules/utils
 
 
 Indices and tables

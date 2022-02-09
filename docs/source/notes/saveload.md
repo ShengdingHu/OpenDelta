@@ -1,5 +1,5 @@
 (saveload)=
-# Save and Share the Delta.
+# Save and Share the Delta
 
 ## Space efficient saving without changing the code.
 After a modified backbone model is trained, you can save only trained part without change to any code, because **the state dict of the backbone model has been changed to the trainable parts**

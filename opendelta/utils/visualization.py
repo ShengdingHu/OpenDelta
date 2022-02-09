@@ -74,10 +74,19 @@ class ModuleTree(RichTree):
 
 
 class Visualization(object):
-    r"""Todo: 1. support distinguish delta model
-              2. support visualize shared weight
+    r"""
+    Better visualization tool for *BIG* pretrained models.
+    
+    - Better repeated block representation
+    - Clearer parameter position 
+    - and Visible parameter state. 
+
+    Args:
+        plm (:obj:`torch.nn.Module`): The pretrained model, actually can be any pytorch module.
+
     """
-    def __init__(self, plm):
+    def __init__(self, plm: nn.Module):
+
         self.plm = plm
         self.type_color = "green"
         self.param_color = "cyan"
@@ -136,12 +145,12 @@ class Visualization(object):
 
         
     def is_leaf_module(self, module):
-        r"""Whether the module is a leaf module
+        r"""[NODOC] Whether the module is a leaf module
         """
         return len([n for n,_ in module.named_children()]) == 0
         
     def build_tree(self, module:nn.Module, tree:ModuleTree=None):
-        r""" build the originial tree structure
+        r"""[NODOC] build the originial tree structure
         """
         if self.is_leaf_module(module):
             return 
@@ -158,7 +167,7 @@ class Visualization(object):
 
 
     def build_common_tree(self, module:nn.Module, mapping, tree:ModuleTree=None, query="", key_to_root=""):
-        r""" build the common tree structure
+        r""" (Unstable) build the common tree structure
         """
         if self.is_leaf_module(module): 
             if len(query)>0: # the field is not in mapping
@@ -221,7 +230,7 @@ class Visualization(object):
 
                 
     def find_or_insert(self, tree:ModuleTree, hierachical_name:List[str] ):
-        r""" Find the node, if not find, insert a virtual node
+        r"""[NODOC] Find the node, if not find, insert a virtual node
         """
         if len(hierachical_name)==1:
             return tree
@@ -236,7 +245,7 @@ class Visualization(object):
         return self.find_or_insert(new_node, hierachical_name=hierachical_name[1:])
     
     def find_not_insert(self, tree:ModuleTree, hierachical_name:List[str] ):
-        r""" Find the node but not insert
+        r"""[NODOC] Find the node but not insert
         """
         if len(hierachical_name)==1:
             return tree
@@ -253,7 +262,7 @@ class Visualization(object):
 
         
     def fold_param_node(self, t: ModuleTree, p:ModuleTree=None):
-        r""" place the parameters' infomation node right after the module that contains the parameters.
+        r"""[NODOC] place the parameters' infomation node right after the module that contains the parameters.
         E.g. w1 (Linear)
              -- weight: [32128, 1024]
         =>
@@ -277,7 +286,7 @@ class Visualization(object):
             return False
 
     def prune_tree(self, t: ModuleTree):
-        r""" Calculate the _finger_print of a module as the _finger_print of all child node plus the _finger_print of itself.
+        r"""[NODOC] Calculate the _finger_print of a module as the _finger_print of all child node plus the _finger_print of itself.
         The leaf node will have the _finger_print == label. 
         Merge the different node that as the same _finger_print into a single node. 
         """
@@ -315,7 +324,7 @@ class Visualization(object):
 
 
     def extract_common_and_join(self, l:List[ModuleTree]):
-        r""" Some modules that have the same info (e.g., are all "Linear") have different names (e.g., w1,w2)
+        r"""[NODOC] Some modules that have the same info (e.g., are all "Linear") have different names (e.g., w1,w2)
         Merge them.
         E.g. tree1.module_name = "w1", tree1.info = "Linear"; tree2.module_name = "w1", tree2.info = "Linear" 
         -> representive.module_name = "w1,w2", representive.info = "Linear"
@@ -351,7 +360,7 @@ class Visualization(object):
         return representative
 
     def neat_expr(self, l:List[str]):
-        r""" A small tool function to arrange the consecutive number into interval display.
+        r"""[NODOC] A small tool function to arrange the consecutive number into interval display.
         E.g., ["1","2","3","5","6","9","10","11","12"] -> ["1-3","5-6","9-12"]
         """
         try:
@@ -362,7 +371,7 @@ class Visualization(object):
             return ",".join(l)
     
     def ranges(self, nums:List[int]):
-        r""" A small tool function to arrange the consecutive number into interval display.
+        r"""[NODOC] A small tool function to arrange the consecutive number into interval display.
         E.g., [1,2,3,5,6,9,10,11,12] -> [[1,3],[5,6],[9,12]]
         """
         nums = sorted(set(nums))
@@ -371,7 +380,7 @@ class Visualization(object):
         return list(zip(edges, edges))
 
     def add_param_info_node(self, m:nn.Module, tree:ModuleTree, record_grad_state=True, record_delta=True):
-        r""" Add parameter infomation of the module. The parameters that are not inside a module (i.e., created using nn.Parameter) will be added in this function.
+        r"""[NODOC] Add parameter infomation of the module. The parameters that are not inside a module (i.e., created using nn.Parameter) will be added in this function.
         """
         known_module = [n for n,c in m.named_children()]
         for n,p in m.named_parameters():

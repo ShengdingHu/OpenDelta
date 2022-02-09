@@ -1,2 +1,2 @@
-# Plug in and unplug a delta model.
+# Plug in and unplug a delta model
 

@@ -38,7 +38,16 @@ from opendelta import Visualization
 Visualizaiton(backbone_model).structure_graph()
 ```
 
-<img src="../imgs/t5lora.png" alt="bert_vis" width="600px">
+
+````{collapse} <span style="color:rgb(141, 99, 224);font-weight:bold;font-style:italic">Click to view output</span>
+```{figure} ../imgs/t5lora.png
+---
+width: 600px
+name: t5lora
+---
+```
+````
+
 
 
 ## Fast deploy from a finetuned delta checkpoints from DeltaHub
@@ -54,4 +63,5 @@ we will automatically check whether you load the delta model the same way it is 
 </p>
 <p>
 We calculate the trained model's [md5](http://some_link) and save it to the config. When finishing loading the delta model, we will re-calculate the md5 to see whether it changes.
+<p>Pass `check_hash=False` to disable the hash checking.</p>
 </div>

@@ -39,50 +39,46 @@ class SaveLoadMixin(PushToHubMixin):
         push_to_hub: bool = False,
         **kwargs,
     ):
-        """
+        r"""
         Save a model and its configuration file to a directory, so that it can be re-loaded using the
-        `[`~PreTrainedModel.from_pretrained`]` class method.
+        `~DeltaBase.from_finetuned` class method.
+
         Arguments:
-        module
-            save_directory (`str` or `os.PathLike`):
+            save_directory (:obj:`str` or :obj:`os.PathLike`):
                 Directory to which to save. Will be created if it doesn't exist.
-            save_config (`bool`, *optional*, defaults to `True`):
+            save_config (:obj:`bool`, *optional*, defaults to `True`):
                 Whether or not to save the config of the model. Useful when in distributed training like TPUs and need
                 to call this function on all processes. In this case, set `save_config=True` only on the main process
                 to avoid race conditions.
-            state_dict (nested dictionary of `torch.Tensor`):
+            state_dict (nested dictionary of :obj:`torch.Tensor`):
                 The state dictionary of the model to save. Will default to `self.state_dict()`, but can be used to only
                 save parts of the model or if special precautions need to be taken when recovering the state dictionary
                 of a model (like when using model parallelism).
-            save_function (`Callable`):
+            save_function (:obj:`Callable`):
                 The function to use to save the state dictionary. Useful on distributed training like TPUs when one
                 need to replace `torch.save` by another method.
-            push_to_hub (`bool`, *optional*, defaults to `False`):
-                Whether or not to push your model to the Hugging Face model hub after saving it.
-                <Tip warning={true}>
-                Using `push_to_hub=True` will synchronize the repository you are pushing to with `save_directory`,
-                which requires `save_directory` to be a local clone of the repo you are pushing to if it's an existing
-                folder. Pass along `temp_dir=True` to use a temporary directory instead.
-                </Tip>
+            push_to_hub (:obj:`bool`, *optional*, defaults to `False`):
+                Whether or not to push your model to the HuggingFace model hub after saving it.
+                
+                .. tip::
+
+                    Using `push_to_hub=True` will synchronize the repository you are pushing to with `save_directory`,
+                    which requires `save_directory` to be a local clone of the repo you are pushing to if it's an existing
+                    folder. Pass along `temp_dir=True` to use a temporary directory instead.
+                
             kwargs:
                 Additional key word arguments passed along to the [`~file_utils.PushToHubMixin.push_to_hub`] method.
-            
-        .. note::
-            You may need to install git-lfs on your machine. 
-            Follow the instructions in 
-            
-            In Linux machine, download the tar.gz file to your machine from 
-            https://github.com/git-lfs/git-lfs/releases, then add it to your path,
-            as last running git-lfs install 
-        
-        Example:
-        
-        .. code_block::
-            wget -P ~ https://github.com/git-lfs/git-lfs/releases/download/v3.0.2/git-lfs-linux-amd64-v3.0.2.tar.gz
-            tar -xvzf git-lfs-linux-amd64-v3.0.2.tar.gz
-            export PATH=~:$PATH
-            git-lfs install
 
+        .. note::
+
+            You may need to install git-lfs on your machine. 
+        
+            .. code-block:: bash
+            
+                wget -P ~ https://github.com/git-lfs/git-lfs/releases/download/v3.0.2/git-lfs-linux-amd64-v3.0.2.tar.gz
+                tar -xvzf git-lfs-linux-amd64-v3.0.2.tar.gz
+                export PATH=~:$PATH
+                git-lfs install
 
         """
         if os.path.isfile(save_directory):
@@ -128,38 +124,34 @@ class SaveLoadMixin(PushToHubMixin):
                         check_hash: Optional[bool] = True,
                         **kwargs):
         r"""
-        Instantiate a finetuned model from a finetuned model configuration.
-        The model is set in evaluation mode by default using `model.eval()` (Dropout modules are deactivated). 
-        To further train the model, you can use the `unfrozen_modules` method.
-        you should first set it back in training mode with `model.train()`.
-        The warning *Weights from XXX not initialized from pretrained model* means that the weights of XXX do not come
-        pretrained with the rest of the model. It is up to you to train those weights with a downstream fine-tuning
-        task.
-        The warning *Weights from XXX not used in YYY* means that the layer XXX is not used by YYY, therefore those
-        weights are discarded.
+        Instantiate a finetuned delta model from a path.
+        The backbone_model is set in evaluation mode by default using `model.eval()` (Dropout modules are deactivated). 
+        To further train the model, you can use the :meth:`freeze_module <opendelta.basemodel.DeltaBase.freeze_module>` method.
+
         Parameters:
-            finetuned_model_name_or_path (`str` or `os.PathLike`, *optional*):
-                Can be either:
-                    - A string, the *model id* of a pretrained model hosted inside a model repo on huggingface.co.
-                      Valid model ids can be located at the root-level, like `bert-base-uncased`, or namespaced under a
-                      user or organization name, like `dbmdz/bert-base-german-cased`.
-                    - A path to a *directory* containing model weights saved using
-                      [`~PreTrainedModel.save_pretrained`], e.g., `./my_model_directory/`.
-                    - A path or url to a *tensorflow index checkpoint file* (e.g, `./tf_model/model.ckpt.index`). In
-                      this case, `from_tf` should be set to `True` and a configuration object should be provided as
-                      `config` argument. This loading path is slower than converting the TensorFlow checkpoint in a
-                      PyTorch model using the provided conversion scripts and loading the PyTorch model afterwards.
-                    - A path or url to a model folder containing a *flax checkpoint file* in *.msgpack* format (e.g,
-                      `./flax_model/` containing `flax_model.msgpack`). In this case, `from_flax` should be set to
-                      `True`.
-                    - `None` if you are both providing the configuration and state dictionary (resp. with keyword
-                      arguments `config` and `state_dict`).
+
+            finetuned_model_name_or_path (:obj:`str` or :obj:`os.PathLike`, *optional*): Can be either:
+                - A string, the *model id* of a pretrained model hosted inside a model repo on huggingface.co.
+                  Valid model ids can be located at the root-level, like `bert-base-uncased`, or namespaced under a
+                  user or organization name, like `dbmdz/bert-base-german-cased`.
+                - A path to a *directory* containing model weights saved using
+                  :meth:`SaveLoadMixin.save_finetuned`, e.g., `./my_model_directory/`.
+                - A path or url to a *tensorflow index checkpoint file* (e.g, `./tf_model/model.ckpt.index`). In
+                  this case, `from_tf` should be set to `True` and a configuration object should be provided as
+                  `config` argument. This loading path is slower than converting the TensorFlow checkpoint in a
+                  PyTorch model using the provided conversion scripts and loading the PyTorch model afterwards.
+                - A path or url to a model folder containing a *flax checkpoint file* in *.msgpack* format (e.g,
+                  `./flax_model/` containing `flax_model.msgpack`). In this case, `from_flax` should be set to
+                  `True`.
+                - `None` if you are both providing the configuration and state dictionary (resp. with keyword
+                  arguments `config` and `state_dict`).
+            backbone_model (:obj:`torch.nn.Module`): The backbone model to be modified.
             model_args (sequence of positional arguments, *optional*):
                 All remaining positional arguments will be passed to the underlying model's `__init__` method.
-            config (`Union[PretrainedConfig, str, os.PathLike]`, *optional*):
-                Can be either:
-                    - an instance of a class derived from [`PretrainedConfig`],
-                    - a string or path valid as input to [`~PretrainedConfig.from_pretrained`].
+            config (Union[:obj:`BaseDeltaConfig`, :obj:`str`, :obj:`os.PathLike`], *optional*): Can be either:
+                - an instance of a class derived from [`PretrainedConfig`],
+                - a string or path valid as input to [`~PretrainedConfig.from_pretrained`].
+                
                 Configuration for the model to use instead of an automatically loaded configuration. Configuration can
                 be automatically loaded when:
                     - The model is a model provided by the library (loaded with the *model id* string of a pretrained
@@ -168,7 +160,7 @@ class SaveLoadMixin(PushToHubMixin):
                       save directory.
                     - The model is loaded by supplying a local directory as `pretrained_model_name_or_path` and a
                       configuration JSON file named *config.json* is found in the directory.
-            state_dict (`Dict[str, torch.Tensor]`, *optional*):
+            state_dict (Dict[:obj:`str`, :obj:`torch.Tensor`], *optional*):
                 A state dictionary to use instead of a state dictionary loaded from saved weights file.
                 This option can be used if you want to create a model from a pretrained configuration but load your own
                 weights. In this case though, you should check if using [`~PreTrainedModel.save_pretrained`] and
@@ -176,16 +168,6 @@ class SaveLoadMixin(PushToHubMixin):
             cache_dir (`Union[str, os.PathLike]`, *optional*):
                 Path to a directory in which a downloaded pretrained model configuration should be cached if the
                 standard cache should not be used.
-            from_tf (`bool`, *optional*, defaults to `False`):
-                Load the model weights from a TensorFlow checkpoint save file (see docstring of
-                `pretrained_model_name_or_path` argument).
-            from_flax (`bool`, *optional*, defaults to `False`):
-                Load the model weights from a Flax checkpoint save file (see docstring of
-                `pretrained_model_name_or_path` argument).
-            ignore_mismatched_sizes (`bool`, *optional*, defaults to `False`):
-                Whether or not to raise an error if some of the weights from the checkpoint do not have the same size
-                as the weights of the model (if for instance, you are instantiating a model with 10 labels from a
-                checkpoint with 3 labels).
             force_download (`bool`, *optional*, defaults to `False`):
                 Whether or not to force the (re-)download of the model weights and configuration files, overriding the
                 cached versions if they exist.
@@ -195,8 +177,6 @@ class SaveLoadMixin(PushToHubMixin):
             proxies (`Dict[str, str]`, *optional*):
                 A dictionary of proxy servers to use by protocol or endpoint, e.g., `{'http': 'foo.bar:3128',
                 'http://hostname': 'foo.bar:4012'}`. The proxies are used on each request.
-            output_loading_info(`bool`, *optional*, defaults to `False`):
-                Whether ot not to also return a dictionary containing missing keys, unexpected keys and error messages.
             local_files_only(`bool`, *optional*, defaults to `False`):
                 Whether or not to only look at local files (i.e., do not try to download the model).
             use_auth_token (`str` or *bool*, *optional*):
@@ -210,19 +190,16 @@ class SaveLoadMixin(PushToHubMixin):
                 Mirror source to accelerate downloads in China. If you are from China and have an accessibility
                 problem, you can set this option to resolve it. Note that we do not guarantee the timeliness or safety.
                 Please refer to the mirror site for more information.
-            _fast_init(`bool`, *optional*, defaults to ```True`):
-                Whether or not to disable fast initialization.
-            low_cpu_mem_usage(`bool``, *optional*, defaults to ```False`):
-                Tries to not use more than 1x model size in CPU memory (including peak memory) while loading the model.
-                This is an experimental feature and a subject to change at any moment.
             torch_dtype (`str` or `torch.dtype`, *optional*):
                 Override the default `torch.dtype` and load the model under this dtype. If `"auto"` is passed the dtype
                 will be automatically derived from the model's weights.
-                <Tip warning={true}>
-                One should only disable *_fast_init* to ensure backwards compatibility with `transformers.__version__ <
-                4.6.0` for seeded model initialization. This argument will be removed at the next major version. See
-                [pull request 11471](https://github.com/huggingface/transformers/pull/11471) for more information.
-                </Tip>
+
+                .. warning::
+                    This feature is inherited from HuggingFace. We do not guarantee its usefulness currently.
+                    One should only disable *_fast_init* to ensure backwards compatibility with `transformers.__version__ <
+                    4.6.0` for seeded model initialization. This argument will be removed at the next major version. See
+                    [pull request 11471](https://github.com/huggingface/transformers/pull/11471) for more information.
+                
             kwargs (remaining dictionary of keyword arguments, *optional*):
                 Can be used to update the configuration object (after it being loaded) and initiate the model (e.g.,
                 `output_attentions=True`). Behaves differently depending on whether a `config` is provided or
@@ -235,29 +212,12 @@ class SaveLoadMixin(PushToHubMixin):
                       corresponds to a configuration attribute will be used to override said attribute with the
                       supplied `kwargs` value. Remaining keys that do not correspond to any configuration attribute
                       will be passed to the underlying model's `__init__` function.
-        <Tip>
-        Passing `use_auth_token=True`` is required when you want to use a private model.
-        </Tip>
-        <Tip>
-        Activate the special ["offline-mode"](https://huggingface.co/transformers/installation.html#offline-mode) to
-        use this method in a firewalled environment.
-        </Tip>
-        Examples:
-        ```python
-        >>> from transformers import BertConfig, BertModel
-        >>> # Download model and configuration from huggingface.co and cache.
-        >>> model = BertModel.from_pretrained("bert-base-uncased")
-        >>> # Model was saved using *save_pretrained('./test/saved_model/')* (for example purposes, not runnable).
-        >>> model = BertModel.from_pretrained("./test/saved_model/")
-        >>> # Update configuration during loading.
-        >>> model = BertModel.from_pretrained("bert-base-uncased", output_attentions=True)
-        >>> assert model.config.output_attentions == True
-        >>> # Loading from a TF checkpoint file instead of a PyTorch model (slower, for example purposes, not runnable).
-        >>> config = BertConfig.from_json_file("./tf_model/my_tf_model_config.json")
-        >>> model = BertModel.from_pretrained("./tf_model/my_tf_checkpoint.ckpt.index", from_tf=True, config=config)
-        >>> # Loading from a Flax checkpoint file instead of a PyTorch model (slower)
-        >>> model = BertModel.from_pretrained("bert-base-uncased", from_flax=True)
-        ```"""
+        
+        .. tip::
+            Passing `use_auth_token=True`` is required when you want to use a private model.
+        
+  
+        """
         config = kwargs.pop("config", None)
         state_dict = kwargs.pop("state_dict", None)
         cache_dir = kwargs.pop("cache_dir", None)

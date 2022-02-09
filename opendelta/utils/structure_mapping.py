@@ -293,13 +293,8 @@ class _LazyLoading(OrderedDict):
 
 
 class CommonStructureMap(object):
-    # Mappings = {
-    #     "t5": t5_mapping,
-    #     "gpt2": gpt2_mapping,
-    #     "bert": bert_mapping,
-    #     "roberta": roberta_mapping,
-    #     "distilbert": distilbert_mapping
-    # }
+    r""" A lazy loading structure map.
+    """
     Mappings = _LazyLoading({
         "RobertaForSequenceClassification": """mapping_for_SequenceClassification(roberta_mapping, "roberta")""",
         "RobertaForMaskedLM": "roberta_mapping",
@@ -307,10 +302,6 @@ class CommonStructureMap(object):
         "BertForSequenceClassification": """mapping_for_SequenceClassification(bert_mapping, "bert")""",
         "T5ForConditionalGeneration": """mapping_for_ConditionalGeneration(t5_mapping, "t5")""",
         "DebertaV2ForSequenceClassification": """mapping_for_SequenceClassification(debertav2_mapping, "deberta")"""
-        # "gpt2": gpt2_mapping,
-        # "bert": bert_mapping,
-        # "roberta": roberta_mapping,
-        # "distilbert": distilbert_mapping
     })
 
     SpecialModelInverseMaps = {
@@ -323,6 +314,8 @@ class CommonStructureMap(object):
 
     @classmethod
     def load(cls, backbone_model, strict=True, warining=False, visualize=True):
+        r"""Doc
+        """
         backbone_class = type(backbone_model).__name__
         if backbone_class not in cls.Mappings:
             raise KeyError(backbone_class)

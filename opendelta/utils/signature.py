@@ -37,6 +37,8 @@ def signature(f):
     return argspec(args, defaults, varargs, keywords) 
 
 def get_arg_names(f):
+    r""" Get a functions argument name, remove the `self` argument
+    """
     args = signature(f).args
     if args[0] == "self":
         args = args[1:]
@@ -44,6 +46,8 @@ def get_arg_names(f):
 
 
 def get_arg_names_inside_func(func):
+    r""" Get the functions argument name inside the function itself. Remove `self` argument.
+    """
     arg_names = func.__code__.co_varnames[: func.__code__.co_argcount]
     if arg_names[0] == "self":
         arg_names = arg_names[1:]
