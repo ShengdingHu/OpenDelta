@@ -65,7 +65,7 @@ class AdapterLayer(nn.Module):
                 module.bias.data.zero_()
         
     
-    def forward(self, output):
+    def post_forward(self, output):
         r""" Get the hidden_states from the PLM's layer output, pass it into the adapter, 
         then combined with the main hidden_states. Finally pass it into the subsequent layer.
 
@@ -163,7 +163,7 @@ class AdapterModel(DeltaBase):
     def update_module(self, module: nn.Module, key: str):
         _, _, ref = self.find_module(module, key)
         adapterlayer = self.new_module_like(ref)
-        self.insert_sequential_module(ref, pre_caller=None, post_caller=adapterlayer.forward, delta_module=adapterlayer, name="adapter")
+        self.insert_sequential_module(ref, delta_module=adapterlayer, name="adapter")
     
     def new_module_like(self, module):
         module_device = get_device(module)

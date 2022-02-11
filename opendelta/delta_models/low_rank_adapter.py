@@ -71,7 +71,7 @@ class LowRankAdapter(nn.Module):
 
         self.instantiated = True
 
-    def forward(self, output):
+    def post_forward(self, output):
         r""" Get the hidden_states from the PLM's layer output, pass it into the low-rank adapter, 
         then combined with the main hidden_states. Finally pass it into the subsequent layer.
 
@@ -155,7 +155,7 @@ class LowRankAdapterModel(DeltaBase, nn.Module):
     def update_module(self, module: nn.Module, key: str):
         _, _, ref = self.find_module(module, key)
         adapterlayer = self.new_module_like(ref)
-        self.insert_sequential_module(ref, pre_caller=None, post_caller=adapterlayer.forward, delta_module=adapterlayer, name="low_rank_adapter")
+        self.insert_sequential_module(ref, delta_module=adapterlayer, name="low_rank_adapter")
     
     def new_module_like(self, module):
         module_device = get_device(module)

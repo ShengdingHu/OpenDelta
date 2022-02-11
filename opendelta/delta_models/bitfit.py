@@ -43,7 +43,7 @@ class BiasLayer(nn.Module):
             raise NotImplementedError
         self.instantiated = True
     
-    def forward(self, output):
+    def post_forward(self, output):
         r"""Presuming the first argument is the tensor to add bias along the last dimension.
         In most cases, it is correct. However, be aware of the possibility that the presumption
         doesn't hold. 
@@ -145,7 +145,7 @@ class BitFitModel(DeltaBase, nn.Module):
     
     def add_bias_to_others(self, c):
         new_bias = BiasLayer()
-        self.insert_sequential_module(c, pre_caller=None, post_caller=new_bias.forward, delta_module=new_bias, name="bias")
+        self.insert_sequential_module(c, delta_module=new_bias, name="bias")
         self.delta_modules.append(new_bias)
 
 

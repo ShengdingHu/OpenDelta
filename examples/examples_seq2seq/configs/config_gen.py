@@ -176,6 +176,16 @@ AllConfigs['soft_prompt_t5-base'].update({
                                 "output_dir": "outputs/soft_prompt/t5-base/",
                             })
 
+AllConfigs['prefix_t5-base'] = copy.deepcopy(BaseConfigs['t5-base'])
+AllConfigs['prefix_t5-base'].update({
+                                "delta_type": "prefix",
+                                "learning_rate": 3e-2,
+                                "unfrozen_modules": [
+                                    "deltas",
+                                ],
+                                "output_dir": "outputs/prefix/t5-base/",
+                            })
+
 
 if __name__ == "__main__":
     import argparse

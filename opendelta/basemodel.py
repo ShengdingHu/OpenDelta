@@ -1,5 +1,6 @@
 
 
+from collections import OrderedDict
 import os
 from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.utils.model_md5 import gen_model_hash
@@ -428,28 +429,62 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         """
         raise NotImplementedError
 
-    def insert_sequential_module(self, module, pre_caller=None, post_caller=None, delta_module=None, name='delta'):
+    def insert_sequential_module(self, module,  delta_module=None, name='delta'):
         r"""insert a module (previous not exists in the code base) before/after a module. Specifically, it modifies the forward 
         function of the original module to  firstly pass the arguments into the new module's forward function and then pass
         it into the original ones. The new module can also be inserted after the original module with similar mechanism. 
 
         When implementing the new module , researchers should be aware of the components of arguments of the original module's forward function.
         """
-        def _caller(_org_func, _pre_caller, _post_caller,  *args, **kwargs):
-            if _pre_caller is not None:
-                args, kwargs = _pre_caller(*args, **kwargs)
+        def _caller(_org_func, org_module,  *args, **kwargs):
+            delta_name = getattr(org_module, "_delta_name")
+            delta_module = getattr(org_module, delta_name)
+            if hasattr(delta_module, "pre_forward"):# is not None:
+                args, kwargs = delta_module.pre_forward(*args, **kwargs)
             ret = _org_func(*args, **kwargs)
-            if _post_caller is not None:
-                ret = _post_caller(ret)
+            if hasattr(delta_module, "post_forward"):# is not None:
+                ret = delta_module.post_forward(ret)
             return ret
+        
+        def new_replicate_for_data_parallel(self):
+            # rewrite the replicat for DataParallel.
+            def _caller(_org_func, org_module,  *args, **kwargs):
+                delta_name = getattr(org_module, "_delta_name")
+                delta_module = getattr(org_module, delta_name)
+                if hasattr(delta_module, "pre_forward"):# is not None:
+                    args, kwargs = delta_module.pre_forward(*args, **kwargs)
+                ret = _org_func(*args, **kwargs)
+                if hasattr(delta_module, "post_forward"):# is not None:
+                    ret = delta_module.post_forward(ret)
+                return ret
+            replica = self.__new__(type(self))
+            new_forward = decorate(replica.forward, _caller, extras=(replica,), kwsyntax=True)
+
+            replica.__dict__ = self.__dict__.copy()
+            replica.__dict__['forward'] = new_forward
+            # replicas do not have parameters themselves, the replicas reference the original
+            # module.
+            replica._parameters = OrderedDict()
+            replica._buffers = replica._buffers.copy()
+            replica._modules = replica._modules.copy()
+            replica._is_replica = True
+
+            return replica
 
         if hasattr(module.forward, "__wrapped__"):
             raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
-        module.forward = decorate(module.forward, _caller, extras=(pre_caller, post_caller), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
-        if delta_module is not None:
-            setattr(module, name, delta_module)
-
+        
+        if delta_module is None:
+            raise RuntimeError("delta module can't be none to ensure successful replicate of the parent module.")
+        setattr(module, name, delta_module)
+        
+        module._delta_name = name
+        module.forward = decorate(module.forward, _caller, extras=(module,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
+        # for DataParallel's copy behavior
+        module._replicate_for_data_parallel = new_replicate_for_data_parallel.__get__(module, type(module))
     
+
+
 
     def insert_parrellel_module(self, module, pre_caller=None, post_caller=None, delta_module=None, name='delta'):
         """insert a module (previous not exists in the code base) across a module. Specifically, it modifies the forward 

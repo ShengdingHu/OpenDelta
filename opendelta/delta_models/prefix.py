@@ -37,7 +37,7 @@ class PrefixLayerT5(nn.Module):
         self.instantiated = True
         
     
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
         batch_size = args[0].shape[0]
@@ -101,7 +101,7 @@ class PrefixLayerBart(nn.Module):
         self.instantiated = True
         
     
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
       
@@ -154,7 +154,7 @@ class PrefixLayerGPT2(nn.Module):
         self.instantiated = True
         
     
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
         batch_size = args[0].shape[0]
@@ -186,6 +186,7 @@ class PrefixLayerGPT2(nn.Module):
 
 
 class PrefixLayerDistilBert(nn.Module):
+    # TODO: Warning: have bugs
     def __init__(self, prefix_token_num, device,):
         super().__init__()
         self.prefix_token_num = prefix_token_num
@@ -283,7 +284,7 @@ class PrefixLayerRoberta(nn.Module):
         self.instantiated = True
         
     
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
         batch_size = args[0].shape[0]
@@ -384,7 +385,7 @@ class ReparameterizeFunction(nn.Module):
             module.past_key_reparam = past_key_values[module_id][0]
             module.past_value_reparam = past_key_values[module_id][1]
 
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r""" Firstly forward through the reparameterized network, and then go through normal forward pass of the PLM.
         """
         self.allocate_parameter()
@@ -476,7 +477,7 @@ class PrefixModel(DeltaBase, nn.Module):
                                               module_list=self.delta_modules)
             self.delta_modules = None
             self.reparams = reparams
-            self.insert_sequential_module(module, pre_caller=reparams.forward)
+            self.insert_sequential_module(module, delta_module=reparams, name="reparams" )
         if self.reparameterize:
             setattr(module, "prefix_reparam", self)
         self.mark_as_delta()
@@ -488,7 +489,7 @@ class PrefixModel(DeltaBase, nn.Module):
         _, _, ref = self.find_module(module, key)
         print("matched_key:", key)
         prefixlayer = self.new_module_like(ref)
-        self.insert_sequential_module(ref, pre_caller=prefixlayer.forward, post_caller=None, delta_module=prefixlayer, name="prefix")
+        self.insert_sequential_module(ref, delta_module=prefixlayer, name="prefix")
         self.delta_modules.append(prefixlayer)  
     
     def new_module_like(self, module):

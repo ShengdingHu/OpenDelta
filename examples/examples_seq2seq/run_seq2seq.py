@@ -47,7 +47,6 @@ from dataclasses import dataclass, field
 from transformers.models.t5.modeling_t5 import T5Config, T5ForConditionalGeneration
 from examples_seq2seq.trainers.model_args import ModelArguments
 from examples_seq2seq.trainers.trainer_args import TrainingArguments, DataTrainingArguments
-from delta_args import DeltaArguments
 
 
 logger = logging.getLogger(__name__)
