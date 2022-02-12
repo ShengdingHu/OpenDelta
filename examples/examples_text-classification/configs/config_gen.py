@@ -275,6 +275,17 @@ AllConfigs['soft_prompt_roberta-base'].update({
                                 "output_dir": "outputs/soft_prompt/roberta-base/",
                             })
 
+AllConfigs['prefix_roberta-base'] = copy.deepcopy(BaseConfigs['roberta-base'])
+AllConfigs['prefix_roberta-base'].update({
+                                "delta_type": "prefix",
+                                "learning_rate": 3e-4,
+                                "unfrozen_modules": [
+                                    "deltas",
+                                    "classifier",
+                                ],
+                                "output_dir": "outputs/prefix/roberta-base/",
+                            })
+
 AllConfigs['soft_prompt_deberta-v2-xlarge'] = copy.deepcopy(BaseConfigs['deberta-v2-xlarge'])
 AllConfigs['soft_prompt_deberta-v2-xlarge'].update({
                                 "delta_type": "soft_prompt",

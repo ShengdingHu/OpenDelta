@@ -407,7 +407,7 @@ class PrefixConfig(BaseDeltaConfig):
     def __init__(
         self, 
         prefix_token_num=6,
-        reparameterize=False,
+        reparameterize=True,
         embed_dim: Optional[int]=512,
         mid_dim: Optional[int]=512,
         **kwargs
@@ -478,8 +478,6 @@ class PrefixModel(DeltaBase, nn.Module):
             self.delta_modules = None
             self.reparams = reparams
             self.insert_sequential_module(module, delta_module=reparams, name="reparams" )
-        if self.reparameterize:
-            setattr(module, "prefix_reparam", self)
         self.mark_as_delta()
         return module
     
@@ -495,7 +493,7 @@ class PrefixModel(DeltaBase, nn.Module):
     def new_module_like(self, module):
         # TODO: support more Attention modules
 
-        if isinstance(module, T5Attention):
+        if isinstance(module, T5Attention): # have some bug
             module_device = get_device(module)
             prefixlayer = PrefixLayerT5(prefix_token_num=self.prefix_token_num, num_heads=module.n_heads ,device=module_device)
         elif isinstance(module, MultiHeadSelfAttention):  # MultiHeadSelfAttention didn't provide past_key_value in the interface of the forward function.
