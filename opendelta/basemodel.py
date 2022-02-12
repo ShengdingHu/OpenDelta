@@ -54,24 +54,24 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         It also provides unified interface for model loading and saving. 
 
     Class attributes (overridden by derived classes):
-    
-    - delta_type (:obj:`str`) the name of the delta modules, used to create the correct [`~opendelta.AutoDeltaModel`].
-    - config_class (:obj:`BaseDeltaConfig`) The corresponding config model 
+
+        - delta_type (:obj:`str`): the name of the delta modules, used to create the correct :class:`opendelta.AutoDeltaModel`.
+        - config_class (:class:`BaseDeltaConfig`): The corresponding config model 
 
 
     Args:
-        backbone_model (:obj:`nn.Module`, *required*)  backbone model that the delta models are build opon. The modification to the 
+        backbone_model (:obj:`nn.Module`, *required*):  backbone model that the delta models are build opon. The modification to the 
             backbone model are in place.
-        modified_modules (:obj:`List[str]`, *optional*, default to :obj:`None`) The modules are subjected to update. 
+        modified_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules are subjected to update. 
             
             .. note::
                 leave this argument :obj:`None` will make the delta model return to the default setting, which add the delta
                 models to the position experimented the paper. In this setting, the common structure mapping is loaded to 
                 addressing the corresponding modules.
 
-        registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`) The root name of the delta models when
+        registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`): The root name of the delta models when
             attached to the backbone model. 
-        common_structure (:obj:`bool`, *optional* ,default to :obj:`None`) Whether use the common structure mapping to 
+        common_structure (:obj:`bool`, *optional* ,default to :obj:`None`): Whether use the common structure mapping to 
 
 
     """
@@ -208,13 +208,13 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         model, (e.g., bias term)
 
         Args:
-            module (:obj:`nn.Module`, *optional*, default to :obj:`None`) The module of which some parts are frozen.
+            module (:obj:`nn.Module`, *optional*, default to :obj:`None`): The module of which some parts are frozen.
                 If left with :obj:`None`, the function will the self.backbone_model as the module to be frozen. 
-            exclude (:obj:`List[str]`, *optional*, default to :string:`["deltas"]`) The parameters that don't need to 
+            exclude (:obj:`List[str]`, *optional*, default to :string:`["deltas"]`): The parameters that don't need to 
                 be freezed. Default to all the delta parameters.
-            set_state_dict (:obj:`bool`, *optional*, default to :obj:`True`) Whether setting the backbone model's state
+            set_state_dict (:obj:`bool`, *optional*, default to :obj:`True`): Whether setting the backbone model's state
                 dict to all the parameters that still need grad.
-            prefix (:obj:`str`, *optional*, default to :string:`""`) A parameters that are used for recursive frozen. 
+            prefix (:obj:`str`, *optional*, default to :string:`""`): A parameters that are used for recursive frozen. 
                 Should not be changed by passing argument other than :string:`""`.
         
         """
@@ -236,13 +236,13 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         model, (e.g., bias term)
 
         Args:
-            module (:obj:`nn.Module`, *optional*, default to :obj:`None`) The module of which some parts are frozen.
+            module (:obj:`nn.Module`, *optional*, default to :obj:`None`): The module of which some parts are frozen.
                 If left with :obj:`None`, the function will the self.backbone_model as the module to be frozen. 
-            exclude (:obj:`List[str]`, *optional*, default to :string:`["deltas"]`) The parameters that don't need to 
+            exclude (:obj:`List[str]`, *optional*, default to :string:`["deltas"]`): The parameters that don't need to 
                 be freezed. Default to all the delta parameters.
-            set_state_dict (:obj:`bool`, *optional*, default to :obj:`True`) Whether setting the backbone model's state
+            set_state_dict (:obj:`bool`, *optional*, default to :obj:`True`): Whether setting the backbone model's state
                 dict to all the parameters that still need grad.
-            prefix (:obj:`str`, *optional*, default to :string:`""`) A parameters that are used for recursive frozen. 
+            prefix (:obj:`str`, *optional*, default to :string:`""`): A parameters that are used for recursive frozen. 
                 Should not be changed by passing argument other than :string:`""`.
         
         """
@@ -398,8 +398,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         r"""Find the module using a key and the root module. Return both the parent reference, the child name and reference.
 
         Args:
-            root_module (:obj:`root_module`) The root_module to find the sub module in
-            key (:obj:`str`) The relative key to the root module. 
+            root_module (:obj:`root_module`): The root_module to find the sub module in
+            key (:obj:`str`): The relative key to the root module. 
 
         Returns:
             (:obj:`nn.Module`, :obj:`str`, :obj:`nn.Module`): 
@@ -429,12 +429,19 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         """
         raise NotImplementedError
 
-    def insert_sequential_module(self, module,  delta_module=None, name='delta'):
+    def insert_sequential_module(self, module,  delta_module=None, name='delta', strict=False):
         r"""insert a module (previous not exists in the code base) before/after a module. Specifically, it modifies the forward 
         function of the original module to  firstly pass the arguments into the new module's forward function and then pass
         it into the original ones. The new module can also be inserted after the original module with similar mechanism. 
 
         When implementing the new module , researchers should be aware of the components of arguments of the original module's forward function.
+        
+        Args:
+            module: (:obj:`nn.Module`): The (sub)module to inserted a delta module.
+            delta_module: (:obj:`DeltaBase`): The delta module to be inserted.
+            name: (:obj:`str`, *optional*): The name of the delta in the backbone module.
+            strict: (:obj:`bool`, *optional*): Whether to prohibit modify a modified module.
+        
         """
         def _caller(_org_func, org_module,  *args, **kwargs):
             delta_name = getattr(org_module, "_delta_name")
@@ -471,8 +478,9 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
             return replica
 
-        if hasattr(module.forward, "__wrapped__"):
-            raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
+        if strict:
+            if hasattr(module.forward, "__wrapped__"):
+                raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
         
         if delta_module is None:
             raise RuntimeError("delta module can't be none to ensure successful replicate of the parent module.")
@@ -481,7 +489,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         module._delta_name = name
         module.forward = decorate(module.forward, _caller, extras=(module,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
         # for DataParallel's copy behavior
-        module._replicate_for_data_parallel = new_replicate_for_data_parallel.__get__(module, type(module))
+        module._replicate_for_data_parallel = new_replicate_for_data_parallel.__get__(module, type(module)) 
+                                             # func.__get__(object, type(object)) register a function as an object's method
     
 
 
@@ -492,6 +501,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         aside the calculation result. Then combine it with the calculation result output from the backbone module.
 
         When implementing the new module , researchers should be aware of the arguments and keywards of the original module's forward function.
+
+        # TODO: currently not in use.
         """
         raise NotImplementedError
 
@@ -539,8 +550,15 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         self.backbone_model.load_state_dict(state_dict, strict=False)
     
     def log(self, delta_ratio=True, trainable_ratio=True, visualization=True):
-        r"""Log the result of applying delta. Possible Options are :string:`trainable_ratio`,
-        :string:`visualization`, :string:`delta_ratio`.
+        r"""Log and visualize the result of applying delta. 
+        Possible Options are `trainable_ratio`,
+        `visualization`, `delta_ratio`.
+
+        Args:
+            delta_ratio (:obj:`bool`, *optional*): Whether computing the ratio of parameters in the delta modules.
+            trainable_ratio (:obj:`bool`, *optional*): Whether computing the ratio of trainable parameters.
+            visualization (:obj:`bool`, *optional*): Whether visualize the parameter information of the modified backbone.
+
         """
 
         if visualization:

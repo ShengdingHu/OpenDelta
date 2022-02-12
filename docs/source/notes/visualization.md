@@ -119,3 +119,7 @@ name: bertdelta_noparam
 ```
 ````
 
+:::{admonition} Order of the submodule
+:class: warning
+Currently, OpenDelta‘s Visualization visualize the model based on pytorch's named_modules method. That means the order of the presented submodule is the order they are add to the parent module, not necessarily the order that tensors flows through. 
+:::

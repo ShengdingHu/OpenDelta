@@ -1102,3 +1102,24 @@
         "test_samples_per_second": 219.091
     }
 }
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 74.50980392156863,
+        "eval_average_metrics": 78.70227038183694,
+        "eval_f1": 82.89473684210526,
+        "eval_loss": 0.23807300627231598,
+        "eval_runtime": 0.9987,
+        "eval_samples_per_second": 204.262
+    },
+    "repo_name": "DeltaHub/prefix_t5-base_mrpc",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 77.94117647058823,
+        "test_average_metrics": 81.2914073479221,
+        "test_f1": 84.64163822525597,
+        "test_loss": 0.21069598197937012,
+        "test_runtime": 1.0824,
+        "test_samples_per_second": 188.473
+    }
+}

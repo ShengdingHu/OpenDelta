@@ -118,7 +118,35 @@ class AdapterConfig(BaseDeltaConfig):
 
 
 class AdapterModel(DeltaBase):
+    r""" The implementation of Adapter(`Parameter-Efficient Transfer Learning for NLP <https://arxiv.org/abs/1902.00751>`_ .
+    Add adapter to the designated `modified_modules`. In sequential paradigm, The modules' output is then passed into the adapter's 
+    post_forward. 
+    
+    .. note::
+        We **assume** the output of the modified module is the hidden state or a tuple where hidden state is the 
+        first element. This is true for most PLMs. However, we admit that currently it's not rigorous, We will improve 
+        it in the next version. Currently, if you encount an error here for you backbone, you can modify the code to 
+        get the hidden state.
 
+    class attributes:
+        - default_modified_modules = ["attn", "ff"] According to the Adapter paper, we add adapter to the attention layer
+          and feed forward layer. 
+        - delta_type = "adapter"
+
+    Args:
+        backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
+        bottleneck_dim (:obj:`int`): The dimension of the adapter's bottleneck. 
+        non_linearity (:obj:`str`): The non linearity of the adapter.
+        sequential (:obj:`str`): Whether insert the adapter in a sequential manner, as opposed to a parallel manner.
+                        See `Towards a Unified View of Parameter-Efficient Transfer Learning <https://arxiv.org/abs/2110.04366>`_
+                        for detail. 
+        modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only
+                        the implemented ones)
+        unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen
+                         together with the prefix parameters.
+        common_structure (:obj:`bool`): whether using name-based addressing witha common structure mapping.
+
+    """
     config_class = AdapterConfig
     delta_type = "adapter"
     default_modified_modules = ["attn", "ff"]

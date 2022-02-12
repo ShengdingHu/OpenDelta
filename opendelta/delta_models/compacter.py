@@ -1,7 +1,6 @@
 from functools import partial
 from typing import Optional
 from opendelta.delta_configs import BaseDeltaConfig
-from opendelta.delta_models.adapter import AdapterLayer
 from opendelta.utils.signature import get_arg_names_inside_func
 from opendelta.utils.utils import *
 from opendelta.utils.cuda import get_device
@@ -165,6 +164,51 @@ class CompacterConfig(BaseDeltaConfig):
 
 
 class CompacterModel(DeltaBase, nn.Module):
+    r""" The implementation of `Compacter: Efficient Low-Rank Hypercomplex Adapter Layers <https://arxiv.org/abs/2106.04647>`_ .
+    Add compacter layer to the designated `modified_modules`. In sequential paradigm,  The modules' output is then 
+    passed into the compacter's post_forward. 
+    
+    .. note::
+        We **assume** the output of the modified module is the hidden state or a tuple where hidden state is the 
+        first element. This is true for most PLMs. However, we admit that currently it's not rigorous, We will improve 
+        it in the next version. Currently, if you encount an error here for you backbone, you can modify the code to 
+        get the hidden state.
+    
+    All the hyperparameter is adopted from the `compacter code base <https://github.com/rabeehk/compacter>`_ .
+
+    class attributes:
+        - default_modified_modules = ["attn", "ff"] According to the compacter paper, we add compacter to the attention layer
+          and feed forward layer. 
+        - delta_type = "compacter"
+
+    Args:
+        backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
+        modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only
+                        the implemented ones)
+        unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen
+                         together with the prefix parameters.
+        common_structure (:obj:`bool`, *optional*, default to :obj:`None`): whether using name-based addressing witha common structure mapping.
+        reduction_factor (:obj:`int`, *optional*, default to `16`): bottleneck_dim = hidden_dim//reduction_factor 
+        non_linearity (:obj:`str`, *optional*, default to `"gelu_new"`): The non linearity activation used in between the down 
+                        projecter and the up projecter. 
+        phm_c_init (:obj:`str`, *optional*, default to `"normal"`): The initialize method of the C in compacter. 
+        hypercomplex_division (:obj:`str`, *optional*, default to 4): The `n` in the paper. The number of division along a dimension in compector. 
+        learn_phm (:obj:`bool`, *optional*, default to :obj:`True` ): Whether the phm rule requires_grad. Note that we didn't check the performance of learn_phm=False.
+        hypercomplex_nonlinearity (:obj:`str`, *optional*, default to `"glorot-uniform"`): The initialize method of the W in compacter. 
+        shared_phm_rule (:obj:`str`, *optional* , default to :obj:`False`): Whether the phm rule is shared accross layer. 
+        factorized_phm (:obj:`str`, *optional*, default to :obj:`True`): Whether to factorize the phm into low rank product.
+        shared_W_phm (:obj:`str`, *optional* , default to :obj:`False`): Whether the W_phm is shared accross layer. 
+        factorized_phm_rule (:obj:`str`, *optional* , default to :obj:`False`): Whether to factorize the phm rule into low rank product. 
+        phm_rank=1 (:obj:`int`, *optional*, default to 1): The rank of low rank decomposition of phm. 
+        phm_init_range (:obj:`float, *optional*, default to 0.0001): The range of phm initialization.
+        kronecker_prod=None,
+        use_bias_up_sampler (:obj:`float`, *optional*, default to :obj:`True`): Whether add bias to the up projector. 
+                            Note that the bias for this is a `hidden_dim` vector. 
+        use_bias_down_sampler (:obj:`float`, *optional*, default to :obj:`True`): Whether add bias to the down projector. 
+                            Note that the bias for this is a `bottleneck_dim` vector. 
+
+
+    """
     config_class = CompacterConfig
     delta_type = "compacter"
     default_modified_modules = ["attn", "ff"]
@@ -173,7 +217,6 @@ class CompacterModel(DeltaBase, nn.Module):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 structure_mapping=None,
                  reduction_factor=16, 
                  non_linearity="gelu_new", 
                  phm_c_init="normal", 

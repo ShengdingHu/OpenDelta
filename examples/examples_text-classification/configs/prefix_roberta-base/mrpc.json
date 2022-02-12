@@ -10,7 +10,7 @@
         "en"
     ],
     "eval_dataset_name": "mrpc",
-    "eval_steps": 200,
+    "eval_steps": 50,
     "evaluation_strategy": "steps",
     "greater_is_better": true,
     "learning_rate": 0.0003,

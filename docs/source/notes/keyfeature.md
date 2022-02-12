@@ -91,15 +91,15 @@ Handcrafting the full names of submodules can be frustrating. We made some simpl
     Taking DistilBert with an classifier on top as an example:
     - set to `["0.attention.out_lin"]` will add delta modules to the attention output of distilbert's 
     ayer 0, i.e., `distilbert.transformer.layer.0.attention.out_lin`.
-    - set to `["attention.out_lin"]` will add the delta modules in every layer's :string:`attention.out_lin`. 
+    - set to `["attention.out_lin"]` will add the delta modules in every layer's `attention.out_lin`. 
     :::
 
 
 2. Regular Expression.
- <img src="../imgs/todo-icon.jpeg" height="30px"> Unite test and Doc later.
+ <img src="../imgs/todo-icon.jpeg" height="30px"> Unit test and Doc later.
 
 3. Interactive Selection.
- <img src="../imgs/todo-icon.jpeg" height="30px"> Unite test and Doc later
+ <img src="../imgs/todo-icon.jpeg" height="30px"> Unit test and Doc later
 
 ## 2. Three basic submodule-level delta operations.
 We use three key functions to achieve the modifications to the backbone model outside the backbone model's code.

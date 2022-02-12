@@ -179,7 +179,7 @@ AllConfigs['soft_prompt_t5-base'].update({
 AllConfigs['prefix_t5-base'] = copy.deepcopy(BaseConfigs['t5-base'])
 AllConfigs['prefix_t5-base'].update({
                                 "delta_type": "prefix",
-                                "learning_rate": 3e-2,
+                                "learning_rate": 3e-4,
                                 "unfrozen_modules": [
                                     "deltas",
                                 ],

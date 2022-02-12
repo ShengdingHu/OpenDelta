@@ -29,6 +29,33 @@ class LoraConfig(BaseDeltaConfig):
 
 
 class LoraModel(DeltaBase):
+    r""" The implementation of `LoRA: Low-Rank Adaptation of Large Language Models <https://arxiv.org/abs/2106.09685>`_ .
+    Thanks for their `loralib <https://github.com/microsoft/LoRA/tree/main/loralib>`_, we use loralib.linear 
+    to replace the linear layer of the backbone model. 
+
+    class attributes:
+        - default_modified_modules = ['attn.q', 'attn.v'] According to the paper, they modify q and v matrix in the
+        attention layer. However, other linears can also be modified, and may lead to better performance. 
+        
+        .. note::
+            modified_modules should point to linear layer. We currently don't support broadcast to all linears in 
+            a module's child modules.
+
+        - delta_type = "lora"
+
+
+    Args:
+        backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
+        lora_r (:obj:`int`, *optional*): the rank of the lora parameters. The smaller lora_r is , the fewer parameters lora has.
+        lora_alpha (:obj:`bool`, *optional*): A hyper-parameter to control the init scale of loralib.linear .
+        lora_dropout (:obj:`boo`, *optional*): The dropout rate in lora.linear. 
+        modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only
+                        the implemented ones)
+        unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen
+                         together with the prefix parameters.
+        common_structure (:obj:`bool`): whether using name-based addressing witha common structure mapping.
+
+    """
 
     config_class = LoraConfig
     delta_type = "lora"

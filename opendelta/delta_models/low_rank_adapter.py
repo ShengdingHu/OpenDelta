@@ -109,6 +109,42 @@ class LowRankAdapter(nn.Module):
 
 
 class LowRankAdapterModel(DeltaBase, nn.Module):
+    r""" The implementation of LowRankAdapter, proposed as a baseline in 
+    `Compacter: Efficient Low-Rank Hypercomplex Adapter Layers <https://arxiv.org/abs/2106.04647>`_ .
+    We found that it enjoys very few parameters but competitive performance, thus add it into OpenDelta.
+    Low Rank Adapter parameterize each adapter’s weight as a product of two rank-one(low) weights.
+
+    Add lowrank adapter layer to the designated `modified_modules`. In sequential paradigm,  The modules' output is then 
+    passed into the low rank adapter's post_forward. 
+    
+    .. note::
+        We **assume** the output of the modified module is the hidden state or a tuple where hidden state is the 
+        first element. This is true for most PLMs. However, we admit that currently it's not rigorous, We will improve 
+        it in the next version. Currently, if you encount an error here for you backbone, you can modify the code to 
+        get the hidden state.
+    
+    All the hyperparameter is adopted from the `compacter code base <https://github.com/rabeehk/compacter>`_ .
+
+    class attributes:
+        - default_modified_modules = ["attn", "ff"] According to the compacter paper, we add low rank adapter to the attention layer
+          and feed forward layer. 
+        - delta_type = "lowrankadapter"
+
+    Args:
+        backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
+        reduction_factor (:obj:`int`, *optional*, default to `16`): bottleneck_dim = hidden_dim//reduction_factor 
+        non_linearity (:obj:`str`, *optional*, default to `"gelu_new"`): The non linearity activation used in between the down 
+                        projecter and the up projecter. 
+        low_rank_w_init (:obj:`str`, *optional*, default to `"glorot-uniform"`): The weight init method of the factorized 
+                        linear weight.
+        low_rank_rank (:obj:`int`, *optional*, default to 1): The rank of the low-rank decomposition. 
+        modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only
+                        the implemented ones)
+        unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen
+                         together with the prefix parameters.
+        common_structure (:obj:`bool`, *optional*, default to :obj:`None`): whether using name-based addressing witha common structure mapping.
+
+    """
 
     config_class = LowRankAdapterConfig
     delta_type = "lowrankadapter"
