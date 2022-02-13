@@ -13,7 +13,11 @@ Implementation of various parameter efficient methods.
 | DistilBERT |  :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
 | RoBERTa |   :white_check_mark: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
 | BERT |   :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
+| T5-3b |   :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
+| Deberta-v2 |   :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
+| CTRL |   :ballot_box_with_check: | :ballot_box_with_check:  | :ballot_box_with_check:  | :ballot_box_with_check:  |   :ballot_box_with_check: | :ballot_box_with_check:  |:ballot_box_with_check:  |  :ballot_box_with_check:  | 
 | ViT |   :ballot_box_with_check: |   |   |   |    |   |  |    | 
+
 
 ### Performance Checked Combination
 
