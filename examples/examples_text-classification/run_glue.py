@@ -571,7 +571,7 @@ def main():
 
             trainer.log_metrics("eval", metrics)
             trainer.save_metrics("eval", metrics)
-        results.append(metrics)
+        results['evaluate'] = metrics
 
     if training_args.do_predict:
         logger.info("*** Predict ***")

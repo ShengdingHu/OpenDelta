@@ -47,8 +47,6 @@ from dataclasses import dataclass, field
 from transformers.models.t5.modeling_t5 import T5Config, T5ForConditionalGeneration
 from examples_seq2seq.trainers.model_args import ModelArguments
 from examples_seq2seq.trainers.trainer_args import TrainingArguments, DataTrainingArguments
-from delta_args import DeltaArguments
-
 
 logger = logging.getLogger(__name__)
 
@@ -186,6 +184,7 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
+    config.dropout_rate = 0.0
     tokenizer = AutoTokenizer.from_pretrained(
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
@@ -232,11 +231,17 @@ def main():
     padding = "max_length" if data_args.pad_to_max_length else False
     
     def preprocess_function(examples, max_target_length):
-        model_inputs = tokenizer(examples['source'], max_length=data_args.max_source_length,
+        # max_target_length += 1
+        # model_inputs = tokenizer([s+"<extra_id_0>" for s in examples['source']], max_length=data_args.max_source_length,
+        #                          padding=padding, truncation=True)
+        # # Setup the tokenizer for targets
+        # with tokenizer.as_target_tokenizer():
+        #     labels = tokenizer(['<extra_id_0>'+t for t in examples['target']], max_length=max_target_length, padding=padding, truncation=True)
+        model_inputs = tokenizer([s for s in examples['source']], max_length=data_args.max_source_length,
                                  padding=padding, truncation=True)
         # Setup the tokenizer for targets
         with tokenizer.as_target_tokenizer():
-            labels = tokenizer(examples['target'], max_length=max_target_length, padding=padding, truncation=True)
+            labels = tokenizer([t for t in examples['target']], max_length=max_target_length, padding=padding, truncation=True)
         # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
         # padding in the loss.
         if padding == "max_length" and data_args.ignore_pad_token_for_loss:
