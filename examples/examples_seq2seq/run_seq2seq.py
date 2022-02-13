@@ -30,6 +30,8 @@ from typing import Optional, List
 from datasets import load_dataset, load_metric, concatenate_datasets
 import transformers
 from transformers import (
+    AutoConfig,
+    AutoModelForSeq2SeqLM,
     AutoTokenizer,
     HfArgumentParser,
     MBartTokenizer,
@@ -178,7 +180,7 @@ def main():
     # Distributed training:
     # The .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
-    config = T5Config.from_pretrained(
+    config = AutoConfig.from_pretrained(
         model_args.config_name if model_args.config_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
         revision=model_args.model_revision,
@@ -192,7 +194,7 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
-    model = T5ForConditionalGeneration.from_pretrained(
+    model = AutoModelForSeq2SeqLM.from_pretrained(
         model_args.model_name_or_path,
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
         config=config,
@@ -202,6 +204,7 @@ def main():
     )
     model.resize_token_embeddings(len(tokenizer))
 
+
     if delta_args.delta_type.lower() != "none":
         from opendelta import AutoDeltaConfig,AutoDeltaModel, Visualization
         delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
@@ -210,9 +213,10 @@ def main():
         delta_model.log(delta_ratio=True, trainable_ratio=True, visualization=True)
 
 
-
-
-
+    # model parallelize
+    if training_args.model_parallel:
+        logger.info('parallelize model!')
+        model.parallelize()
 
     data_args.dataset_name = [data_args.task_name]
     data_args.eval_dataset_name = [data_args.eval_dataset_name]
