@@ -1,6 +1,7 @@
 
 
 from collections import OrderedDict
+from multiprocessing.sharedctypes import Value
 import os
 from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.utils.model_md5 import gen_model_hash
@@ -18,6 +19,7 @@ from transformers.deepspeed import deepspeed_config, is_deepspeed_zero3_enabled
 from opendelta import SaveLoadMixin
 from opendelta import logging
 from opendelta.utils.structure_mapping import CommonStructureMap
+from opendelta.utils.interactive.web import interactive
 
 logger = logging.get_logger(__name__)
 
@@ -83,16 +85,23 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                  backbone_model: nn.Module,
                  modified_modules: Optional[List[str]] = None,
                  unfrozen_modules: Optional[List[str]] = None,
-                 common_structure=False,
+                 interactive_modify: Optional[bool] = False,
+                 common_structure = False,
                  ):
         nn.Module.__init__(self)
         # register the backbone model after init using self.__dict__ method to avoid adding backbone_model
         # to the modules of the delta model.
         self.__dict__["backbone_model"] = backbone_model
-        if modified_modules  is None:
-            self.modified_modules = self.default_modified_modules
-            self.common_structure = True
+        if modified_modules is None:
+            if interactive_modify:
+                self.modified_modules = interactive(backbone_model)
+                self.common_structure = common_structure
+            else:
+                self.modified_modules = self.default_modified_modules
+                self.common_structure = True
         else:
+            if interactive_modify:
+                raise ValueError("Use modified_modules and interactive_modify at the same time is not supported")
             self.modified_modules = modified_modules
             self.common_structure = common_structure
         if self.common_structure:

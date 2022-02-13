@@ -158,12 +158,14 @@ class AdapterModel(DeltaBase):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
+                 interactive_modify: Optional[bool] = False,
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
+                           interactive_modify=interactive_modify,
                            )
         arg_names = get_arg_names_inside_func(self.__init__)
         for arg_name in arg_names:

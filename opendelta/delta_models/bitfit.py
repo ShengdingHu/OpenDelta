@@ -72,7 +72,7 @@ class BiasLayer(nn.Module):
 
 
 
-class BitFitModel(DeltaBase, nn.Module):
+class BitFitModel(DeltaBase):
     r""" The implementation of `BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models <https://arxiv.org/abs/2106.10199>`_ .
     Unfreeze bias term (or add bias term if bias term is absent in the backbone, e.g. T5) to the modules of
     a transformer block. 
@@ -112,12 +112,14 @@ class BitFitModel(DeltaBase, nn.Module):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
+                 interactive_modify: Optional[bool] = False,
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
+                           interactive_modify=interactive_modify,
                            )
         arg_names = get_arg_names_inside_func(self.__init__)
         for arg_name in arg_names:

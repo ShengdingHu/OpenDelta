@@ -6,3 +6,4 @@ openprompt
 loralib
 decorator
 rich
+web.py
