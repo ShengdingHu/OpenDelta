@@ -54,7 +54,7 @@ Instead, if you want to modify the code, run
 ```
 python setup.py develop
 ```
-s
+
 
 
 ### Execution Tested Combination
