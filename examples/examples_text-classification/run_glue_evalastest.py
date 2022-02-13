@@ -383,6 +383,14 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
+    if tokenizer.pad_token is None:
+        if tokenizer.eos_token is not None:
+            tokenizer.pad_token = tokenizer.eos_token
+            config.pad_token_id = config.eos_token_id # some models check pad_token_id in config, e.g. ctrl
+        else:
+            tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+            config.pad_token_id = config.vocab_size
+
     model = AutoModelForSequenceClassification.from_pretrained(
         model_args.model_name_or_path,
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
@@ -392,6 +400,7 @@ def main():
         use_auth_token=True if model_args.use_auth_token else None,
     )
 
+    model.resize_token_embeddings(len(tokenizer))
     if delta_args.delta_type.lower() != "none":
         from opendelta import AutoDeltaConfig
         from opendelta.auto_delta import AutoDeltaModel
