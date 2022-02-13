@@ -122,6 +122,40 @@ bert_mapping = {
     }
 }
 
+debertav2_mapping = {
+    "deberta.embeddings.word_embeddings": {"__name__":"embeddings"},
+    "deberta.embeddings.LayerNorm": {"__name__":""},
+    "deberta.encoder": {"__name__":"encoder",
+        "layer": {"__name__":"block",
+            "$": {"__name__":"$",
+                "attention": {"__name__":"attn",
+                    "self.query_proj": {"__name__":"q"},
+                    "self.key_proj": {"__name__":"k"},
+                    "self.value_proj": {"__name__":"v"},
+                    "output.dense": {"__name__":"proj"},
+                    "output.LayerNorm": {"__name__":"layer_norm"},
+                },
+                "output": {"__name__":"ff",
+                            "dense": {"__name__":"w2"},
+                            "LayerNorm": {"__name__":"layer_norm"}
+                },
+                "intermediate.dense": {"__name__":"ff.w1"},
+            }
+        },
+        "rel_embeddings": {"__name__": ""},
+        "LayerNorm": {"__name__": ""},
+        "conv": {"__name__": "",
+            "conv": {"__name__": ""},
+            "LayerNorm": {"__name__": ""}
+        }
+    },
+    "lm_predictions.lm_head": {"__name__":"lm_head",
+        "dense": {"__name__":""},
+        "LayerNorm": {"__name__":""},
+        "bias": {"__name__": ""}
+    },
+}
+
 gpt2_mapping = {
     "transformer.wte": {"__name__":"embeddings"},
     "transformer.wpe": {"__name__":""},
@@ -209,49 +243,7 @@ def transform(org_key, mapping, strict=True, warning=False, verbose=False):
     return new_key
     
 
-# class _LazyStructureMapping(OrderedDict):
-#     """
-#     A dictionary that lazily load its values when they are requested.
-#     """
 
-#     def __init__(self, mapping):
-#         self._mapping = mapping
-#         self._extra_content = {}
-#         self._modules = {}
-
-#     def __getitem__(self, key):
-#         if key in self._extra_content:
-#             return self._extra_content[key]
-#         if key not in self._mapping:
-#             raise KeyError(key)
-#         value = self._mapping[key]
-#         module_name = key #model_type_to_module_name(key)
-#         # if module_name not in self._modules:
-#         self._modules[module_name] = importlib.import_module(f".{module_name}", "opendelta.delta_models")
-#         return getattr(self._modules[module_name], value)
-
-#     def keys(self):
-#         return list(self._mapping.keys()) + list(self._extra_content.keys())
-
-#     def values(self):
-#         return [self[k] for k in self._mapping.keys()] + list(self._extra_content.values())
-
-#     def items(self):
-#         return [(k, self[k]) for k in self._mapping.keys()] + list(self._extra_content.items())
-
-#     def __iter__(self):
-#         return iter(list(self._mapping.keys()) + list(self._extra_content.keys()))
-
-#     def __contains__(self, item):
-#         return item in self._mapping or item in self._extra_content
-
-#     def register(self, key, value):
-#         """
-#         Register a new configuration in this mapping.
-#         """
-#         if key in self._mapping.keys():
-#             raise ValueError(f"'{key}' is already used by a Transformers config, pick another name.")
-#         self._extra_content[key] = value
 
 def mapping_for_SequenceClassification(mapping, type):
     mapping = copy.deepcopy(mapping)
@@ -263,6 +255,10 @@ def mapping_for_SequenceClassification(mapping, type):
         }
     elif type == "bert":
         mapping.pop("lm_head")
+        mapping["classifier"] = {"__name__": "classifier"}
+    elif type == "deberta":
+        mapping.pop("lm_predictions.lm_head")
+        mapping["pooler"] = {"__name__": "classifier"} 
         mapping["classifier"] = {"__name__": "classifier"}
     else:
         raise NotImplementedError
@@ -297,23 +293,15 @@ class _LazyLoading(OrderedDict):
 
 
 class CommonStructureMap(object):
-    # Mappings = {
-    #     "t5": t5_mapping,
-    #     "gpt2": gpt2_mapping,
-    #     "bert": bert_mapping,
-    #     "roberta": roberta_mapping,
-    #     "distilbert": distilbert_mapping
-    # }
+    r""" A lazy loading structure map.
+    """
     Mappings = _LazyLoading({
         "RobertaForSequenceClassification": """mapping_for_SequenceClassification(roberta_mapping, "roberta")""",
         "RobertaForMaskedLM": "roberta_mapping",
         "BertForMaskedLM": "bert_mapping",
         "BertForSequenceClassification": """mapping_for_SequenceClassification(bert_mapping, "bert")""",
-        "T5ForConditionalGeneration": """mapping_for_ConditionalGeneration(t5_mapping, "t5")"""
-        # "gpt2": gpt2_mapping,
-        # "bert": bert_mapping,
-        # "roberta": roberta_mapping,
-        # "distilbert": distilbert_mapping
+        "T5ForConditionalGeneration": """mapping_for_ConditionalGeneration(t5_mapping, "t5")""",
+        "DebertaV2ForSequenceClassification": """mapping_for_SequenceClassification(debertav2_mapping, "deberta")"""
     })
 
     SpecialModelInverseMaps = {
@@ -326,6 +314,8 @@ class CommonStructureMap(object):
 
     @classmethod
     def load(cls, backbone_model, strict=True, warining=False, visualize=True):
+        r"""Doc
+        """
         backbone_class = type(backbone_model).__name__
         if backbone_class not in cls.Mappings:
             raise KeyError(backbone_class)

@@ -43,7 +43,7 @@ class BiasLayer(nn.Module):
             raise NotImplementedError
         self.instantiated = True
     
-    def forward(self, output):
+    def post_forward(self, output):
         r"""Presuming the first argument is the tensor to add bias along the last dimension.
         In most cases, it is correct. However, be aware of the possibility that the presumption
         doesn't hold. 
@@ -73,6 +73,35 @@ class BiasLayer(nn.Module):
 
 
 class BitFitModel(DeltaBase, nn.Module):
+    r""" The implementation of `BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models <https://arxiv.org/abs/2106.10199>`_ .
+    Unfreeze bias term (or add bias term if bias term is absent in the backbone, e.g. T5) to the modules of
+    a transformer block. 
+
+    .. note:: 
+        **Broadcast to Submodule**: We modify all potential positions  of the specified 
+        `modified_modules`. That is to say, if we specify `attn` in the modified_modules, then all position
+        including the q, k, v and out linear layer of the attention layer are added bias layer (or unfreezing).
+        The potential position is determined according to equation (1)-(5) and the previous three 
+        equations.
+
+    class attributes:
+        - default_modified_modules = ["attn", "ff", "layer_norm","lm_head.proj"] According to the paper and the 
+          implementation in `Compacter's baseline <https://github.com/rabeehk/compacter>`_ , we modify the
+          bias term in the above modules. 
+        - delta_type = "bitfit"
+
+
+
+
+    Args:
+        backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
+        modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only
+                        the implemented ones)
+        unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen
+                         together with the prefix parameters.
+        common_structure (:obj:`bool`): whether using name-based addressing witha common structure mapping.
+
+    """
 
 
     config_class = BitFitConfig
@@ -145,7 +174,7 @@ class BitFitModel(DeltaBase, nn.Module):
     
     def add_bias_to_others(self, c):
         new_bias = BiasLayer()
-        self.insert_sequential_module(c, pre_caller=None, post_caller=new_bias.forward, delta_module=new_bias, name="bias")
+        self.insert_sequential_module(c, delta_module=new_bias, name="bias")
         self.delta_modules.append(new_bias)
 
 

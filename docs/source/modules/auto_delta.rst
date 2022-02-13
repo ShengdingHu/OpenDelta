@@ -1,16 +1,14 @@
 Auto Classes
 ======================================
 
-Auto Classes for Delta Models and Configs.
 
----------------------------------------
-
-
+AutoDeltaConfig
+------------------------------------
 .. autoclass:: opendelta.auto_delta.AutoDeltaConfig
     :members:
 
-~~~~~~~~~~~~~~~
 
-
+AutoDeltaModel
+------------------------------------
 .. autoclass:: opendelta.auto_delta.AutoDeltaModel
     :members:

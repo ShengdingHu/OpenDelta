@@ -571,7 +571,11 @@ def main():
 
             trainer.log_metrics("eval", metrics)
             trainer.save_metrics("eval", metrics)
+<<<<<<< HEAD
         results['evaluate'] = metrics
+=======
+        results['eval'] = metrics
+>>>>>>> 3e0fbd846967e2eb747df216ff045d8d0a66ae95
 
     if training_args.do_predict:
         logger.info("*** Predict ***")

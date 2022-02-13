@@ -1,6 +1,8 @@
 import hashlib
  
 def gen_model_hash(model, with_parameters=True):
+    r"""Get model hash (structure and parameter)
+    """
     str_model_structure = str(model).replace("\n","").replace(" ","").replace("\t","").encode('utf-8')
     md5 = hashlib.md5(str_model_structure)
 
@@ -13,7 +15,7 @@ def gen_model_hash(model, with_parameters=True):
 
     
 def gen_parameter_hash(generator, md5=None):
-    r""" From https://zhuanlan.zhihu.com/p/392942816
+    r"""Get parameter hash. From https://zhuanlan.zhihu.com/p/392942816
 
     """
     if md5 is None:

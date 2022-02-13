@@ -3,7 +3,7 @@ from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.utils.signature import get_arg_names_inside_func, signature
 from typing import Optional
 from transformers.models.distilbert.modeling_distilbert import MultiHeadSelfAttention
-from transformers.models.t5.modeling_t5 import T5Attention
+from transformers.models.t5.modeling_t5 import T5Attention, T5LayerSelfAttention
 from transformers.models.bert.modeling_bert import BertSelfAttention
 from transformers.models.gpt2.modeling_gpt2 import GPT2Attention
 from transformers.models.bart.modeling_bart import BartAttention
@@ -37,7 +37,7 @@ class PrefixLayerT5(nn.Module):
         self.instantiated = True
         
     
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
         batch_size = args[0].shape[0]
@@ -101,7 +101,7 @@ class PrefixLayerBart(nn.Module):
         self.instantiated = True
         
     
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
       
@@ -154,7 +154,7 @@ class PrefixLayerGPT2(nn.Module):
         self.instantiated = True
         
     
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
         batch_size = args[0].shape[0]
@@ -186,6 +186,7 @@ class PrefixLayerGPT2(nn.Module):
 
 
 class PrefixLayerDistilBert(nn.Module):
+    # TODO: Warning: have bugs
     def __init__(self, prefix_token_num, device,):
         super().__init__()
         self.prefix_token_num = prefix_token_num
@@ -283,7 +284,7 @@ class PrefixLayerRoberta(nn.Module):
         self.instantiated = True
         
     
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r"""The args and kwargs are inherited from the T5Attention's forward function.
         """
         batch_size = args[0].shape[0]
@@ -384,7 +385,7 @@ class ReparameterizeFunction(nn.Module):
             module.past_key_reparam = past_key_values[module_id][0]
             module.past_value_reparam = past_key_values[module_id][1]
 
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         r""" Firstly forward through the reparameterized network, and then go through normal forward pass of the PLM.
         """
         self.allocate_parameter()
@@ -406,7 +407,7 @@ class PrefixConfig(BaseDeltaConfig):
     def __init__(
         self, 
         prefix_token_num=6,
-        reparameterize=False,
+        reparameterize=True,
         embed_dim: Optional[int]=512,
         mid_dim: Optional[int]=512,
         **kwargs
@@ -422,10 +423,30 @@ class PrefixConfig(BaseDeltaConfig):
 
 
 class PrefixModel(DeltaBase, nn.Module):
-    r""" Support insert prefix token before each layer. For example, layer 3 4 6 10 and other layer untouched. 
+    r""" The implementation of `Prefix-Tuning: Optimizing Continuous Prompts for Generation <https://arxiv.org/abs/2101.00190>`_ .
+    However, as attention block of different PLM differs substantially, e.g., the input arguments, the name convention
+    of `past_key_value`, we have to implement different prefixlayer for different PLM. Given the inconvenience in the
+    code level, we only support several commonly used backbone models (Currently: T5, DistilBert,Bert, Roberta, GPT2, 
+    BART). If you are trying to apply delta tuning to other backbone models, we suggest you trying other delta models 
+    or implementing it and making a pull request. 
+
+    Experimental Feature: 
+        
+        Support inserting prefix token before each layer. For example, layer 3 4 6 10 and other layer untouched. 
+
+
 
     Args:
-        emb_dim (:obj:`int`) The embedding dim of the reparameterization model.
+        backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
+        prefix_token_num (:obj:`int`): the number of prefix token
+        reparameterize (:obj:`bool`): Whether use the reparameterization for prefix tuning.
+        embed_dim (:obj:`int`): The embeding dimension of prefix token when using the reparameterization.
+        mid_dim (:obj:`int`): The dimension of the hiddens of the reparameterization network.
+        modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only
+                        the implemented ones)
+        unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen
+                         together with the prefix parameters.
+        common_structure (:obj:`bool`): whether using name-based addressing witha common structure mapping.
 
     """
     config_class = PrefixConfig
@@ -437,8 +458,8 @@ class PrefixModel(DeltaBase, nn.Module):
                  reparameterize=True,
                  embed_dim: Optional[int]=512,
                  mid_dim: Optional[int]=512,
-                 modified_modules: Optional[bool] = None,
-                 unfrozen_modules: Optional[bool] = None,
+                 modified_modules: Optional[List[str]] = None,
+                 unfrozen_modules: Optional[List[str]] = None,
                  common_structure: Optional[bool] = None,
                  ):
         DeltaBase.__init__(self, 
@@ -462,9 +483,15 @@ class PrefixModel(DeltaBase, nn.Module):
                  module: nn.Module, 
                  modified_modules: List[str],
                 ) -> nn.Module:
-        for key, _ in module.named_modules():
+        first_modified_module = None 
+        # Current, We assume the layerer are in order in named_modules. 
+        # Thus the first modified module is the first module that the tensor flows to.
+        for key, _ in module.named_modules(): 
             if self.find_key(key, modified_modules):
-                print("find key",key)
+                print("find key",key) 
+                if first_modified_module is None:
+                    _, _, ref = self.find_module(module, key)
+                    first_modified_module = ref
                 self.update_module(module, key)
         
         self._pseudo_data_to_instantiate(module)
@@ -476,9 +503,7 @@ class PrefixModel(DeltaBase, nn.Module):
                                               module_list=self.delta_modules)
             self.delta_modules = None
             self.reparams = reparams
-            self.insert_sequential_module(module, pre_caller=reparams.forward)
-        if self.reparameterize:
-            setattr(module, "prefix_reparam", self)
+            self.insert_sequential_module(first_modified_module, delta_module=reparams, name="reparams", strict=False)
         self.mark_as_delta()
         return module
     
@@ -486,15 +511,17 @@ class PrefixModel(DeltaBase, nn.Module):
     
     def update_module(self, module: nn.Module, key: str):
         _, _, ref = self.find_module(module, key)
-        print("matched_key:", key)
-        prefixlayer = self.new_module_like(ref)
-        self.insert_sequential_module(ref, pre_caller=prefixlayer.forward, post_caller=None, delta_module=prefixlayer, name="prefix")
+
+        prefixlayer, ref = self.new_module_like(ref)
+        self.insert_sequential_module(ref, delta_module=prefixlayer, name="prefix")
         self.delta_modules.append(prefixlayer)  
     
     def new_module_like(self, module):
         # TODO: support more Attention modules
 
-        if isinstance(module, T5Attention):
+        if isinstance(module, T5Attention) or isinstance(module, T5LayerSelfAttention): 
+            if isinstance(module, T5LayerSelfAttention):
+                module = module.SelfAttention # innermodule
             module_device = get_device(module)
             prefixlayer = PrefixLayerT5(prefix_token_num=self.prefix_token_num, num_heads=module.n_heads ,device=module_device)
         elif isinstance(module, MultiHeadSelfAttention):  # MultiHeadSelfAttention didn't provide past_key_value in the interface of the forward function.
@@ -515,7 +542,7 @@ class PrefixModel(DeltaBase, nn.Module):
             prefixlayer = PrefixLayerBart(prefix_token_num=self.prefix_token_num, num_heads=module.num_heads ,device=module_device)
         else:
             raise NotImplementedError(type(module))
-        return prefixlayer
+        return prefixlayer, module
 
             
  

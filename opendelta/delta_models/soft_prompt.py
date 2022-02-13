@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3e0fbd846967e2eb747df216ff045d8d0a66ae95
 from opendelta.utils.signature import get_arg_names, get_arg_names_inside_func
 from opendelta.utils.utils import *
 from opendelta.utils.cuda import get_device
@@ -64,7 +67,7 @@ class SoftPromptLayer(nn.Module):
         assert self.num_tokens>0
         self.instantiate(raw_embedding(torch.tensor([0])).shape[-1])
 
-    def forward(self, *args, **kwargs):
+    def pre_forward(self, *args, **kwargs):
         # if attention_mask is passed as PLM's input, modify it here
         if 'encoder_outputs' in kwargs and kwargs['encoder_outputs'] is not None: 
             # In generation, the input is forward through the model again.
@@ -90,8 +93,7 @@ class SoftPromptLayer(nn.Module):
             try:
                 inputs_embeds = self.raw_embedding(input_ids)
             except:
-                from IPython import embed
-                embed(header = "inputs_embeds")
+                raise RuntimeError("neither inputs_embeds nor input_ids is specified.")
         else:
             inputs_embeds = kwargs['inputs_embeds']
             
@@ -175,8 +177,6 @@ class SoftPromptModel(DeltaBase):
     def update_module(self):
         soft_prompt_layer = self.new_module_like(self.raw_embedding)
         self.insert_sequential_module(self.backbone_model.get_encoder() if self.backbone_model.config.is_encoder_decoder else self.backbone_model,
-                                          pre_caller=soft_prompt_layer.forward, 
-                                          post_caller=None, 
                                           delta_module=soft_prompt_layer, 
                                           name="soft_prompt_layer"  )
 

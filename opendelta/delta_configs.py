@@ -49,7 +49,8 @@ class BaseDeltaConfig(PushToHubMixin):
 
                 2. set to :string:`["attention.out_lin"]` will add the delta modules in every layer's :string:`attention.out_lin`.
       
-        unfrozen_modules (:obj:`List[str]`, *optional*, defaults to :obj:`["deltas"]` ) The modules that are unfrozen 
+        unfrozen_modules (:obj:`List[str]`, *optional*, defaults to :obj:`["deltas"]` ) 
+        The modules that are unfrozen 
             during training. Including the ones that are newly introduced as delta modules, and the ones that are 
             originally a part of the model but set to trainable (:obj:`requires_grad=True`) to train together with the 
             delta modules. OpenDelta will take every modules that **ends with** the one of the provided keys and all 
