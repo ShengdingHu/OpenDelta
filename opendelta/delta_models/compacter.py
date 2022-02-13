@@ -163,7 +163,7 @@ class CompacterConfig(BaseDeltaConfig):
 
 
 
-class CompacterModel(DeltaBase, nn.Module):
+class CompacterModel(DeltaBase):
     r""" The implementation of `Compacter: Efficient Low-Rank Hypercomplex Adapter Layers <https://arxiv.org/abs/2106.04647>`_ .
     Add compacter layer to the designated `modified_modules`. In sequential paradigm,  The modules' output is then 
     passed into the compacter's post_forward. 
@@ -217,6 +217,7 @@ class CompacterModel(DeltaBase, nn.Module):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
+                 interactive_modify: Optional[bool] = False,
                  reduction_factor=16, 
                  non_linearity="gelu_new", 
                  phm_c_init="normal", 
@@ -238,6 +239,7 @@ class CompacterModel(DeltaBase, nn.Module):
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
+                           interactive_modify=interactive_modify,
                            )
         assert shared_phm_rule == False, "In opendelta version {opendelta.__version__}, "\
             "shared_phm_rule is not supported. Later, sharing parameters will be tackled using"\

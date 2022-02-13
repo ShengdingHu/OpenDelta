@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 3e0fbd846967e2eb747df216ff045d8d0a66ae95
 from opendelta.utils.signature import get_arg_names, get_arg_names_inside_func
 from opendelta.utils.utils import *
 from opendelta.utils.cuda import get_device
@@ -141,12 +137,14 @@ class SoftPromptModel(DeltaBase):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
+                 interactive_modify: Optional[bool] = False,
                 ):
         DeltaBase.__init__(self, 
                            backbone_model = backbone_model,
                            modified_modules = ["root"],
                            unfrozen_modules = unfrozen_modules,
                            common_structure = False,
+                           interactive_modify = interactive_modify,
                           )
 
         arg_names = get_arg_names_inside_func(self.__init__)

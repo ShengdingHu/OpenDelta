@@ -110,7 +110,8 @@ class Visualization(object):
                         keep_non_params=False, 
                         common_structure=False, 
                         mapping=None, 
-                        only_common=False
+                        only_common=False,
+                        printTree=True,
                         ):
         r"""Draw the structure graph in command line. 
 
@@ -139,7 +140,9 @@ class Visualization(object):
         self.prune_tree(self.root_tree)
         if not self.expand_params:
             self.fold_param_node(self.root_tree)
-        richprint(self.root_tree)
+        if printTree:
+            richprint(self.root_tree)
+        return self.root_tree
 
     
 
