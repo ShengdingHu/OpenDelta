@@ -28,7 +28,7 @@ OpenDelta is a toolkit for parameter efficient methods (we dub it as *delta tuni
 
 ### Using Pip
 
-Our repo is tested on Python 3.6+ and PyTorch 1.8.1+, install OpenPrompt using pip as follows:
+Our repo is tested on Python 3.6+ and PyTorch 1.8.1+, install OpenDelta using pip as follows:
 
 ```shell
 pip install opendelta
@@ -44,15 +44,17 @@ Clone the repository from github:
 git clone https://github.com/thunlp/OpenDelta.git
 cd OpenDelta
 pip install -r requirements.txt
+```
+If you won't modify the code, run
+```
 python setup.py install
 ```
 
-Modify the code
-
+Instead, if you want to modify the code, run
 ```
 python setup.py develop
 ```
-
+s
 
 
 ### Execution Tested Combination
@@ -78,11 +80,4 @@ python setup.py develop
 Google sheet [here](https://docs.google.com/spreadsheets/d/1BIVa8ocAPga-u7rBOXLYaTfaJSjI1dWfwohmLjmFDrY/edit?usp=sharing)
 
 
-### TODOs
-
-- [ ] Compactor `shared_phm_rule=True` not supported.
-- [ ] delta_models/adapters folder need to be remove with no harms.
-- [ ] Preffier Adatper
-- [ ] Prompt Tuning
-- [ ] Prefix Generation Bug
 
