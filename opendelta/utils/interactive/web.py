@@ -115,4 +115,6 @@ def interactive(model):
     print("Open the link below for interactive modification. (On remote host, there are local port mapping in IDE like vscode, etc.)")
     app.run()
     global names
+    print("modified_modules:")
+    print(names)
     return names
