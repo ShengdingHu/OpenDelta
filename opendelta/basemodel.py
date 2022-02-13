@@ -95,7 +95,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         if modified_modules is None:
             if interactive_modify:
                 self.modified_modules = interactive(backbone_model)
-                self.common_structure = common_structure
+                self.common_structure = False
             else:
                 self.modified_modules = self.default_modified_modules
                 self.common_structure = True
