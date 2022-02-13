@@ -86,7 +86,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                  backbone_model: nn.Module,
                  modified_modules: Optional[List[str]] = None,
                  unfrozen_modules: Optional[List[str]] = None,
-                 interactive_modify: Optional[Union[bool, int]] = None,
+                 interactive_modify: Optional[Union[bool, int]] = False,
                  common_structure = False,
                  ):
         nn.Module.__init__(self)
@@ -94,7 +94,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         # to the modules of the delta model.
         self.__dict__["backbone_model"] = backbone_model
         if modified_modules is None:
-            if interactive_modify is not None:
+            if interactive_modify:
                 if isinstance(interactive_modify, bool):
                     self.modified_modules = interactive(backbone_model)
                 else:
@@ -104,7 +104,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                 self.modified_modules = self.default_modified_modules
                 self.common_structure = True
         else:
-            if interactive_modify is not None:
+            if interactive_modify:
                 raise ValueError("Use modified_modules and interactive_modify at the same time is not supported")
             self.modified_modules = modified_modules
             self.common_structure = common_structure
