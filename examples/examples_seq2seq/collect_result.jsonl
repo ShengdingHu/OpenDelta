@@ -1104,23 +1104,390 @@
 }
 {
     "evaluate": {
-        "epoch": 20.0,
-        "eval_accuracy": 74.50980392156863,
-        "eval_average_metrics": 78.70227038183694,
-        "eval_f1": 82.89473684210526,
-        "eval_loss": 0.23807300627231598,
-        "eval_runtime": 0.9987,
-        "eval_samples_per_second": 204.262
+        "epoch": 3.0,
+        "eval_accuracy": 0.0,
+        "eval_average_metrics": 0.0,
+        "eval_loss": 4.919861316680908,
+        "eval_runtime": 2.2222,
+        "eval_samples_per_second": 450.001
     },
-    "repo_name": "DeltaHub/prefix_t5-base_mrpc",
+    "repo_name": "DeltaHub/soft_prompt_t5-base_sst2",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 0.0,
+        "test_average_metrics": 0.0,
+        "test_loss": 4.365617752075195,
+        "test_runtime": 2.01,
+        "test_samples_per_second": 433.823
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 0.0,
+        "eval_average_metrics": 0.0,
+        "eval_loss": 3.181633472442627,
+        "eval_runtime": 3.4991,
+        "eval_samples_per_second": 39.438
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_rte",
     "test": {
         "epoch": 20.0,
-        "test_accuracy": 77.94117647058823,
-        "test_average_metrics": 81.2914073479221,
-        "test_f1": 84.64163822525597,
-        "test_loss": 0.21069598197937012,
-        "test_runtime": 1.0824,
-        "test_samples_per_second": 188.473
+        "test_accuracy": 0.0,
+        "test_average_metrics": 0.0,
+        "test_loss": 3.0797579288482666,
+        "test_runtime": 3.5014,
+        "test_samples_per_second": 39.699
+    }
+}
+{
+    "evaluate": {
+        "epoch": 3.0,
+        "eval_accuracy": 97.5,
+        "eval_average_metrics": 97.5,
+        "eval_loss": 0.03923957794904709,
+        "eval_runtime": 9.3277,
+        "eval_samples_per_second": 107.208
+    },
+    "repo_name": "DeltaHub/lora_t5-base_sst2",
+    "test": {
+        "epoch": 3.0,
+        "test_accuracy": 94.15137614678899,
+        "test_average_metrics": 94.15137614678899,
+        "test_loss": 0.0857105404138565,
+        "test_runtime": 8.2522,
+        "test_samples_per_second": 105.669
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 0.0,
+        "eval_average_metrics": 0.0,
+        "eval_loss": 5.293125152587891,
+        "eval_runtime": 10.4458,
+        "eval_samples_per_second": 95.733
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large_sst2",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 0.0,
+        "test_average_metrics": 0.0,
+        "test_loss": 5.365442752838135,
+        "test_runtime": 8.2955,
+        "test_samples_per_second": 105.118
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 0.0,
+        "eval_average_metrics": 0.0,
+        "eval_loss": 1.0959151983261108,
+        "eval_runtime": 3.9479,
+        "eval_samples_per_second": 34.956
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_rte",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 0.0,
+        "test_average_metrics": 0.0,
+        "test_loss": 1.0584385395050049,
+        "test_runtime": 3.4749,
+        "test_samples_per_second": 40.001
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 0.0,
+        "eval_average_metrics": 0.0,
+        "eval_loss": 6.986207008361816,
+        "eval_runtime": 3.8164,
+        "eval_samples_per_second": 36.16
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_rte",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 0.0,
+        "test_average_metrics": 0.0,
+        "test_loss": 6.797420501708984,
+        "test_runtime": 4.1052,
+        "test_samples_per_second": 33.859
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 79.02140672782875,
+        "eval_average_metrics": 79.02140672782875,
+        "eval_loss": 0.14151978492736816,
+        "eval_runtime": 10.1842,
+        "eval_samples_per_second": 160.543
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-base_superglue-boolq",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 78.0428134556575,
+        "test_average_metrics": 78.0428134556575,
+        "test_loss": 0.1428450047969818,
+        "test_runtime": 10.132,
+        "test_samples_per_second": 161.369
+    }
+}
+{
+    "evaluate": {
+        "epoch": 60.0,
+        "eval_accuracy": 66.77115987460816,
+        "eval_average_metrics": 66.77115987460816,
+        "eval_loss": 0.19387413561344147,
+        "eval_runtime": 5.619,
+        "eval_samples_per_second": 56.771
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-wic",
+    "test": {
+        "epoch": 60.0,
+        "test_accuracy": 65.51724137931035,
+        "test_average_metrics": 65.51724137931035,
+        "test_loss": 0.18992935121059418,
+        "test_runtime": 4.3013,
+        "test_samples_per_second": 74.164
+    }
+}
+{
+    "evaluate": {
+        "epoch": 200.0,
+        "eval_accuracy": 80.43478260869566,
+        "eval_average_metrics": 80.43478260869566,
+        "eval_loss": 0.18158407509326935,
+        "eval_runtime": 3.9051,
+        "eval_samples_per_second": 35.338
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_rte",
+    "test": {
+        "epoch": 200.0,
+        "test_accuracy": 79.13669064748201,
+        "test_average_metrics": 79.13669064748201,
+        "test_loss": 0.22918254137039185,
+        "test_runtime": 3.4803,
+        "test_samples_per_second": 39.939
+    }
+}
+{
+    "evaluate": {
+        "epoch": 60.0,
+        "eval_accuracy": 66.14420062695925,
+        "eval_average_metrics": 66.14420062695925,
+        "eval_loss": 0.3137217164039612,
+        "eval_runtime": 2.3267,
+        "eval_samples_per_second": 137.106
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-wic",
+    "test": {
+        "epoch": 60.0,
+        "test_accuracy": 66.14420062695925,
+        "test_average_metrics": 66.14420062695925,
+        "test_loss": 0.27694183588027954,
+        "test_runtime": 1.9981,
+        "test_samples_per_second": 159.656
+    }
+}
+{
+    "evaluate": {
+        "epoch": 50.0,
+        "eval_accuracy": 77.92048929663609,
+        "eval_average_metrics": 77.92048929663609,
+        "eval_loss": 0.15128014981746674,
+        "eval_runtime": 46.4699,
+        "eval_samples_per_second": 35.184
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-boolq",
+    "test": {
+        "epoch": 50.0,
+        "test_accuracy": 76.20795107033639,
+        "test_average_metrics": 76.20795107033639,
+        "test_loss": 0.15821194648742676,
+        "test_runtime": 46.27,
+        "test_samples_per_second": 35.336
+    }
+}
+{
+    "evaluate": {
+        "epoch": 200.0,
+        "eval_accuracy": 78.98550724637681,
+        "eval_average_metrics": 78.98550724637681,
+        "eval_loss": 0.5692653059959412,
+        "eval_runtime": 3.0841,
+        "eval_samples_per_second": 44.746
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_rte",
+    "test": {
+        "epoch": 200.0,
+        "test_accuracy": 71.22302158273382,
+        "test_average_metrics": 71.22302158273382,
+        "test_loss": 0.6690124869346619,
+        "test_runtime": 3.0154,
+        "test_samples_per_second": 46.097
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 53.57142857142857,
+        "eval_average_metrics": 46.42673992673993,
+        "eval_f1_multiclass": 39.282051282051285,
+        "eval_loss": 0.5522289872169495,
+        "eval_runtime": 1.3789,
+        "eval_samples_per_second": 20.306
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-cb",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 53.57142857142857,
+        "test_average_metrics": 46.221450962830275,
+        "test_f1_multiclass": 38.87147335423197,
+        "test_loss": 0.6251225471496582,
+        "test_runtime": 1.2633,
+        "test_samples_per_second": 22.165
+    }
+}
+{
+    "evaluate": {
+        "epoch": 2000.0,
+        "eval_accuracy": 75.0,
+        "eval_average_metrics": 63.94824311490978,
+        "eval_f1_multiclass": 52.89648622981956,
+        "eval_loss": 0.28015631437301636,
+        "eval_runtime": 0.9534,
+        "eval_samples_per_second": 29.369
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-cb",
+    "test": {
+        "epoch": 2000.0,
+        "test_accuracy": 75.0,
+        "test_average_metrics": 63.333333333333336,
+        "test_f1_multiclass": 51.66666666666667,
+        "test_loss": 0.2751100957393646,
+        "test_runtime": 0.8541,
+        "test_samples_per_second": 32.782
+    }
+}
+{
+    "evaluate": {
+        "epoch": 70.0,
+        "eval_accuracy": 79.69418960244649,
+        "eval_average_metrics": 79.69418960244649,
+        "eval_loss": 0.18620885908603668,
+        "eval_runtime": 45.6509,
+        "eval_samples_per_second": 35.815
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-boolq",
+    "test": {
+        "epoch": 70.0,
+        "test_accuracy": 77.61467889908256,
+        "test_average_metrics": 77.61467889908256,
+        "test_loss": 0.18978336453437805,
+        "test_runtime": 44.9984,
+        "test_samples_per_second": 36.335
+    }
+}
+{
+    "evaluate": {
+        "epoch": 70.0,
+        "eval_accuracy": 81.7737003058104,
+        "eval_average_metrics": 81.7737003058104,
+        "eval_loss": 0.13067878782749176,
+        "eval_runtime": 51.5533,
+        "eval_samples_per_second": 31.715
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-boolq",
+    "test": {
+        "epoch": 70.0,
+        "test_accuracy": 78.65443425076452,
+        "test_average_metrics": 78.65443425076452,
+        "test_loss": 0.1404688060283661,
+        "test_runtime": 50.6773,
+        "test_samples_per_second": 32.263
+    }
+}
+{
+    "evaluate": {
+        "epoch": 1599.96,
+        "eval_accuracy": 52.0,
+        "eval_average_metrics": 52.0,
+        "eval_loss": 0.23958811163902283,
+        "eval_runtime": 1.2422,
+        "eval_samples_per_second": 40.251
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-copa",
+    "test": {
+        "epoch": 1599.96,
+        "test_accuracy": 57.99999999999999,
+        "test_average_metrics": 57.99999999999999,
+        "test_loss": 0.2002403885126114,
+        "test_runtime": 1.2526,
+        "test_samples_per_second": 39.918
+    }
+}
+{
+    "evaluate": {
+        "epoch": 70.0,
+        "eval_accuracy": 81.7737003058104,
+        "eval_average_metrics": 81.7737003058104,
+        "eval_loss": 0.13067878782749176,
+        "eval_runtime": 52.7904,
+        "eval_samples_per_second": 30.972
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-boolq",
+    "test": {
+        "epoch": 70.0,
+        "test_accuracy": 78.65443425076452,
+        "test_average_metrics": 78.65443425076452,
+        "test_loss": 0.1404688060283661,
+        "test_runtime": 51.9257,
+        "test_samples_per_second": 31.487
+    }
+}
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_average_metrics": 47.418777533039645,
+        "eval_em": 35.4625550660793,
+        "eval_f1": 59.375,
+        "eval_loss": 0.1777249127626419,
+        "eval_runtime": 86.379,
+        "eval_samples_per_second": 28.062
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-multirc",
+    "test": {
+        "epoch": 20.0,
+        "test_average_metrics": 45.6436612824278,
+        "test_em": 33.333333333333336,
+        "test_f1": 57.95398923152227,
+        "test_loss": 0.17498870193958282,
+        "test_runtime": 87.6677,
+        "test_samples_per_second": 27.65
+    }
+}
+{
+    "evaluate": {
+        "epoch": 5.0,
+        "eval_average_metrics": 74.34549878345499,
+        "eval_em": 73.72262773722628,
+        "eval_f1": 74.9683698296837,
+        "eval_loss": 0.3008313477039337,
+        "eval_runtime": 94.468,
+        "eval_samples_per_second": 14.502
+    },
+    "repo_name": "DeltaHub/soft_prompt_t5-large-lm-adapt_superglue-record",
+    "test": {
+        "epoch": 5.0,
+        "test_average_metrics": 83.15126327283681,
+        "test_em": 82.66341591987349,
+        "test_f1": 83.63911062580013,
+        "test_loss": 0.2979890704154968,
+        "test_runtime": 968.0676,
+        "test_samples_per_second": 15.677
     }
 }
 {

@@ -108,7 +108,7 @@ class LowRankAdapter(nn.Module):
 
 
 
-class LowRankAdapterModel(DeltaBase, nn.Module):
+class LowRankAdapterModel(DeltaBase):
     r""" The implementation of LowRankAdapter, proposed as a baseline in 
     `Compacter: Efficient Low-Rank Hypercomplex Adapter Layers <https://arxiv.org/abs/2106.04647>`_ .
     We found that it enjoys very few parameters but competitive performance, thus add it into OpenDelta.
@@ -158,12 +158,14 @@ class LowRankAdapterModel(DeltaBase, nn.Module):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
+                 interactive_modify: Optional[bool] = False,
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
+                           interactive_modify=interactive_modify,
                            )
         arg_names = get_arg_names_inside_func(self.__init__)
         for arg_name in arg_names:

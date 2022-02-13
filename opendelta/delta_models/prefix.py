@@ -422,7 +422,7 @@ class PrefixConfig(BaseDeltaConfig):
 
 
 
-class PrefixModel(DeltaBase, nn.Module):
+class PrefixModel(DeltaBase):
     r""" The implementation of `Prefix-Tuning: Optimizing Continuous Prompts for Generation <https://arxiv.org/abs/2101.00190>`_ .
     However, as attention block of different PLM differs substantially, e.g., the input arguments, the name convention
     of `past_key_value`, we have to implement different prefixlayer for different PLM. Given the inconvenience in the
@@ -461,12 +461,14 @@ class PrefixModel(DeltaBase, nn.Module):
                  modified_modules: Optional[List[str]] = None,
                  unfrozen_modules: Optional[List[str]] = None,
                  common_structure: Optional[bool] = None,
+                 interactive_modify: Optional[bool] = False,
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 
                            modified_modules=modified_modules,
                            unfrozen_modules=unfrozen_modules,
                            common_structure=common_structure,
+                           interactive_modify=interactive_modify,
                            )
         arg_names = get_arg_names_inside_func(self.__init__)
         for arg_name in arg_names:

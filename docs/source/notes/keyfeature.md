@@ -4,7 +4,7 @@
 :::{admonition} Plug-and-play Design.
 :class: tip
 
-Existing open-source project to propogate this **``delta-tuning''** paradigm includes
+Existing open-source project to propogate this **''delta-tuning''** paradigm includes
 <a href="https://adapterhub.ml">AdapterHub</a>, which copies the transformers code base and modify on it, which makes it unintuitive to transfer from a normal code base to a delta-tuning ones.
 
 OpenDelta approaches this problem via a **true plug-and-play** fashion to the PLMs. To migrate from a full-model finetuning training scripts to a delta tuning training scripts, you **DO NOT**  need to change the backbone bone model code base to an adapted code base.

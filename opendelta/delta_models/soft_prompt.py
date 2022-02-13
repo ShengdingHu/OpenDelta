@@ -101,7 +101,7 @@ class SoftPromptLayer(nn.Module):
         kwargs['inputs_embeds'] = inputs_embeds
 
         am = kwargs['attention_mask']
-        am.data = torch.cat([torch.ones((*am.shape[:-1],self.num_tokens), dtype = am.dtype,device=am.device), am], dim=-1)
+        am.data = torch.cat([torch.ones((*am.shape[:-1], inputs_embeds.shape[-2]-am.shape[-1]), dtype = am.dtype,device=am.device), am], dim=-1)
 
         return args, kwargs
 
@@ -137,12 +137,14 @@ class SoftPromptModel(DeltaBase):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
+                 interactive_modify: Optional[bool] = False,
                 ):
         DeltaBase.__init__(self, 
                            backbone_model = backbone_model,
                            modified_modules = ["root"],
                            unfrozen_modules = unfrozen_modules,
                            common_structure = False,
+                           interactive_modify = interactive_modify,
                           )
 
         arg_names = get_arg_names_inside_func(self.__init__)
@@ -172,7 +174,7 @@ class SoftPromptModel(DeltaBase):
     
     def update_module(self):
         soft_prompt_layer = self.new_module_like(self.raw_embedding)
-        self.insert_sequential_module(self.backbone_model, 
+        self.insert_sequential_module(self.backbone_model.get_encoder() if self.backbone_model.config.is_encoder_decoder else self.backbone_model,
                                           delta_module=soft_prompt_layer, 
                                           name="soft_prompt_layer"  )
 

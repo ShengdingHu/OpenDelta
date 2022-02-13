@@ -1,4 +1,4 @@
-torch==1.9.0
+torch>=1.9.0
 transformers==4.10.0
 sentencepiece==0.1.96
 tqdm==4.62.2
@@ -6,3 +6,4 @@ openprompt
 loralib
 decorator
 rich
+web.py
