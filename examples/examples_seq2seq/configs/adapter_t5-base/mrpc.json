@@ -11,11 +11,12 @@
         "en"
     ],
     "eval_dataset_name": "mrpc",
-    "eval_steps": 200,
+    "eval_steps": 100,
     "evaluation_strategy": "steps",
     "greater_is_better": true,
     "learning_rate": 0.0003,
     "load_best_model_at_end": true,
+    "logging_steps":10,
     "max_source_length": 128,
     "metric_for_best_model": "average_metrics",
     "model_name_or_path": "../../../../plm_cache/t5-base",

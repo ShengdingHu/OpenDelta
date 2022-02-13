@@ -1511,3 +1511,24 @@
         "test_samples_per_second": 262.979
     }
 }
+{
+    "evaluate": {
+        "epoch": 20.0,
+        "eval_accuracy": 0.0,
+        "eval_average_metrics": 0.0,
+        "eval_f1": 0.0,
+        "eval_loss": 0.20416393876075745,
+        "eval_runtime": 1.8778,
+        "eval_samples_per_second": 108.639
+    },
+    "repo_name": "DeltaHub/adapter_t5-base_mrpc",
+    "test": {
+        "epoch": 20.0,
+        "test_accuracy": 0.0,
+        "test_average_metrics": 0.0,
+        "test_f1": 0.0,
+        "test_loss": 0.1770762801170349,
+        "test_runtime": 1.5085,
+        "test_samples_per_second": 135.238
+    }
+}

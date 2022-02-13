@@ -208,10 +208,8 @@ def main():
         delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
         delta_model.freeze_module(set_state_dict = True)
         delta_model.log(delta_ratio=True, trainable_ratio=True, visualization=True)
-
-
-
-
+    
+    
 
 
     data_args.dataset_name = [data_args.task_name]

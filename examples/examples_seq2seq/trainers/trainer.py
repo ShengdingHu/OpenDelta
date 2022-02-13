@@ -144,7 +144,7 @@ class BaseTrainer(Trainer):
             deepspeed_engine.lr_scheduler = None
 
         model = self._wrap_model(self.model, training=False)
-
+  
         # if full fp16 is wanted on eval and this ``evaluation`` or ``predict`` isn't called while
         # ``train`` is running, halve it first and then put on device
         if not self.is_in_train and self.args.fp16_full_eval:
@@ -192,7 +192,6 @@ class BaseTrainer(Trainer):
 
             # Prediction step
             loss, logits, labels = self.prediction_step(model, inputs, prediction_loss_only, ignore_keys=ignore_keys)
-
             # Update containers on host
             if loss is not None:
                 losses = self._nested_gather(loss.repeat(batch_size))
