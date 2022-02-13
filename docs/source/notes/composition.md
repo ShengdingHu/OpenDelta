@@ -44,7 +44,7 @@ name: defaultmodification
 ---
 ```
 ````
-:::{admonition}
+:::{admonition} Order of Insertion
 :class: warning
 **When adding to the same layer, please pay attention to the order of adding delta.** As the above example, adapter is added after the `fc2`, the tensor will first go through `adapter` then go through `adapter_1`, at last `compacter`. If the delta is added before the backbone layer, then the last added delta will be the first to go through.
 

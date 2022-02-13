@@ -33,6 +33,7 @@ OpenDelta is a **Plug-and-play** Library of the parameter-efficient fine-tuning 
    notes/composition.md
    notes/pluginunplug.md
    notes/acceleration.md
+   notes/explored_config.md
    notes/citation.md
 
 .. toctree::

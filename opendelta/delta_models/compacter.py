@@ -2,7 +2,7 @@ from functools import partial
 from typing import Optional
 from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.utils.signature import get_arg_names_inside_func
-from opendelta.utils.utils import *
+from opendelta.utils.name_based_addressing import *
 from opendelta.utils.cuda import get_device
 from opendelta.basemodel import DeltaBase
 import loralib as lora
@@ -13,7 +13,8 @@ import opendelta
 from opendelta.delta_models.layers.activations import Activations
 import inspect
 from opendelta.delta_models.layers.hypercomplex_linear import PHMLinear
-
+import opendelta.utils.logging as logging
+logger = logging.get_logger(__name__)
 
 class HyperComplexAdapterLayer(nn.Module):
     """Hypercomplex Adapter layer, in which the weights of up and down sampler modules
@@ -112,7 +113,7 @@ class HyperComplexAdapterLayer(nn.Module):
         
         if not self.instantiated:
             self.hidden_dim = hiddens.shape[-1]
-            print(f"Got hidden dim hidden_dim {self.hidden_dim}")
+            logger.debug(f"Got hidden dim hidden_dim {self.hidden_dim}")
             self.instantiate(hidden_dim=self.hidden_dim)
             
 

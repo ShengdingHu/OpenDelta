@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 import re
 from collections import OrderedDict
-
-
+import opendelta.utils.logging as logging
+logger = logging.get_logger(__name__)
 class ModuleTree(RichTree):
     def __init__(
         self,
@@ -175,9 +175,9 @@ class Visualization(object):
         if self.is_leaf_module(module): 
             if len(query)>0: # the field is not in mapping
                 if self.has_parameter(module):
-                    from IPython import embed
-                    embed(header = "in leaf")
-                    print(f"Parameter node {query} not found under tree {tree.module_name} and module {module}. Is your mapping correct?")  # WARNING
+                    # from IPython import embed
+                    # embed(header = "in leaf")
+                    logger.warning(f"Parameter node {query} not found under tree {tree.module_name} and module {module}. Is your mapping correct?")  # WARNING
             return 
         else:
             for n,m in module.named_children():

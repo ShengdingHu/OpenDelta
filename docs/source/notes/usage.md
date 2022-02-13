@@ -93,6 +93,11 @@ The performance may vary due to positional differences, but there is no academic
 :::
 
 
+:::{admonition} Favored Configurations
+:class: tip
+Feel confused about the flexibility that OpenDelta brings? NO WORRY! We will add [Favored Configurations](favoredconfiguration) soon.
+:::
+
 ## STEP 3: Freezing parameters
 The main part of the backbone model is not automatically frozen (We may add the option in future). To freeze the main part of the backbone model except the trainable parts (usually the delta paramters), use [freeze_module](opendelta.basemodel.DeltaBase.freeze_module) method. The `exclude` field obeys the same name-based addressing rules as the `modified_modules` field.
 

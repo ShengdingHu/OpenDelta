@@ -38,7 +38,7 @@
 
 ### Named-based addressing
 ```{eval-rst}
-.. automodule:: opendelta.utils.utils
+.. automodule:: opendelta.utils.name_based_addressing
     :members:
 ```
 

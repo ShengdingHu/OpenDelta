@@ -2,7 +2,7 @@ from functools import partial
 from random import random
 from typing import Optional
 from opendelta.utils.signature import get_arg_names_inside_func
-from opendelta.utils.utils import *
+from opendelta.utils.name_based_addressing import *
 from opendelta.utils.cuda import get_device
 from opendelta.basemodel import DeltaBase
 import loralib as lora
@@ -12,8 +12,8 @@ import math
 from opendelta.delta_models.layers.activations import Activations
 import inspect
 from opendelta import BaseDeltaConfig
-  
-
+import opendelta.utils.logging as logging
+logger = logging.get_logger(__name__)
 
 class AdapterLayer(nn.Module):
     r"""A layer of adapter tuning module. 
@@ -70,21 +70,20 @@ class AdapterLayer(nn.Module):
         then combined with the main hidden_states. Finally pass it into the subsequent layer.
 
         """
-        # if self.instantiated and self.layer_id == 0 and random() < 0.01:
-        #     print(self.modulelist[0].weight)
         if isinstance(output, tuple):
             hiddens = output[0]
         elif isinstance(output, torch.Tensor):
             hiddens = output
         else:
             raise TypeError
-        
+
+
         if not self.instantiated:
             self.hidden_dim = hiddens.shape[-1]
-            print(f"Got hidden dim hidden_dim {self.hidden_dim}")
+            logger.debug(f"Got hidden dim hidden_dim {self.hidden_dim}")
             self.instantiate(hidden_dim=self.hidden_dim)
+                
 
-        print("In adapter")
         adapter_output = self.modulelist(hiddens)
         modified_output = adapter_output + hiddens # TODO option: disable residual_connection
         if isinstance(output, tuple):

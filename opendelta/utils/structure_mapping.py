@@ -1,11 +1,8 @@
-
-from asyncio.log import logger
-from os import popen
 from typing import OrderedDict
 import copy
-
+import opendelta.utils.logging as logging
 from opendelta.utils.visualization import Visualization
-
+logger = logging.get_logger(__name__)
 t5_mapping = {
     "shared": {"__name__":"embeddings"},
     "encoder": {"__name__":"encoder",

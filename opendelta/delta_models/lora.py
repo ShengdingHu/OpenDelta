@@ -1,7 +1,7 @@
 from typing import Optional
 
 from opendelta.utils.signature import get_arg_names, get_arg_names_inside_func
-from opendelta.utils.utils import *
+from opendelta.utils.name_based_addressing import *
 from opendelta.basemodel import DeltaBase
 from transformers.models.t5 import T5ForConditionalGeneration
 import loralib as lora
@@ -91,9 +91,9 @@ class LoraModel(DeltaBase):
     
     
     def update_module(self, module: nn.Module, key: str):
-        parent_ref, children_name, child_ref = self.find_module(module, key)
+        parent_ref, child_name, child_ref = self.find_module(module, key)
         new_module = self.new_module_like(child_module=child_ref)
-        self.replace_module(parent_ref, children_name, child_ref, new_module, delta_name="lora")
+        self.replace_module(parent_ref, child_name, child_ref, new_module, delta_name="lora")
         
     def _pseudo_data_to_instantiate(self, module):
         # no need to pass pseudo input, so overwrite it

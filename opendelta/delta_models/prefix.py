@@ -8,14 +8,15 @@ from transformers.models.bert.modeling_bert import BertSelfAttention
 from transformers.models.gpt2.modeling_gpt2 import GPT2Attention
 from transformers.models.bart.modeling_bart import BartAttention
 from transformers.models.roberta.modeling_roberta import RobertaAttention
-from opendelta.utils.utils import *
+from opendelta.utils.name_based_addressing import *
 from opendelta.utils.cuda import get_device
 from opendelta.basemodel import DeltaBase
 from transformers.models.t5 import T5ForConditionalGeneration
 import loralib as lora
 import torch.nn as nn
 import torch
-
+import opendelta.utils.logging as logging
+logger = logging.get_logger(__name__)
 
 
 class PrefixLayerT5(nn.Module):
@@ -237,7 +238,7 @@ class PrefixLayerDistilBert(nn.Module):
             raise TypeError
         if not self.key_instantiated:
             self.hidden_dim = hiddens.shape[-1]
-            print(f"Got key hidden dim hidden_dim {self.hidden_dim}")
+            logger.debug(f"Got key hidden dim hidden_dim {self.hidden_dim}")
             self.key_instantiate(hidden_dim=self.hidden_dim)
         batch_size = hiddens.shape[0]
         if self.past_key_reparam is None:

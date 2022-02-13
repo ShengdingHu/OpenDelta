@@ -1,5 +1,5 @@
 from opendelta.utils.signature import get_arg_names, get_arg_names_inside_func
-from opendelta.utils.utils import *
+from opendelta.utils.name_based_addressing import *
 from opendelta.utils.cuda import get_device
 from opendelta.basemodel import DeltaBase
 from typing import *

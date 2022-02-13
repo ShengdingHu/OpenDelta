@@ -112,7 +112,9 @@ def interactive(model):
     html = dfs(tree, 0, [], "")
 
     print()
-    print("Open the link below for interactive modification. (On remote host, there are local port mapping in IDE like vscode, etc.)")
+    print("If on your machine, open the link below for interactive modification.\n "
+    "If on remote host, you could use port mapping, "
+    "or run in vscode terminal, which automatically do port mapping for you.")
     app.run()
     global names
     return names
