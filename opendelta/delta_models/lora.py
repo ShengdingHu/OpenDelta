@@ -90,22 +90,14 @@ class LoraModel(DeltaBase):
     
     def update_module(self, module: nn.Module, key: str):
         parent_ref, children_name, child_ref = self.find_module(module, key)
-        self.replace_module(parent_ref, children_name, child_ref)
+        new_module = self.new_module_like(child_module=child_ref)
+        self.replace_module(parent_ref, children_name, child_ref, new_module, delta_name="lora")
         
     def _pseudo_data_to_instantiate(self, module):
         # no need to pass pseudo input, so overwrite it
         pass
-    
-    def replace_module(self,
-                      parent_module: nn.Module, 
-                      children_name: str,
-                      child_module: Optional[nn.Module],
-                      ):
-        r"""Replace a module's child module (the entire referenced module) using the module's reference name.
-        If the replacemodule is None, it will call self.new_module_like method which are
-        different for different objects. 
-        This method will get the reference of the parent modules of the target module and register a new module on the node. 
-        """
+
+    def new_module_like(self, child_module):
         if isinstance(child_module, nn.Linear):
             in_features, out_features = child_module.in_features, child_module.out_features
             new_module = lora.Linear(in_features=in_features, 
@@ -115,11 +107,11 @@ class LoraModel(DeltaBase):
                                      lora_dropout=self.lora_dropout)
             new_module.weight = child_module.weight
             new_module.bias = child_module.bias # if bias is None, also copy
-            self.delta_modules.append(new_module)
         else:
             raise NotImplementedError
+        return new_module
 
-        setattr(parent_module, children_name, new_module)
+    
     
     def mark_as_delta(self, module: nn.Module = None):
         if module is None:

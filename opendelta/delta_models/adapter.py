@@ -84,7 +84,7 @@ class AdapterLayer(nn.Module):
             print(f"Got hidden dim hidden_dim {self.hidden_dim}")
             self.instantiate(hidden_dim=self.hidden_dim)
 
-
+        print("In adapter")
         adapter_output = self.modulelist(hiddens)
         modified_output = adapter_output + hiddens # TODO option: disable residual_connection
         if isinstance(output, tuple):

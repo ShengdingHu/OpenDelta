@@ -2,6 +2,7 @@
 
 from collections import OrderedDict
 import os
+from numpy import True_
 from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.utils.model_md5 import gen_model_hash
 from opendelta.utils.signature import get_arg_names, signature
@@ -38,6 +39,39 @@ def non_module_param(module: nn.Module):
             ret.append((n,p))
     return ret
 
+
+def new_replicate_for_data_parallel(self):
+    r""" self is the parent module. 
+    """
+    # rewrite the replicat for DataParallel.
+    def _caller(_org_func, org_module, delta_name,  *args, **kwargs):
+        # delta_name = getattr(_org_func, "_delta_name")
+        delta_module = getattr(org_module, delta_name)
+        if hasattr(delta_module, "pre_forward"): # is not None:
+            args, kwargs = delta_module.pre_forward(*args, **kwargs)
+        ret = _org_func(*args, **kwargs)
+        if hasattr(delta_module, "post_forward"):# is not None:
+            ret = delta_module.post_forward(ret)
+        return ret
+    replica = self.__new__(type(self))
+    org_forward = replica.forward
+    replica.__dict__ = self.__dict__.copy()
+    assert replica.forward != org_forward
+    replica.__dict__['forward'] = org_forward
+
+    for _delta_info in self._delta_infos:
+        if _delta_info['method'] == "insert_sequential" and _delta_info['state'] == "on":
+            new_forward = decorate(replica.forward, _caller, extras=(replica, _delta_info['delta_name']), kwsyntax=True)
+            replica.__dict__['forward'] = new_forward
+
+    # replicas do not have parameters themselves, the replicas reference the original
+    # module.
+    replica._parameters = OrderedDict()
+    replica._buffers = replica._buffers.copy()
+    replica._modules = replica._modules.copy()
+    replica._is_replica = True
+
+    return replica
 
 
 
@@ -385,14 +419,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             pnum_tot += param.numel()
         return pnum_tot
     
-    # def num_frozen_parameters(self, module: Optional[nn.Module]=None):
-    #     if module is None:
-    #         module = self
-    #     pnum_tot = 0
-    #     for param in module.parameters():
-    #         if not param.requires_grad:
-    #             pnum_tot += param.numel()
-    #     return pnum_tot
+
 
     def find_module(self, root_module: nn.Module, key:str):
         r"""Find the module using a key and the root module. Return both the parent reference, the child name and reference.
@@ -414,14 +441,47 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         module = getattr(parent_module, sub_keys[-1])
         return parent_module, sub_keys[-1], module
 
+    def _register_delta_infos(self, parent_module, _delta_info):
+        _delta_infos = getattr(parent_module, "_delta_infos", [])
+        if len(_delta_infos) > 0: # check if duplicated name
+            list_of_deltas = [d['delta_name'] for d in _delta_infos]
+            cur_name = _delta_info['delta_name']
+            if cur_name in list_of_deltas:
+                cur_name = cur_name + "_1"
+            counter = 1
+            while cur_name in list_of_deltas:
+                counter += 1
+                cur_name = cur_name.split("_")[0] + "_"+str(counter)
+            _delta_info["delta_name"] = cur_name
+        _delta_infos.append(_delta_info)
+        setattr(parent_module, "_delta_infos", _delta_infos)
+
     def replace_module(self,
                       parent_module: nn.Module, 
                       children_name: str,
-                      replacedmodule: Optional[nn.Module]=None):
-        r"""Replace a module using the reference of its parent module. This method will be reimplemented in different
-        derived class if needed
+                      child_module: nn.Module,
+                      new_module: nn.Module,
+                      delta_name: Optional[str] = "delta",
+                      ):
+        r"""Replace a module's child module (the entire referenced module) using the module's reference name.
+        If the replacemodule is None, it will call self.new_module_like method which are
+        different for different objects. 
+        This method will get the reference of the parent modules of the target module and register a new module on the node. 
         """
-        raise NotImplementedError
+        self.delta_modules.append(new_module)
+        setattr(parent_module, children_name, new_module)
+        # register delta info
+        _delta_info = {"method": "replace", 
+                      "delta_module": new_module, 
+                      "children_name": children_name,
+                      "org_module": child_module,
+                      "delta_name": delta_name,
+                      "delta_belong": self,
+                      "state": "on"}
+        self._register_delta_infos(parent_module=parent_module,
+                                   _delta_info = _delta_info,
+                                  )
+        
     
     def modify_module(self, module: nn.Module):
         r"""Modify the inside parameteres of a module. This method will be reimplemented in different
@@ -429,7 +489,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         """
         raise NotImplementedError
 
-    def insert_sequential_module(self, module,  delta_module=None, name='delta', strict=False):
+    def insert_sequential_module(self, module,  delta_module=None, name='delta', strict=False, _delta_info=None):
         r"""insert a module (previous not exists in the code base) before/after a module. Specifically, it modifies the forward 
         function of the original module to  firstly pass the arguments into the new module's forward function and then pass
         it into the original ones. The new module can also be inserted after the original module with similar mechanism. 
@@ -441,10 +501,11 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             delta_module: (:obj:`DeltaBase`): The delta module to be inserted.
             name: (:obj:`str`, *optional*): The name of the delta in the backbone module.
             strict: (:obj:`bool`, *optional*): Whether to prohibit modify a modified module.
+            _delta_info (:obj:`Dict`, *optional*): Used in attach(), reattach a delta module to backbone. The info of 
+                                    original delta is passed through `_delta_info`.
         
         """
-        def _caller(_org_func, org_module,  *args, **kwargs):
-            delta_name = getattr(org_module, "_delta_name")
+        def _caller(_org_func, org_module, delta_name, *args, **kwargs):
             delta_module = getattr(org_module, delta_name)
             if hasattr(delta_module, "pre_forward"):# is not None:
                 args, kwargs = delta_module.pre_forward(*args, **kwargs)
@@ -453,47 +514,42 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                 ret = delta_module.post_forward(ret)
             return ret
         
-        def new_replicate_for_data_parallel(self):
-            # rewrite the replicat for DataParallel.
-            def _caller(_org_func, org_module,  *args, **kwargs):
-                delta_name = getattr(org_module, "_delta_name")
-                delta_module = getattr(org_module, delta_name)
-                if hasattr(delta_module, "pre_forward"):# is not None:
-                    args, kwargs = delta_module.pre_forward(*args, **kwargs)
-                ret = _org_func(*args, **kwargs)
-                if hasattr(delta_module, "post_forward"):# is not None:
-                    ret = delta_module.post_forward(ret)
-                return ret
-            replica = self.__new__(type(self))
-            new_forward = decorate(replica.forward, _caller, extras=(replica,), kwsyntax=True)
-
-            replica.__dict__ = self.__dict__.copy()
-            replica.__dict__['forward'] = new_forward
-            # replicas do not have parameters themselves, the replicas reference the original
-            # module.
-            replica._parameters = OrderedDict()
-            replica._buffers = replica._buffers.copy()
-            replica._modules = replica._modules.copy()
-            replica._is_replica = True
-
-            return replica
 
         if strict:
             if hasattr(module.forward, "__wrapped__"):
                 raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
         
-        if delta_module is None:
-            raise RuntimeError("delta module can't be none to ensure successful replicate of the parent module.")
-        setattr(module, name, delta_module)
+        # record info for plug and unplug and nested wrap
+        if _delta_info is None:
+            if delta_module is None:
+                raise RuntimeError("delta module can't be none to ensure successful replicate of the parent module.")
         
-        module._delta_name = name
-        module.forward = decorate(module.forward, _caller, extras=(module,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
-        # for DataParallel's copy behavior
+            _delta_info = {"method": "insert_sequential", 
+                        "delta_module": delta_module, 
+                        "delta_name": name,
+                        "delta_belong": self,
+                        "state": "on"}
+            self._register_delta_infos(parent_module=module,
+                                    _delta_info = _delta_info)
+        else:
+            delta_module = _delta_info["delta_module"]
+            name = _delta_info["delta_name"]
+
+
+                
+
+        setattr(module, _delta_info['delta_name'], _delta_info["delta_module"])
+        
+        # _sequential_delta_name = getattr(module, "sequential_delta_name") 
+        # module._delta_names = name # register to inner forward, to support future nested wrap
+        module.forward = decorate(module.forward, _caller, extras=(module, _delta_info['delta_name']), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
+        # for DataParallel's copy behavior. Experimental:
+        # may have bugs when module.forward is nestedly wrapped.
         module._replicate_for_data_parallel = new_replicate_for_data_parallel.__get__(module, type(module)) 
                                              # func.__get__(object, type(object)) register a function as an object's method
+        
+            
     
-
-
 
     def insert_parrellel_module(self, module, pre_caller=None, post_caller=None, delta_module=None, name='delta'):
         """insert a module (previous not exists in the code base) across a module. Specifically, it modifies the forward 
@@ -549,7 +605,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             backbone_model = self.backbone_model
         self.backbone_model.load_state_dict(state_dict, strict=False)
     
-    def log(self, delta_ratio=True, trainable_ratio=True, visualization=True):
+    def log(self, module=None, delta_ratio=True, trainable_ratio=True, visualization=True):
         r"""Log and visualize the result of applying delta. 
         Possible Options are `trainable_ratio`,
         `visualization`, `delta_ratio`.
@@ -560,20 +616,120 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             visualization (:obj:`bool`, *optional*): Whether visualize the parameter information of the modified backbone.
 
         """
+        if module is None:
+            module = self.backbone_model
+
 
         if visualization:
             from opendelta import Visualization
-            Visualization(self.backbone_model).structure_graph()
+            Visualization(module).structure_graph()
         if trainable_ratio:
-            n_trainable = self.num_trainable_parameters(self.backbone_model)
-            n_total = self.num_total_parameters(self.backbone_model)
+            n_trainable = self.num_trainable_parameters(module)
+            n_total = self.num_total_parameters(module)
             logger.info("Trainable Ratio: {:2f}%".format(n_trainable/n_total*100))
         if delta_ratio:
-            n_delta = self.num_trainable_parameters()
-            n_total = self.num_total_parameters(self.backbone_model)
+            n_delta = self.num_delta_parameters(module)
+            n_total = self.num_total_parameters(module)
             logger.info("Delta Parameter Ratio: {:2f}%".format(n_delta/n_total*100))
 
+    def num_delta_parameters(self, module: Optional[nn.Module]=None):
+        r"""[NODOC] A small sugar function to get the number of trainable parameter in the backbone model. Often used to 
+        compute the trainable rate.
+
+        Args: 
+            module (:obj:`nn.Module`): of which module we want to know the number of trainable paramemters.
         
+        Returns:
+            :obj:`List[nn.Parameter]` 
+        """
+        if module is None:
+            module = self.backbone_model
+        pnum_tot = 0
+        for param in module.parameters():
+            if hasattr(param, "_is_delta"):
+                pnum_tot += param.numel()
+        return pnum_tot
+        
+    # Three functions for plug and remove the delta model.
+    def attach(self, module: Optional[nn.Module]=None,):
+        r"""Reattach the delta model
+        """
+            
+        if module is None:
+            module = self.backbone_model
+
+        for name, submodule in module.named_modules():
+            if hasattr(submodule, "_delta_infos"):
+                _delta_infos = getattr(submodule, "_delta_infos")      
+                for _delta_info in _delta_infos:
+                    if _delta_info['delta_belong'] is not self:
+                        continue
+                    if _delta_info["state"] == "on":
+                        continue
+
+                    if _delta_info['method'] == "replace":
+                        setattr(submodule, _delta_info["children_name"], _delta_info['delta_module'])
+                    elif _delta_info['method'] == "insert_sequential":
+                        self.insert_sequential_module(module=submodule, 
+                                    _delta_info=_delta_info)
+                    else:
+                        raise NotImplementedError
+
+                    _delta_info['state'] = "on"     
+
+
+    def detach(self, module: Optional[nn.Module]=None,):
+        r"""Remove the delta module from the backbone
+        """
+        
+        if module is None:
+            module = self.backbone_model
+
+
+        for name, submodule in module.named_modules():
+            if hasattr(submodule, "_delta_infos"):
+                _delta_infos = getattr(submodule, "_delta_infos")      
+                for _delta_info in _delta_infos:
+                    if _delta_info['delta_belong'] is not self:
+                        continue
+                    if _delta_info["state"] == "off":
+                        continue
+
+                    if _delta_info['method'] == "replace":
+                        setattr(submodule, _delta_info["children_name"], _delta_info['org_module'])
+                    elif _delta_info['method'] == "insert_sequential":
+                        if hasattr(submodule.forward, "__wrapped__"):
+                            submodule.forward = submodule.forward.__wrapped__
+                            # submodule._replicate_for_data_parallel = super(submodule)._replicate_for_data_parallel
+                            delattr(submodule, _delta_info["delta_name"])
+                            # from IPython import embed
+                            # embed(header="in detach of insert sequential")
+                        else:
+                            raise AttributeError("submodule {}'s forward has no attribute __wrapped__. It'ss not a wrapped function.".format(name))
+                    else:
+                        raise NotImplementedError
+                    
+                    _delta_info['state'] = "off"
+
+                    
+                        
+
+
+
+        # # firstly detach the forward function which has been added to the module.
+        # for func in self.delta_modified_forwards:
+        #     func = func.__wrapped__
+
+        
+        # # reset the replaced modules
+        # for parent, name, children in self.delta_original_modules:
+        #     setattr(parent, name, children)
+
+        
+
+        # unregister the delta modules
+        # find all delta_parameters that still inside the module and mark them as not delta
+        # self.unmark_delta()
 
 
 

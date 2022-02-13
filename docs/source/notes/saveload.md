@@ -85,3 +85,7 @@ delta_model.from_finetuned("test_delta_model", backbone_model)
 </p>
 </div>
 
+
+## Save & Load for Composition of Delta
+
+<img src="../imgs/todo-icon.jpeg" height="30px"> Currently save & load method is not suitable for [composition of delta model](compositon). Please wait for future releases. 
