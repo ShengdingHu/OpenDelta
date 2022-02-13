@@ -7,3 +7,4 @@ loralib
 decorator
 rich
 web.py
+gitpython

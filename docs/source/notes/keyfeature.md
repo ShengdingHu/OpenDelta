@@ -84,6 +84,7 @@ name: toy-delta
 Handcrafting the full names of submodules can be frustrating. We made some simplifications
 
 1. End-matching Rules.
+
     OpenDelta will take every modules that 
     **ends with** the provided name suffix as the modification [target module](target_module). 
     :::{admonition} Example
@@ -99,7 +100,55 @@ Handcrafting the full names of submodules can be frustrating. We made some simpl
  <img src="../imgs/todo-icon.jpeg" height="30px"> Unit test and Doc later.
 
 3. Interactive Selection.
- <img src="../imgs/todo-icon.jpeg" height="30px"> Unit test and Doc later
+
+    We provide a way to interact visually to select modules needed.
+
+    ```python
+    from transformers import BertForMaskedLM
+    model = BertForMaskedLM.from_pretrained("bert-base-cased")
+    # suppose we load BERT
+
+    from opendelta import LoraModel # use lora as an example, others are same
+    delta_model = LoraModel(backbone_model=model, interactive_modify=True)
+    ```
+
+    by setting `interactive_modify`, a web server will be opened on local host, and the link will be print in the terminal.
+
+    ```
+    http://0.0.0.0:8888/
+    ```
+
+    If on your local machine, click to open the link for interactive modification.
+
+    If on remote host, you could use port mapping. For example, vscode terminal will automatically do port mapping for you, you can simply use `control/command + click` to open the link.
+
+    You can change the port number in case the default port number is occupied by other program by setting `interactive_modify=port_number`, in which port_number is an integer.
+
+    The web page looks like the following figure.
+
+    ```{figure} ../imgs/interact.jpg
+    ---
+    width: 500px
+    name: interact web page
+    ---
+    ```
+
+    - By clicking on `[+]`/`[-]` to expand / collapse tree nodes.
+
+    - By clicking on text to select tree nodes, **yellow dotted** box indicates the selection.
+
+    - **Double** click on the pink `[*]` is an advanced option to unfold the repeated nodes. By default, modules with the same architecture are folded into one node and are marked in red, for example, the `BertLayer` of layers 0~11 in the above figure are in the same structure. Regular model changes will make the same changes to each layers.
+    
+        - If you want to change only a few of them, first double-click on `[*]`, then select the parts you want in the unfolded structure.
+        
+        - If you want to make the same change to all but a few of them, first select the common parts you want in the folded structure, then double-click on `[*]` to remove the few positions you don't need to change in the expanded structure.
+
+    Click `submit` button on the top-right corner, then go back to your terminal, you can get a list of name-based addresses printed in the terminal in the following format, and these modules are being "delta".
+
+    ```
+    modified_modules:
+    [bert.encoder.layer.0.output.dense, ..., bert.encoder.layer.11.output.dense]
+    ```
 
 ## 2. Three basic submodule-level delta operations.
 We use three key functions to achieve the modifications to the backbone model outside the backbone model's code.

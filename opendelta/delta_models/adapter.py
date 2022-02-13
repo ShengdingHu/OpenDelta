@@ -1,6 +1,6 @@
 from functools import partial
 from random import random
-from typing import Optional
+from typing import Optional, Union
 from opendelta.utils.signature import get_arg_names_inside_func
 from opendelta.utils.name_based_addressing import *
 from opendelta.utils.cuda import get_device
@@ -157,7 +157,7 @@ class AdapterModel(DeltaBase):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 interactive_modify: Optional[bool] = False,
+                 interactive_modify: Optional[Union[bool, int]] = False,
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 

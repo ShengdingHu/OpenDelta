@@ -1,0 +1,42 @@
+{
+    "dataset_config_name": [
+        "en"
+    ],
+    "delta_type": "bitfit",
+    "delta_lr": 0.003,
+    "do_eval": true,
+    "do_test": true,
+    "do_train": true,
+    "eval_dataset_config_name": [
+        "en"
+    ],
+    "eval_dataset_name": "cola",
+    "evaluation_strategy": "epoch",
+    "greater_is_better": true,
+    "learning_rate": 0.003,
+    "load_best_model_at_end": true,
+    "max_source_length": 128,
+    "metric_for_best_model": "eval_accuracy",
+    "model_name_or_path": "ctrl",
+    "non_linearity": "gelu_new",
+    "num_train_epochs": 1,
+    "output_dir": "outputs/bias/ctrl/cola",
+    "per_device_eval_batch_size": 100,
+    "per_device_train_batch_size": 8,
+    "predict_with_generate": true,
+    "save_strategy": "epoch",
+    "save_total_limit": 1,
+    "split_validation_test": true,
+    "task_name": "cola",
+    "test_dataset_config_name": [
+        "en"
+    ],
+    "test_dataset_name": "cola",
+    "tokenizer_name": "ctrl",
+    "unfrozen_modules": [
+        "classifier",
+        "deltas"
+    ],
+    "warmup_steps": 0,
+    "modified_modules": ["multi_head_attention", "ffn.0", "ffn.2", "layer_norm"]
+}

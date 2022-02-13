@@ -1,7 +1,7 @@
 from functools import partial
 from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.utils.signature import get_arg_names_inside_func, signature
-from typing import Optional
+from typing import Optional, Union
 from transformers.models.distilbert.modeling_distilbert import MultiHeadSelfAttention
 from transformers.models.t5.modeling_t5 import T5Attention, T5LayerSelfAttention
 from transformers.models.bert.modeling_bert import BertSelfAttention
@@ -462,7 +462,7 @@ class PrefixModel(DeltaBase):
                  modified_modules: Optional[List[str]] = None,
                  unfrozen_modules: Optional[List[str]] = None,
                  common_structure: Optional[bool] = None,
-                 interactive_modify: Optional[bool] = False,
+                 interactive_modify: Optional[Union[bool, int]] = False,
                  ):
         DeltaBase.__init__(self, 
                            backbone_model, 

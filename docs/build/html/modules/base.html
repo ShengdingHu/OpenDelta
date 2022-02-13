@@ -1,109 +1,512 @@
-
 <!DOCTYPE html>
-
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>Base Classes &#8212; OpenDelta 0.1.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base Classes &mdash; OpenDelta 0.1.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/js/custom.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="next" title="Delta Models" href="deltas.html" />
+    <link rel="prev" title="Citation" href="../notes/citation.html" /> 
+</head>
 
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
-
-          <div class="body" role="main">
-            
-  <section id="base-classes">
-<h1>Base Classes<a class="headerlink" href="#base-classes" title="Permalink to this headline">¶</a></h1>
-<section id="delta-base">
-<h2>Delta Base<a class="headerlink" href="#delta-base" title="Permalink to this headline">¶</a></h2>
-<p>:obj:’DeltaBase’ is the base class for all the delta models.</p>
-</section>
-</section>
-
-
-          </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">OpenDelta</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> OpenDelta
+          </a>
+              <div class="version">
+                0.1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../notes/overview.html">What is Delta-tuning and Why OpenDelta?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/visualization.html">Visualize the Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/saveload.html">Save and Share the Delta</a></li>
 </ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
+<p class="caption" role="heading"><span class="caption-text">Advanced Usage</span></p>
 <ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  </ul></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/keyfeature.html">Philosophy and Key Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/unifyname.html">Unified Name Convention</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/autodelta.html">AutoDelta Mechanism</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/composition.html">Composition of delta models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/pluginunplug.html">Multitask Modeling using OpenDelta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/acceleration.html">OpenDelta+</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/citation.html">Citation</a></li>
 </ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Base Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basedeltaconfig">BaseDeltaConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deltabase">DeltaBase</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deltas.html">Delta Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_delta.html">Auto Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+</ul>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2021, Shengding Hu, Ning Ding, Yujia Qin.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/modules/base.rst.txt"
-          rel="nofollow">Page source</a>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">OpenDelta</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Base Classes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/base.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="base-classes">
+<h1>Base Classes<a class="headerlink" href="#base-classes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="basedeltaconfig">
+<h2>BaseDeltaConfig<a class="headerlink" href="#basedeltaconfig" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="opendelta.delta_configs.BaseDeltaConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BaseDeltaConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modified_modules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unfrozen_modules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['deltas']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_structure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backbone_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backbone_checkpoint_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backbone_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/delta_configs.html#BaseDeltaConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.delta_configs.BaseDeltaConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for all configuration classes. Handles a few
+parameters common to all delta models’ configurations as well as methods for loading/downloading/saving configurations.</p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul class="simple">
+<li><p><strong>delta_type</strong> （<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the delta modules, used to create the correct [<cite>~opendelta.AutoConfig</cite>].</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modified_modules</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">List[str]</span></code>, <em>optional</em>, defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – <p>The list of keys to determine which modules you want to modify. OpenDelta will take every modulees that
+<strong>ends with</strong> the one of the provided keys as the modification target. When not given any value, i.e.
+<cite>modified_modules=None</cite>, the delta module will use the it corresponding default modification modules.
+Taking DistilBertModel with an classifier on top as an example:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Examples</strong>: When adding delta to DistilBertModel,</p>
+<p>1. set to <a href="#id1"><span class="problematic" id="id2">:string:`[&quot;0.attention.out_lin&quot;]`</span></a> will add delta modules to the attention output of distilbert’s
+ayer 0, i.e., <a href="#id3"><span class="problematic" id="id4">:string:`distilbert.transformer.layer.0.attention.out_lin`</span></a>.</p>
+<ol class="arabic simple" start="2">
+<li><p>set to <a href="#id5"><span class="problematic" id="id6">:string:`[&quot;attention.out_lin&quot;]`</span></a> will add the delta modules in every layer’s <a href="#id7"><span class="problematic" id="id8">:string:`attention.out_lin`</span></a>.</p></li>
+</ol>
+</div>
+</p></li>
+<li><p><strong>unfrozen_modules</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">List[str]</span></code>, <em>optional</em>, defaults to <code class="xref py py-obj docutils literal notranslate"><span class="pre">[&quot;deltas&quot;]</span></code>) – </p></li>
+<li><p><strong>unfrozen</strong> (<em>The modules that are</em>) – <p>during training. Including the ones that are newly introduced as delta modules, and the ones that are
+originally a part of the model but set to trainable (<code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_grad=True</span></code>) to train together with the
+delta modules. OpenDelta will take every modules that <strong>ends with</strong> the one of the provided keys and all
+its sub-modules and paramters as trainable.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Examples</strong>: When adding delta to DistilBertModel,</p>
+<ol class="arabic simple">
+<li><p>set this argument to <a href="#id9"><span class="problematic" id="id10">:string:`[&quot;bias&quot;]`</span></a> will make all bias terms tunable.</p></li>
+<li><p>set this argument to <a href="#id11"><span class="problematic" id="id12">:string:`[&quot;attention&quot;]`</span></a> will make all parameters in all attention modules tunable.</p></li>
+</ol>
+<p>3. set this argument to <a href="#id13"><span class="problematic" id="id14">:string:`[&quot;deltas&quot;]`</span></a> will make all the parameters in the newly introduced delta
+modules tunable.</p>
+<ol class="arabic simple" start="4">
+<li><p>set this argument to <a href="#id15"><span class="problematic" id="id16">:string:`[&quot;classifier&quot;]`</span></a> will make all parameters in the classifier tunable.</p></li>
+</ol>
+<p>5. set this argument to <a href="#id17"><span class="problematic" id="id18">:string:`[&quot;3.ffn.lin2&quot;, &quot;deltas&quot;, &quot;classifier&quot;]`</span></a>, will make all parameters in
+the third layer’s feed forward layer’s send linear layer, the detla modules, and the classifiers modules
+tunable.</p>
+</div>
+</p></li>
+<li><p><strong>common_structure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – Whether using the common structure mapping of
+the transformer model when designating <code class="xref py py-obj docutils literal notranslate"><span class="pre">modified_modules</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">unfrozen_modules</span></code>.</p></li>
+<li><p><strong>backbone_class</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – The name of backbone model’s class, e.g.
+<a href="#id19"><span class="problematic" id="id20">:string:`RobertaForMaskedLM`</span></a>. Saving this infomation let the users explicitly know on which backbone the
+delta model is trained.</p></li>
+<li><p><strong>backbone_checkpoint_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – The specific checkpoint of the model.
+In ideal case, it should be the url to download the checkpoint. However, we do not force the user to
+specify a downloadable url here.</p></li>
+<li><p><strong>backbone_hash</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – The md5-hash of the backbone model. It is
+calculated using the string representation of the model and the sequential expansion of all the
+parameters in the model. When loading a delta checkpoint in strict mode, the hash of the backbone model
+will be compared to the hash in this config.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.delta_configs.BaseDeltaConfig.from_finetuned">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_finetuned</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">finetuned_model_name_or_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.10)"><span class="pre">os.PathLike</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig" title="opendelta.delta_configs.BaseDeltaConfig"><span class="pre">opendelta.delta_configs.BaseDeltaConfig</span></a></span></span><a class="reference internal" href="../_modules/opendelta/delta_configs.html#BaseDeltaConfig.from_finetuned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.delta_configs.BaseDeltaConfig.from_finetuned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a <a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig" title="opendelta.delta_configs.BaseDeltaConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseDeltaConfig</span></code></a> (or a derived class) from a finetined delta module configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>finetuned_model_name_or_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">os.PathLike</span></code></a>) – <p>This can be either:</p>
+<ul>
+<li><p>a string, the <em>model id</em> of a finetuned delta model configuration hosted inside a model repo on
+deltahub.co. Valid model ids can be located at the root-level, like <a href="#id21"><span class="problematic" id="id22">:string:`bert-base-uncased`</span></a>, or
+namespaced under a user or organization name, like <a href="#id23"><span class="problematic" id="id24">:string:`dbmdz/bert-base-german-cased`</span></a>.</p></li>
+<li><p>a path to a <em>directory</em> containing a configuration file saved using the <a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig.save_finetuned" title="opendelta.delta_configs.BaseDeltaConfig.save_finetuned"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseDeltaConfig.save_finetuned()</span></code></a> method, e.g., <a href="#id25"><span class="problematic" id="id26">:string:`./my_model_directory/`</span></a>.</p></li>
+<li><p>a path or url to a saved configuration JSON <em>file</em>, e.g., <a href="#id27"><span class="problematic" id="id28">:string:`./my_model_directory/configuration.json`</span></a>.</p></li>
+</ul>
+</p></li>
+<li><p><strong>cache_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">os.PathLike</span></code></a>, <em>optional</em>) – Path to a directory in which a downloaded pretrained delta model configuration should be cached if the
+standard cache should not be used.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">LoraConfig</span><span class="o">.</span><span class="n">from_finetuned</span><span class="p">(</span><span class="s2">&quot;deltahub.com/checkpoints/lora_for_mnli_roberta_base&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.delta_configs.BaseDeltaConfig.save_finetuned">
+<span class="sig-name descname"><span class="pre">save_finetuned</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.10)"><span class="pre">os.PathLike</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">push_to_hub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/delta_configs.html#BaseDeltaConfig.save_finetuned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.delta_configs.BaseDeltaConfig.save_finetuned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a configuration object to the directory <code class="xref py py-obj docutils literal notranslate"><span class="pre">save_directory</span></code>, so that it can be re-loaded using the
+<a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig.from_finetuned" title="opendelta.delta_configs.BaseDeltaConfig.from_finetuned"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseDeltaConfig.from_finetuned()</span></code></a> class method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">os.PathLike</span></code></a>) – Directory where the configuration JSON file
+will be saved (will be created if it does not exist).</p></li>
+<li><p><strong>push_to_hub</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>, defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>) – <p>Whether or not to push your model to
+the Hugging Face model hub after saving it.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Using <cite>push_to_hub=True</cite> will synchronize the repository you are pushing to with <cite>save_directory</cite>,
+which requires <cite>save_directory</cite> to be a local clone of the repo you are pushing to if it’s an existing
+folder. Pass along <cite>temp_dir=True</cite> to use a temporary directory instead.</p>
+</div>
+</p></li>
+<li><p><strong>kwargs</strong> – Additional key word arguments passed along to the
+<a class="reference external" href="https://huggingface.co/docs/transformers/master/main_classes/model#transformers.file_utils.PushToHubMixin.push_to_hub">PushToHubMixin.push_to_hub</a> method.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.delta_configs.BaseDeltaConfig.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig" title="opendelta.delta_configs.BaseDeltaConfig"><span class="pre">opendelta.delta_configs.BaseDeltaConfig</span></a></span></span><a class="reference internal" href="../_modules/opendelta/delta_configs.html#BaseDeltaConfig.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.delta_configs.BaseDeltaConfig.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a <a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig" title="opendelta.delta_configs.BaseDeltaConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseDeltaConfig</span></code></a> from a python dictionary of parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_dict</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Dict[str,</span> <span class="pre">Any]</span></code>) – Dictionary that will be used to instantiate the configuration object. Such a dictionary can be
+retrieved from a pretrained checkpoint by leveraging the [<cite>~PretrainedConfig.get_config_dict</cite>] method.</p></li>
+<li><p><strong>kwargs</strong> (<cite>Dict[str, Any]</cite>) – Additional parameters from which to initialize the configuration object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The configuration object instantiated from those parameters.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig" title="opendelta.delta_configs.BaseDeltaConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseDeltaConfig</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.delta_configs.BaseDeltaConfig.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/opendelta/delta_configs.html#BaseDeltaConfig.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.delta_configs.BaseDeltaConfig.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes this instance to a Python dictionary.
+:returns: Dictionary of all the attributes that make up this configuration instance.
+:rtype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="deltabase">
+<h2>DeltaBase<a class="headerlink" href="#deltabase" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DeltaBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backbone_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified_modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unfrozen_modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interactive_modify</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">common_structure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the base class for all delta models. It provides four simple but effective functionalities
+for building the delta model:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>addressing a module inside the backbone model using a minimal description key.</p></li>
+<li><p>provide the interface for modifying and inserting model which keeps the docs/IO the same as the module
+before modification.</p></li>
+<li><p>pass a pseudo input to determine the inter dimension of the delta models.</p></li>
+<li><p>freeze a part of model parameters according to key.</p></li>
+</ol>
+<p>It also provides unified interface for model loading and saving.</p>
+</div></blockquote>
+<p>Class attributes (overridden by derived classes):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>delta_type (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>): the name of the delta modules, used to create the correct <code class="xref py py-class docutils literal notranslate"><span class="pre">opendelta.AutoDeltaModel</span></code>.</p></li>
+<li><p>config_class (<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseDeltaConfig</span></code>): The corresponding config model</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>backbone_model</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code>, <em>required</em>) – backbone model that the delta models are build opon. The modification to the
+backbone model are in place.</p></li>
+<li><p><strong>modified_modules</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">List[str]</span></code>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – <p>The modules are subjected to update.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>leave this argument <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> will make the delta model return to the default setting, which add the delta
+models to the position experimented the paper. In this setting, the common structure mapping is loaded to
+addressing the corresponding modules.</p>
+</div>
+</p></li>
+<li><p><strong>registraction_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>, default to <a href="#id29"><span class="problematic" id="id30">:string:`&quot;deltas&quot;`</span></a>) – The root name of the delta models when
+attached to the backbone model.</p></li>
+<li><p><strong>common_structure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – Whether use the common structure mapping to</p></li>
+<li><p><strong>interactive_modify</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – Whether to use interactive modification.
+By setting to <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> can specify the port of web server.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#opendelta.basemodel.DeltaBase.config_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig" title="opendelta.delta_configs.BaseDeltaConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">opendelta.delta_configs.BaseDeltaConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.10)"><span class="pre">RuntimeError</span></a></span></span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.forward" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Removed method. As the model is a delta model, which should be attached to a backbone model and can’t forward any data by itself. Please using the backbone model’s forward function after attach the delta model to the backbone.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.from_config">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#opendelta.delta_configs.BaseDeltaConfig" title="opendelta.delta_configs.BaseDeltaConfig"><span class="pre">opendelta.delta_configs.BaseDeltaConfig</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backbone_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a delta model from a config object or a dict containing the configs. To temperarily change
+a value in the config, pass it through kwargs. If the config has a backbone model’s hash, which means it is
+a finetuned delta model’s config, then we will compare the hash in the config and the newly caculated to ensure
+the finedtuned delta model is trained on the passed backbone_model. Pass <cite>check_hash=False</cite> to disable the
+checking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseDeltaConfig</span></code> or <cite>dict</cite>) – initialize the delta model.</p></li>
+<li><p><strong>backbone_model</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code>) – model. modifications will be made in place in the backbone model.</p></li>
+<li><p><strong>check_hash</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, default to <cite>True</cite>) – backbone hash.</p></li>
+<li><p><strong>kwargs</strong> – Any configurations that are passed to update the config object. #TODO unit test needed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.add_all_delta_to_backbone">
+<span class="sig-name descname"><span class="pre">add_all_delta_to_backbone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backbone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified_modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.nn.modules.module.Module</span></span></span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.add_all_delta_to_backbone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.add_all_delta_to_backbone" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function to add delta models to the backbone model based on the <code class="xref py py-obj docutils literal notranslate"><span class="pre">modified_modules</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>backbone_model</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code>, <em>required</em>) – modification to the backbone model are in place.</p></li>
+<li><p><strong>modified_modules</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">List[str]</span></code>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – leave this argument <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> will make the delta model return to the default setting, which add the delta
+models to the position experimented the paper. In this setting, the common structure mapping is loaded to
+addressing the corresponding modules.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code> The modified backbone model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.update_module">
+<span class="sig-name descname"><span class="pre">update_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.update_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.update_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a module specified by <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code>. The method is reimplemented in each specific delta model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.freeze_module">
+<span class="sig-name descname"><span class="pre">freeze_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_state_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.freeze_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.freeze_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>(meth_freeze_module)=
+Freeze the parameters of plm. Leave the parameters in exclude untouched.
+deltas module is filtered with <cite>_is_delta</cite> attributes because it may have parameter sharing to the main
+model, (e.g., bias term)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) – The module of which some parts are frozen.
+If left with <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the function will the self.backbone_model as the module to be frozen.</p></li>
+<li><p><strong>exclude</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">List[str]</span></code>, <em>optional</em>, default to <a href="#id31"><span class="problematic" id="id32">:string:`[&quot;deltas&quot;]`</span></a>) – The parameters that don’t need to
+be freezed. Default to all the delta parameters.</p></li>
+<li><p><strong>set_state_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>, default to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>) – Whether setting the backbone model’s state
+dict to all the parameters that still need grad.</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>, default to <a href="#id35"><span class="problematic" id="id36">:string:`&quot;&quot;`</span></a>) – A parameters that are used for recursive frozen.
+Should not be changed by passing argument other than <a href="#id33"><span class="problematic" id="id34">:string:`&quot;&quot;`</span></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.find_module">
+<span class="sig-name descname"><span class="pre">find_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.find_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.find_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the module using a key and the root module. Return both the parent reference, the child name and reference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root_module</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">root_module</span></code>) – The root_module to find the sub module in</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – The relative key to the root module.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>A reference to the parent module of the target module, mainly for substuting the target module.</p></li>
+<li><p>The key of the target module relevant to its parent module</p></li>
+<li><p>Target module.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(<code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.replace_module">
+<span class="sig-name descname"><span class="pre">replace_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">replacedmodule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.replace_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.replace_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace a module using the reference of its parent module. This method will be reimplemented in different
+derived class if needed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.modify_module">
+<span class="sig-name descname"><span class="pre">modify_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.modify_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.modify_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify the inside parameteres of a module. This method will be reimplemented in different
+derived class if needed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.insert_sequential_module">
+<span class="sig-name descname"><span class="pre">insert_sequential_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'delta'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.insert_sequential_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.insert_sequential_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>insert a module (previous not exists in the code base) before/after a module. Specifically, it modifies the forward
+function of the original module to  firstly pass the arguments into the new module’s forward function and then pass
+it into the original ones. The new module can also be inserted after the original module with similar mechanism.</p>
+<p>When implementing the new module , researchers should be aware of the components of arguments of the original module’s forward function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module</strong> – (<code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code>): The (sub)module to inserted a delta module.</p></li>
+<li><p><strong>delta_module</strong> – (<a class="reference internal" href="#opendelta.basemodel.DeltaBase" title="opendelta.basemodel.DeltaBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeltaBase</span></code></a>): The delta module to be inserted.</p></li>
+<li><p><strong>name</strong> – (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>): The name of the delta in the backbone module.</p></li>
+<li><p><strong>strict</strong> – (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>): Whether to prohibit modify a modified module.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.insert_parrellel_module">
+<span class="sig-name descname"><span class="pre">insert_parrellel_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_caller</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_caller</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'delta'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.insert_parrellel_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.insert_parrellel_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>insert a module (previous not exists in the code base) across a module. Specifically, it modifies the forward
+function of the original module to  firstly pass the arguments into the delta model’s forward function and set
+aside the calculation result. Then combine it with the calculation result output from the backbone module.</p>
+<p>When implementing the new module , researchers should be aware of the arguments and keywards of the original module’s forward function.</p>
+<p># TODO: currently not in use.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.set_active_state_dict">
+<span class="sig-name descname"><span class="pre">set_active_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.set_active_state_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.set_active_state_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>modify the state_dict function of the model (by default, the backbone model) to return only the tunable part.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>module</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">nn.Module</span></code>) – The module modified. The modification is in-place.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="opendelta.basemodel.DeltaBase.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainable_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/opendelta/basemodel.html#DeltaBase.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#opendelta.basemodel.DeltaBase.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log and visualize the result of applying delta.
+Possible Options are <cite>trainable_ratio</cite>,
+<cite>visualization</cite>, <cite>delta_ratio</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delta_ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether computing the ratio of parameters in the delta modules.</p></li>
+<li><p><strong>trainable_ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether computing the ratio of trainable parameters.</p></li>
+<li><p><strong>visualization</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether visualize the parameter information of the modified backbone.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../notes/citation.html" class="btn btn-neutral float-left" title="Citation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="deltas.html" class="btn btn-neutral float-right" title="Delta Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
-    
+  <hr/>
 
-    
-  </body>
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, THUNLP OpenDelta Team, Licenced under the Apache License, Version 2.0.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>

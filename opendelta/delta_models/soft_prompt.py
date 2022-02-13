@@ -137,7 +137,7 @@ class SoftPromptModel(DeltaBase):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 interactive_modify: Optional[bool] = False,
+                 interactive_modify: Optional[Union[bool, int]] = False,
                 ):
         DeltaBase.__init__(self, 
                            backbone_model = backbone_model,
