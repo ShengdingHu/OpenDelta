@@ -92,7 +92,12 @@ urls = (
     '/(.*)', 'hello',
 )
 
-app = web.application(urls, globals())
+class PortApplication(web.application):
+    def run(self, port=8080, *middleware):
+        func = self.wsgifunc(*middleware)
+        return web.httpserver.runsimple(func, ('0.0.0.0', port))
+
+app = PortApplication(urls, globals())
 render = web.template.render(os.path.join(os.path.dirname(__file__), 'templates/'))
 names = []
 
@@ -105,7 +110,7 @@ class submit:
         names = [name.strip("root.") for name in web.input().name.split(";")]
         app.stop()
 
-def interactive(model):
+def interactive(model, port=8888):
     tree = Visualization(model).structure_graph(printTree=False)
 
     global html
@@ -113,7 +118,7 @@ def interactive(model):
 
     print()
     print("Open the link below for interactive modification. (On remote host, there are local port mapping in IDE like vscode, etc.)")
-    app.run()
+    app.run(port=port)
     global names
     print("modified_modules:")
     print(names)

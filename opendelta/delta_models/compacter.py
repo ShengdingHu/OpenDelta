@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Optional
+from typing import Optional, Union
 from opendelta.delta_configs import BaseDeltaConfig
 from opendelta.utils.signature import get_arg_names_inside_func
 from opendelta.utils.utils import *
@@ -217,7 +217,7 @@ class CompacterModel(DeltaBase):
                  modified_modules: Optional[bool] = None,
                  unfrozen_modules: Optional[bool] = None,
                  common_structure: Optional[bool] = None,
-                 interactive_modify: Optional[bool] = False,
+                 interactive_modify: Optional[Union[bool, int]] = False,
                  reduction_factor=16, 
                  non_linearity="gelu_new", 
                  phm_c_init="normal", 

@@ -73,9 +73,10 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
         registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`): The root name of the delta models when
             attached to the backbone model. 
-        common_structure (:obj:`bool`, *optional* ,default to :obj:`None`): Whether use the common structure mapping to 
+        common_structure (:obj:`bool`, *optional*, default to :obj:`None`): Whether use the common structure mapping to 
 
-
+        interactive_modify (:obj:`bool` or :obj:`int`, *optional*, default to :obj:`None`): Whether to use interactive modification.
+            By setting to :obj:`int` can specify the port of web server.
     """
     delta_type = ""
     default_modified_modules = []
@@ -85,7 +86,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                  backbone_model: nn.Module,
                  modified_modules: Optional[List[str]] = None,
                  unfrozen_modules: Optional[List[str]] = None,
-                 interactive_modify: Optional[bool] = False,
+                 interactive_modify: Optional[Union[bool, int]] = None,
                  common_structure = False,
                  ):
         nn.Module.__init__(self)
@@ -93,14 +94,17 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         # to the modules of the delta model.
         self.__dict__["backbone_model"] = backbone_model
         if modified_modules is None:
-            if interactive_modify:
-                self.modified_modules = interactive(backbone_model)
+            if interactive_modify is not None:
+                if isinstance(interactive_modify, bool):
+                    self.modified_modules = interactive(backbone_model)
+                else:
+                    self.modified_modules = interactive(backbone_model, port=interactive_modify)
                 self.common_structure = False
             else:
                 self.modified_modules = self.default_modified_modules
                 self.common_structure = True
         else:
-            if interactive_modify:
+            if interactive_modify is not None:
                 raise ValueError("Use modified_modules and interactive_modify at the same time is not supported")
             self.modified_modules = modified_modules
             self.common_structure = common_structure
