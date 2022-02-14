@@ -100,7 +100,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         self.__dict__["backbone_model"] = backbone_model
         if modified_modules is None:
             if interactive_modify:
-                if isinstance(interactive_modify, bool):
+                if isinstance(interactive_modify, bool) and interactive_modify==True:
                     self.modified_modules = interactive(backbone_model)
                 else:
                     self.modified_modules = interactive(backbone_model, port=interactive_modify)
