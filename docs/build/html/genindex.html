@@ -58,6 +58,7 @@
 <li class="toctree-l1"><a class="reference internal" href="notes/composition.html">Composition of delta models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes/pluginunplug.html">Multitask Modeling using OpenDelta</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes/acceleration.html">OpenDelta+</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes/explored_config.html">Favored Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes/citation.html">Citation</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
@@ -123,6 +124,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/base.html#opendelta.basemodel.DeltaBase.attach">attach() (DeltaBase method)</a>
+</li>
       <li><a href="modules/auto_delta.html#opendelta.auto_delta.AutoDeltaConfig">AutoDeltaConfig (class in opendelta.auto_delta)</a>
 </li>
       <li><a href="modules/auto_delta.html#opendelta.auto_delta.AutoDeltaModel">AutoDeltaModel (class in opendelta.auto_delta)</a>
@@ -176,16 +179,20 @@
       <li><a href="modules/base.html#opendelta.basemodel.DeltaBase">DeltaBase (class in opendelta.basemodel)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/base.html#opendelta.basemodel.DeltaBase.detach">detach() (DeltaBase method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#opendelta.utils.utils.endswith_in">endswith_in() (in module opendelta.utils.utils)</a>
+      <li><a href="modules/utils.html#opendelta.utils.name_based_addressing.endswith_in">endswith_in() (in module opendelta.utils.name_based_addressing)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/utils.html#opendelta.utils.utils.endswith_in_regex">endswith_in_regex() (in module opendelta.utils.utils)</a>
+      <li><a href="modules/utils.html#opendelta.utils.name_based_addressing.endswith_in_regex">endswith_in_regex() (in module opendelta.utils.name_based_addressing)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -193,6 +200,8 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/base.html#opendelta.basemodel.DeltaBase.find_key">find_key() (DeltaBase method)</a>
+</li>
       <li><a href="modules/base.html#opendelta.basemodel.DeltaBase.find_module">find_module() (DeltaBase method)</a>
 </li>
       <li><a href="modules/base.html#opendelta.basemodel.DeltaBase.forward">forward() (DeltaBase method)</a>
@@ -251,7 +260,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/base.html#opendelta.basemodel.DeltaBase.insert_sequential_module">insert_sequential_module() (DeltaBase method)</a>
 </li>
-      <li><a href="modules/utils.html#opendelta.utils.utils.is_child_key">is_child_key() (in module opendelta.utils.utils)</a>
+      <li><a href="modules/utils.html#opendelta.utils.name_based_addressing.is_child_key">is_child_key() (in module opendelta.utils.name_based_addressing)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -283,9 +292,9 @@
       <ul>
         <li><a href="modules/utils.html#module-opendelta.utils.model_md5">opendelta.utils.model_md5</a>
 </li>
-        <li><a href="modules/utils.html#module-opendelta.utils.signature">opendelta.utils.signature</a>
+        <li><a href="modules/utils.html#module-opendelta.utils.name_based_addressing">opendelta.utils.name_based_addressing</a>
 </li>
-        <li><a href="modules/utils.html#module-opendelta.utils.utils">opendelta.utils.utils</a>
+        <li><a href="modules/utils.html#module-opendelta.utils.signature">opendelta.utils.signature</a>
 </li>
       </ul></li>
   </ul></td>
@@ -302,19 +311,19 @@
 </li>
       </ul></li>
       <li>
-    opendelta.utils.signature
+    opendelta.utils.name_based_addressing
 
       <ul>
-        <li><a href="modules/utils.html#module-opendelta.utils.signature">module</a>
+        <li><a href="modules/utils.html#module-opendelta.utils.name_based_addressing">module</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
-    opendelta.utils.utils
+    opendelta.utils.signature
 
       <ul>
-        <li><a href="modules/utils.html#module-opendelta.utils.utils">module</a>
+        <li><a href="modules/utils.html#module-opendelta.utils.signature">module</a>
 </li>
       </ul></li>
   </ul></td>
@@ -332,11 +341,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/base.html#opendelta.basemodel.DeltaBase.replace_module">replace_module() (DeltaBase method)</a>
-
-      <ul>
-        <li><a href="modules/deltas.html#opendelta.LoraModel.replace_module">(LoraModel method)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -361,11 +366,11 @@
 </li>
       <li><a href="modules/utils.html#opendelta.utils.visualization.Visualization.structure_graph">structure_graph() (Visualization method)</a>
 </li>
-      <li><a href="modules/utils.html#opendelta.utils.utils.substring_in">substring_in() (in module opendelta.utils.utils)</a>
+      <li><a href="modules/utils.html#opendelta.utils.name_based_addressing.substring_in">substring_in() (in module opendelta.utils.name_based_addressing)</a>
 </li>
-      <li><a href="modules/utils.html#opendelta.utils.utils.substring_in_regex">substring_in_regex() (in module opendelta.utils.utils)</a>
+      <li><a href="modules/utils.html#opendelta.utils.name_based_addressing.substring_in_regex">substring_in_regex() (in module opendelta.utils.name_based_addressing)</a>
 </li>
-      <li><a href="modules/utils.html#opendelta.utils.utils.superstring_in">superstring_in() (in module opendelta.utils.utils)</a>
+      <li><a href="modules/utils.html#opendelta.utils.name_based_addressing.superstring_in">superstring_in() (in module opendelta.utils.name_based_addressing)</a>
 </li>
   </ul></td>
 </tr></table>
