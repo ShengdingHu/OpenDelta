@@ -1,6 +1,7 @@
 <div align="center">
 
-# OpenDelta
+
+<img src="https://s4.ax1x.com/2022/02/14/Hy7lAf.png" width="350px">
 
 **An Open-Source Framework for Paramter Efficient Tuning.**
 
@@ -9,7 +10,7 @@
 <p align="center">
   <a href="#Overview">Overview</a> •
   <a href="#installation">Installation</a> •
-  <a href="#Execution-Tested-Combination">Execution Tested Combination</a> •
+  <a href="#Supported-Models">Supported Models</a> •
   <a href="https://opendelta.readthedocs.io/">Docs</a> • 
   <a href="https://docs.google.com/spreadsheets/d/1BIVa8ocAPga-u7rBOXLYaTfaJSjI1dWfwohmLjmFDrY/edit?usp=sharing">Performance</a> •
 
@@ -22,7 +23,7 @@
 
 ## Overview
 
-OpenDelta is a toolkit for parameter efficient methods (we dub it as *delta tuning*), by which users could flexibly assign (or add) a small amount parameters to update while keeping the most paramters frozen. 
+OpenDelta is a toolkit for parameter efficient methods (we dub it as *delta tuning*), by which users could flexibly assign (or add) a small amount parameters to update while keeping the most paramters frozen. By using OpenDelta, users could easily implement prefix-tuning, adapters, Lora, or any other types of delta tuning with preferred PTMs.
 
 ## Installation
 
@@ -61,6 +62,9 @@ python setup.py develop
 We verify our 
 
 (tested using testing/testing.py)
+
+-  ✅ : Performance Checked
+-  :ballot_box_with_check: : Compatibility Checked
 
 |            | Lora                    | Bias<br>Tuning          | Prefix<br> Tuning       | Adapter<br>Houstbly     | Adapter<br>Preffier     | Adapter<br>Drop         | Adapater<br> Low-Rank   | Compactor               | Prompt <br> Tuning | Diff<br>Pruning |
 | ---------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ------------------ | --------------- |
