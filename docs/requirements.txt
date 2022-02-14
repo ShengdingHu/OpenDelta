@@ -10,3 +10,4 @@ loralib
 decorator
 rich
 myst_parser
+web.py
