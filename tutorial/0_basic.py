@@ -1,5 +1,5 @@
 from transformers import AutoModelForSequenceClassification
-model = AutoModelForSequenceClassification.from_pretrained("facebook/bart-base") # suppose we load BART
+model = AutoModelForSequenceClassification.from_pretrained("facebook/bart-base")
 # suppose we load BART
 
 from opendelta import Visualization

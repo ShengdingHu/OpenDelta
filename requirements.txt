@@ -1,5 +1,6 @@
 torch>=1.9.0
 transformers==4.10.0
+datasets
 sentencepiece==0.1.96
 tqdm==4.62.2
 openprompt
