@@ -206,7 +206,7 @@ def main():
 
 
     if delta_args.delta_type.lower() != "none":
-        from opendelta import AutoDeltaConfig,AutoDeltaModel, Visualization
+        from opendelta import AutoDeltaConfig,AutoDeltaModel
         delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
         delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
         delta_model.freeze_module(set_state_dict = True)

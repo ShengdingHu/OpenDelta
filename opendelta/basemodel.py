@@ -75,7 +75,10 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
         registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`): The root name of the delta models when
             attached to the backbone model. 
-        common_structure (:obj:`bool`, *optional*, default to :obj:`None`): Whether use the common structure mapping to 
+        common_structure (:obj:`bool`, *optional*, default to :obj:`None`): Whether use the common structure mapping to specify the
+                modified_modules. i.e., if common_structure=True, then we use a common ["attn"] for attention module in different models.
+                We DO NOT recommend manually set ``common_structure`` to ``true`` by yourself unless you are using delta 
+                among multiple backbones and don't want to modify the code. 
 
         interactive_modify (:obj:`bool` or :obj:`int`, *optional*, default to :obj:`None`): Whether to use interactive modification.
             By setting to :obj:`int` can specify the port of web server.
@@ -178,16 +181,12 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         self.plm_total_params = sum(p.numel() for p in backbone.parameters())
         # create a new key list to avoid recursion.
         backbone_key_list = [key for key, _ in backbone.named_modules()] 
-        print(backbone_key_list)
         for key in backbone_key_list:
-            if self.find_key(key, modified_modules): #TODO have bugs when commonstructure has a virtual node and it's refered
-                print("find key",key)
+            if self.find_key(key, modified_modules): #TODO may have bugs when commonstructure has a virtual node and it's refered
+                logger.debug("find key: {}".format(key))
                 self.update_module(backbone, key)
         self._pseudo_data_to_instantiate(backbone)
-        # mark the paratmers that are the delta parameters for easily 
-        # extracting the delta_paramters.
-        # This is important if the delta parameters are contained in the
-        # original models parameters
+        # mark the paratmers that are the delta parameters for easily displaying the delta_paramters.
         self.mark_as_delta()
         return backbone
     
@@ -237,7 +236,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
         if module is None:
             module = self.backbone_model
-        self._freeze_module_recursive(module, exclude, "")           # modify the active state dict that still need grad
+        self._freeze_module_recursive(module, exclude, "")    # modify the active state dict that still need grad
         if set_state_dict:
             self.set_active_state_dict(module)
 

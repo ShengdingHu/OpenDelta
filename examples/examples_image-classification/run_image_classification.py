@@ -20,7 +20,6 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 import datasets
-from delta_args import DeltaArguments
 import numpy as np
 import torch
 from datasets import load_dataset
@@ -112,6 +111,31 @@ class DataTrainingArguments:
             data_files["val"] = self.validation_dir
         self.data_files = data_files if data_files else None
 
+class RemainArgHfArgumentParser(HfArgumentParser):
+    def parse_json_file(self, json_file: str, return_remaining_args=True ):
+        """
+        Alternative helper method that does not use `argparse` at all, instead loading a json file and populating the
+        dataclass types.
+        """
+        import argparse
+        import json
+        from pathlib import Path
+        import dataclasses
+
+        data = json.loads(Path(json_file).read_text())
+        outputs = []
+        for dtype in self.dataclass_types:
+            keys = {f.name for f in dataclasses.fields(dtype) if f.init}
+            inputs = {k: data.pop(k) for k in list(data.keys()) if k in keys}
+            obj = dtype(**inputs)
+            outputs.append(obj)
+        
+        remain_args = argparse.ArgumentParser()
+        remain_args.__dict__.update(data)
+        if return_remaining_args:
+            return (*outputs, remain_args)
+        else:
+            return (*outputs,)
 
 @dataclass
 class ModelArguments:
@@ -158,7 +182,7 @@ def main():
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
 
-    parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments, DeltaArguments))
+    parser = RemainArgHfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
@@ -262,8 +286,13 @@ def main():
         use_auth_token=True if model_args.use_auth_token else None,
     )
 
-    from examples.insert_deltas import insert_deltas
-    model = insert_deltas(model, model_args, delta_args)
+
+    if delta_args.delta_type.lower() != "none":
+        from opendelta import AutoDeltaConfig,AutoDeltaModel
+        delta_config = AutoDeltaConfig.from_dict(vars(delta_args))
+        delta_model = AutoDeltaModel.from_config(delta_config, backbone_model=model)
+        delta_model.freeze_module(set_state_dict = True)
+        delta_model.log(delta_ratio=True, trainable_ratio=True, visualization=True)
 
     # Define torchvision transforms to be applied to each image.
     normalize = Normalize(mean=feature_extractor.image_mean, std=feature_extractor.image_std)

@@ -16,9 +16,8 @@ limitations under the License.
 
 ## Use OpenDelta in vision transformer ViT
 
-This example uses the huggingface image classification examples, by adding several
+This example uses the [huggingface image classification examples](), by adding several
 lines in the original scripts.
-
 
 
 # Image classification examples

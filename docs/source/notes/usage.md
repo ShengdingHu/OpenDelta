@@ -53,7 +53,9 @@ For different delta methods, the operation for the modification target is differ
 :::
 
 ### 2.2 Use the default modification.
-We also provide the default modifications of each delta methods for some commonly used PTMs (e.g., BERT, RoBERTA, DistilBERT, T5, GPT2), so the users don't need to specify the submodules to modify.<img src="../imgs/hint-icon-2.jpg" height="30px">  *For details about the default modification, see [Unified Name Convention](unifyname)*
+We also provide the default modifications of each delta methods for some commonly used PTMs (e.g., BERT, RoBERTA, DistilBERT, T5, GPT2), so the users don't need to specify the submodules to modify.
+
+The default modifications is achieved by a [common_structure mapping](commonstructure), that is, use the mapping a name of a module to the it's name on a common transformer structure. <img src="../imgs/hint-icon-2.jpg" height="30px">  *For details about the default modification, see [Unified Name Convention](unifyname)*
 
 
 

@@ -12,6 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# OpenDelta copied from Huggingface Transformers
 """ Logging utilities."""
 
 import logging
@@ -40,7 +42,7 @@ log_levels = {
     "critical": logging.CRITICAL,
 }
 
-_default_log_level = logging.WARNING
+_default_log_level = logging.INFO
 
 
 def _get_default_logging_level():
@@ -80,11 +82,16 @@ def _configure_library_root_logger() -> None:
             return
         _default_handler = logging.StreamHandler()  # Set sys.stderr as stream.
         _default_handler.flush = sys.stderr.flush
+        formatter = logging.Formatter(
+            "[%(levelname)s|(OpenDelta)%(module)s:%(lineno)d]%(asctime)s >> %(message)s")
+        _default_handler.setFormatter(formatter)
 
         # Apply our default configuration to the library root logger.
         library_root_logger = _get_library_root_logger()
         library_root_logger.addHandler(_default_handler)
         library_root_logger.setLevel(_get_default_logging_level())
+
+        
         library_root_logger.propagate = False
 
 

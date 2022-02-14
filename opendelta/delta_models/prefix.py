@@ -255,7 +255,7 @@ class PrefixLayerDistilBert(nn.Module):
             raise TypeError
         if not self.value_instantiated:
             self.hidden_dim = hiddens.shape[-1]
-            print(f"Got value hidden dim hidden_dim {self.hidden_dim}")
+            logger.debug(f"Got value hidden dim hidden_dim {self.hidden_dim}")
             self.value_instantiate(hidden_dim=self.hidden_dim)
         batch_size = hiddens.shape[0]
         if self.past_value_reparam is None:
@@ -491,7 +491,7 @@ class PrefixModel(DeltaBase):
         # Thus the first modified module is the first module that the tensor flows to.
         for key, _ in module.named_modules(): 
             if self.find_key(key, modified_modules):
-                print("find key",key) 
+                logger.debug("find key {}".format(key))
                 if first_modified_module is None:
                     _, _, ref = self.find_module(module, key)
                     first_modified_module = ref

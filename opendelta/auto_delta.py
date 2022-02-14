@@ -384,22 +384,16 @@ if __name__ == "__main__":
     config = AutoDeltaConfig.from_dict({"delta_type":"lora", "lora_r": 7})
 
 
-    # exit()
     from transformers import AutoModelForSequenceClassification
     model = AutoModelForSequenceClassification.from_pretrained("../../plm_cache/roberta-base/", num_labels=2)
     # from IPython import embed
-    # embed(header="fafa")
-    # config = AutoDeltaConfig.from_finetuned("ShengdingHu/delta_models", use_auth_token=True)
     delta_model = AutoDeltaModel.from_config(config, model)
     delta_model.freeze_module(exclude = ['deltas','classifier'], set_state_dict = True)
-    from IPython import embed
-    embed(header="fafa")
+
 
     # delta_model.save_finetuned("autodelta_try", push_to_hub=True, private=True)
     delta_model = AutoDeltaModel.from_finetuned("ShengdingHu/autodelta_try", model, use_auth_token=True)
-    from IPython import embed
-    embed(header="fafa")
 
 
-    # AutoDelta.from_config()
+
 
