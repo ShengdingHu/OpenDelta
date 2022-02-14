@@ -63,6 +63,9 @@ We verify our
 
 (tested using testing/testing.py)
 
+-  ✅ : Performance Checked
+-  :ballot_box_with_check: : Compatibility Checked
+
 |            | Lora                    | Bias<br>Tuning          | Prefix<br> Tuning       | Adapter<br>Houstbly     | Adapter<br>Preffier     | Adapter<br>Drop         | Adapater<br> Low-Rank   | Compactor               | Prompt <br> Tuning | Diff<br>Pruning |
 | ---------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ------------------ | --------------- |
 | T5         |  ✅                     | ✅                       | ✅                       | :white_check_mark:      | :ballot_box_with_check: | :ballot_box_with_check: | :white_check_mark:      | :white_check_mark:      |                    |                 |
