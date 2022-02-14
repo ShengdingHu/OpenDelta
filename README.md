@@ -10,7 +10,7 @@
 <p align="center">
   <a href="#Overview">Overview</a> •
   <a href="#installation">Installation</a> •
-  <a href="#Execution-Tested-Combination">Execution Tested Combination</a> •
+  <a href="#Supported-Models">Supported Models</a> •
   <a href="https://opendelta.readthedocs.io/">Docs</a> • 
   <a href="https://docs.google.com/spreadsheets/d/1BIVa8ocAPga-u7rBOXLYaTfaJSjI1dWfwohmLjmFDrY/edit?usp=sharing">Performance</a> •
 
