@@ -57,13 +57,14 @@ python setup.py develop
 
 
 
-### Execution Tested Combination
+### Supported Models
+We verify our 
 
 (tested using testing/testing.py)
 
 |            | Lora                    | Bias<br>Tuning          | Prefix<br> Tuning       | Adapter<br>Houstbly     | Adapter<br>Preffier     | Adapter<br>Drop         | Adapater<br> Low-Rank   | Compactor               | Prompt <br> Tuning | Diff<br>Pruning |
 | ---------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ----------------------- | ------------------ | --------------- |
-| T5         | ✅                       | ✅                       | ✅                       | :white_check_mark:      | :ballot_box_with_check: | :ballot_box_with_check: | :white_check_mark:      | :white_check_mark:      |                    |                 |
+| T5         |  ✅                     | ✅                       | ✅                       | :white_check_mark:      | :ballot_box_with_check: | :ballot_box_with_check: | :white_check_mark:      | :white_check_mark:      |                    |                 |
 | GPT-2      | :ballot_box_with_check: | ☑️                      | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: |                    |                 |
 | BART       | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: |                    |                 |
 | DistilBERT | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: | :ballot_box_with_check: |                    |                 |
