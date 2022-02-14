@@ -9,7 +9,7 @@ def superstring_in(str_a: str , list_b: List[str]):
     return any(str_a in str_b for str_b in list_b)
 
 def is_child_key(str_a: str , list_b: List[str]):
-    r"""check whether a string in `list_b` is the child key in `str_a`
+    r"""check whether a string in ``list_b`` is the child key in ``str_a``
 
     Args:
     Returns:
@@ -17,7 +17,7 @@ def is_child_key(str_a: str , list_b: List[str]):
     return any(str_b in str_a and (str_b==str_a or str_a[len(str_b)]==".") for str_b in list_b)
 
 def endswith_in(str_a: str , list_b: List[str]):
-    r"""check whether `str_a` has a substring that is in list_b.
+    r"""check whether ``str_a`` has a substring that is in list_b.
 
     Args:
     Returns:
@@ -25,7 +25,7 @@ def endswith_in(str_a: str , list_b: List[str]):
     return any(str_a.endswith(str_b) and (str_a==str_b or str_a[-len(str_b)-1] == ".")  for str_b in list_b)
 
 def substring_in(str_a: str , list_b: List[str]):
-    r"""check whether `str_a` has a substring that is in list_b.
+    r"""check whether ``str_a`` has a substring that is in list_b.
 
     Args:
     Returns:
@@ -39,7 +39,7 @@ def substring_in(str_a: str , list_b: List[str]):
     return False
 
 def endswith_in_regex(str_a: str , list_b: List[str]):
-    r"""check whether `str_a` has a substring that is in list_b.
+    r"""check whether ``str_a`` has a substring that is in list_b.
 
     Args:
     Returns:
@@ -54,7 +54,7 @@ def endswith_in_regex(str_a: str , list_b: List[str]):
     return False
 
 def substring_in_regex(str_a: str , list_b: List[str]):
-    r"""check whether `str_a` has a substring that is in list_b.
+    r"""check whether ``str_a`` has a substring that is in list_b.
 
     Args:
     Returns:

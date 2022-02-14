@@ -98,7 +98,7 @@ class AdapterLayer(nn.Module):
 
 class AdapterConfig(BaseDeltaConfig):
     r"""
-    This is the configuration class to store the configuration of a [`LoraModel`]
+    This is the configuration class to store the configuration of a :py:class:`~AdapterModel`
 
     """
     def __init__(
@@ -117,8 +117,8 @@ class AdapterConfig(BaseDeltaConfig):
 
 
 class AdapterModel(DeltaBase):
-    r""" The implementation of Adapter(`Parameter-Efficient Transfer Learning for NLP <https://arxiv.org/abs/1902.00751>`_ .
-    Add adapter to the designated `modified_modules`. In sequential paradigm, The modules' output is then passed into the adapter's 
+    r""" The implementation of Adapter(`Parameter-Efficient Transfer Learning for NLP <https://arxiv.org/abs/1902.00751>`_ ) .
+    Add adapter to the designated ``modified_modules``. In sequential paradigm, The modules' output is then passed into the adapter's 
     post_forward. 
     
     .. note::
