@@ -18,7 +18,7 @@ logger = logging.get_logger(__name__)
 
 class BitFitConfig(BaseDeltaConfig):
     r"""
-    This is the configuration class to store the configuration of a [`LoraModel`]
+    This is the configuration class to store the configuration of a :py:class:`~BitFitModel`
 
     """
     def __init__(
@@ -80,7 +80,7 @@ class BitFitModel(DeltaBase):
 
     .. note:: 
         **Broadcast to Submodule**: We modify all potential positions  of the specified 
-        `modified_modules`. That is to say, if we specify `attn` in the modified_modules, then all position
+        ``modified_modules``. That is to say, if we specify ``attn`` in the modified_modules, then all position
         including the q, k, v and out linear layer of the attention layer are added bias layer (or unfreezing).
         The potential position is determined according to equation (1)-(5) and the previous three 
         equations.

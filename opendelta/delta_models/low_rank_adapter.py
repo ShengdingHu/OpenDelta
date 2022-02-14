@@ -22,7 +22,7 @@ logger = logging.get_logger(__name__)
 
 class LowRankAdapterConfig(BaseDeltaConfig):
     r"""
-    This is the configuration class to store the configuration of a [`LoraModel`]
+    This is the configuration class to store the configuration of a :py:class:`~LowRankAdapterModel`
 
     """
     def __init__(
@@ -115,7 +115,7 @@ class LowRankAdapterModel(DeltaBase):
     We found that it enjoys very few parameters but competitive performance, thus add it into OpenDelta.
     Low Rank Adapter parameterize each adapter’s weight as a product of two rank-one(low) weights.
 
-    Add lowrank adapter layer to the designated `modified_modules`. In sequential paradigm,  The modules' output is then 
+    Add lowrank adapter layer to the designated ``modified_modules``. In sequential paradigm,  The modules' output is then 
     passed into the low rank adapter's post_forward. 
     
     .. note::
@@ -133,10 +133,10 @@ class LowRankAdapterModel(DeltaBase):
 
     Args:
         backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
-        reduction_factor (:obj:`int`, *optional*, default to `16`): bottleneck_dim = hidden_dim//reduction_factor 
-        non_linearity (:obj:`str`, *optional*, default to `"gelu_new"`): The non linearity activation used in between the down 
+        reduction_factor (:obj:`int`, *optional*, default to ``16``): bottleneck_dim = hidden_dim//reduction_factor 
+        non_linearity (:obj:`str`, *optional*, default to ``"gelu_new"``): The non linearity activation used in between the down 
                         projecter and the up projecter. 
-        low_rank_w_init (:obj:`str`, *optional*, default to `"glorot-uniform"`): The weight init method of the factorized 
+        low_rank_w_init (:obj:`str`, *optional*, default to ``"glorot-uniform"``): The weight init method of the factorized 
                         linear weight.
         low_rank_rank (:obj:`int`, *optional*, default to 1): The rank of the low-rank decomposition. 
         modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only

@@ -132,7 +132,7 @@ class HyperComplexAdapterLayer(nn.Module):
 
 class CompacterConfig(BaseDeltaConfig):
     r"""
-    This is the configuration class to store the configuration of a [`LoraModel`]
+    This is the configuration class to store the configuration of a :py:class:`~CompacterModel`
 
     """
     def __init__(
@@ -166,7 +166,7 @@ class CompacterConfig(BaseDeltaConfig):
 
 class CompacterModel(DeltaBase):
     r""" The implementation of `Compacter: Efficient Low-Rank Hypercomplex Adapter Layers <https://arxiv.org/abs/2106.04647>`_ .
-    Add compacter layer to the designated `modified_modules`. In sequential paradigm,  The modules' output is then 
+    Add compacter layer to the designated ``modified_modules``. In sequential paradigm,  The modules' output is then 
     passed into the compacter's post_forward. 
     
     .. note::
@@ -189,13 +189,13 @@ class CompacterModel(DeltaBase):
         unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen
                          together with the prefix parameters.
         common_structure (:obj:`bool`, *optional*, default to :obj:`None`): whether using name-based addressing witha common structure mapping.
-        reduction_factor (:obj:`int`, *optional*, default to `16`): bottleneck_dim = hidden_dim//reduction_factor 
-        non_linearity (:obj:`str`, *optional*, default to `"gelu_new"`): The non linearity activation used in between the down 
+        reduction_factor (:obj:`int`, *optional*, default to ``16``): bottleneck_dim = hidden_dim//reduction_factor 
+        non_linearity (:obj:`str`, *optional*, default to ``"gelu_new"``): The non linearity activation used in between the down 
                         projecter and the up projecter. 
-        phm_c_init (:obj:`str`, *optional*, default to `"normal"`): The initialize method of the C in compacter. 
-        hypercomplex_division (:obj:`str`, *optional*, default to 4): The `n` in the paper. The number of division along a dimension in compector. 
+        phm_c_init (:obj:`str`, *optional*, default to ``"normal"``): The initialize method of the C in compacter. 
+        hypercomplex_division (:obj:`str`, *optional*, default to 4): The ``n`` in the paper. The number of division along a dimension in compector. 
         learn_phm (:obj:`bool`, *optional*, default to :obj:`True` ): Whether the phm rule requires_grad. Note that we didn't check the performance of learn_phm=False.
-        hypercomplex_nonlinearity (:obj:`str`, *optional*, default to `"glorot-uniform"`): The initialize method of the W in compacter. 
+        hypercomplex_nonlinearity (:obj:`str`, *optional*, default to ``"glorot-uniform"``): The initialize method of the W in compacter. 
         shared_phm_rule (:obj:`str`, *optional* , default to :obj:`False`): Whether the phm rule is shared accross layer. 
         factorized_phm (:obj:`str`, *optional*, default to :obj:`True`): Whether to factorize the phm into low rank product.
         shared_W_phm (:obj:`str`, *optional* , default to :obj:`False`): Whether the W_phm is shared accross layer. 
@@ -204,9 +204,9 @@ class CompacterModel(DeltaBase):
         phm_init_range (:obj:`float, *optional*, default to 0.0001): The range of phm initialization.
         kronecker_prod=None,
         use_bias_up_sampler (:obj:`float`, *optional*, default to :obj:`True`): Whether add bias to the up projector. 
-                            Note that the bias for this is a `hidden_dim` vector. 
+                            Note that the bias for this is a ``hidden_dim`` vector. 
         use_bias_down_sampler (:obj:`float`, *optional*, default to :obj:`True`): Whether add bias to the down projector. 
-                            Note that the bias for this is a `bottleneck_dim` vector. 
+                            Note that the bias for this is a ``bottleneck_dim`` vector. 
 
 
     """

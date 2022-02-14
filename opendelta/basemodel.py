@@ -73,7 +73,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                 models to the position experimented the paper. In this setting, the common structure mapping is loaded to 
                 addressing the corresponding modules.
 
-        registraction_name (:obj:`str`, *optional*, default to :string:`"deltas"`): The root name of the delta models when
+        registraction_name (:obj:`str`, *optional*, default to ``"deltas"``): The root name of the delta models when
             attached to the backbone model. 
         common_structure (:obj:`bool`, *optional*, default to :obj:`None`): Whether use the common structure mapping to specify the
                 modified_modules. i.e., if common_structure=True, then we use a common ["attn"] for attention module in different models.
@@ -139,15 +139,15 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         r"""Initialize a delta model from a config object or a dict containing the configs. To temperarily change
         a value in the config, pass it through kwargs. If the config has a backbone model's hash, which means it is
         a finetuned delta model's config, then we will compare the hash in the config and the newly caculated to ensure
-        the finedtuned delta model is trained on the passed backbone_model. Pass `check_hash=False` to disable the
+        the finedtuned delta model is trained on the passed backbone_model. Pass ``check_hash=False`` to disable the
         checking.
 
         Args:
-            config (:obj:`BaseDeltaConfig` or `dict`) A config object or a dict that contains the necessary value to 
+            config (:obj:`BaseDeltaConfig` or :obj:`dict`) A config object or a dict that contains the necessary value to 
                             initialize the delta model.
             backbone_model (:obj:`nn.Module`) A pytorch module that will be pass into the delta model as the backbone 
                     model. modifications will be made in place in the backbone model.
-            check_hash (:obj:`bool`, default to `True`) Whether to check hash of the backbone model and the config's 
+            check_hash (:obj:`bool`, default to ``True``) Whether to check hash of the backbone model and the config's 
                             backbone hash. 
             kwargs: Any configurations that are passed to update the config object. #TODO unit test needed.
         """
@@ -193,9 +193,9 @@ class DeltaBase(nn.Module, SaveLoadMixin):
 
     
     def mark_as_delta(self, module: nn.Module=None,):
-        r"""[NODOC] Mark :obj:`module`'s all parameters as delta parameters by setting a :string:`_is_delta`  attribute to each of them.
+        r"""[NODOC] Mark :obj:`module`'s all parameters as delta parameters by setting a ``_is_delta`` attribute to each of them.
         Generally, it is used after creating the delta modules. By leaving module to :obj:`None`, it will mark all the parameters in the 
-        delta model as :string:`_is_delta`.
+        delta model as ``_is_delta``.
 
         Args:
             module (:obj:`nn.Module`): The module to mark as delta.
@@ -217,18 +217,18 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                       set_state_dict: Optional[bool]=True, 
                       ):
         r"""Freeze the parameters of plm. Leave the parameters in exclude untouched.
-        deltas module is filtered with `_is_delta` attributes because it may have parameter sharing to the main 
+        deltas module is filtered with ``_is_delta`` attributes because it may have parameter sharing to the main 
         model, (e.g., bias term)
 
         Args:
             module (:obj:`nn.Module`, *optional*, default to :obj:`None`): The module of which some parts are frozen.
                 If left with :obj:`None`, the function will the self.backbone_model as the module to be frozen. 
-            exclude (:obj:`List[str]`, *optional*, default to :string:`["deltas"]`): The parameters that don't need to 
+            exclude (:obj:`List[str]`, *optional*, default to ``["deltas"]``): The parameters that don't need to 
                 be freezed. Default to all the delta parameters.
             set_state_dict (:obj:`bool`, *optional*, default to :obj:`True`): Whether setting the backbone model's state
                 dict to all the parameters that still need grad.
-            prefix (:obj:`str`, *optional*, default to :string:`""`): A parameters that are used for recursive frozen. 
-                Should not be changed by passing argument other than :string:`""`.
+            prefix (:obj:`str`, *optional*, default to ``""``): A parameters that are used for recursive frozen. 
+                Should not be changed by passing argument other than ``""``.
         
         """
         if exclude is None:
@@ -245,18 +245,18 @@ class DeltaBase(nn.Module, SaveLoadMixin):
                       exclude: Optional[List[str]] = None,
                       prefix=""):
         r"""[NODOC] Freeze the parameters of plm. Leave the parameters in exclude untouched.
-        deltas module is filtered with `_is_delta` attributes because it may have parameter sharing to the main 
+        deltas module is filtered with ``_is_delta`` attributes because it may have parameter sharing to the main 
         model, (e.g., bias term)
 
         Args:
             module (:obj:`nn.Module`, *optional*, default to :obj:`None`): The module of which some parts are frozen.
                 If left with :obj:`None`, the function will the self.backbone_model as the module to be frozen. 
-            exclude (:obj:`List[str]`, *optional*, default to :string:`["deltas"]`): The parameters that don't need to 
+            exclude (:obj:`List[str]`, *optional*, default to ``["deltas"]``): The parameters that don't need to 
                 be freezed. Default to all the delta parameters.
             set_state_dict (:obj:`bool`, *optional*, default to :obj:`True`): Whether setting the backbone model's state
                 dict to all the parameters that still need grad.
-            prefix (:obj:`str`, *optional*, default to :string:`""`): A parameters that are used for recursive frozen. 
-                Should not be changed by passing argument other than :string:`""`.
+            prefix (:obj:`str`, *optional*, default to ``""``): A parameters that are used for recursive frozen. 
+                Should not be changed by passing argument other than ``""``.
         
         """
 
@@ -288,7 +288,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
         Args: 
             key (Union[:obj:`str`, :obj:`re.Pattern`]): The key (name) of a submodule in a ancestor module.
                                  E.g., model.encoder.layer.0.attention
-            target_list (List[:obj:`str`]): The target list that we try to match `key` with. E.g., ["attention"]
+            target_list (List[:obj:`str`]): The target list that we try to match ``key`` with. E.g., ["attention"]
             only_tail (:obj:`bool`): the element in the target_list should be in the tail of key
 
         Returns: 
@@ -316,7 +316,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
     def _pseudo_data_to_instantiate(self, module: Optional[nn.Module]=None):
         r"""Create a pseudo_data into the module to know the dimemsion of each tensor in the computation graph.
         First try to use the dummy_inputs of the pretrained model. If the model has no dummy_inputs, will try to create
-        integer tensor as the pseudo_input,  if `decoder_input_ids` is in the model's forward function, additional create it.
+        integer tensor as the pseudo_input,  if ``decoder_input_ids`` is in the model's forward function, additional create it.
 
         Args:
             module (:obj:`nn.Module`, *optional*, default to :obj:`None`): The backbone model.
@@ -466,7 +466,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             child_name (:obj:`str`): The chird module's name, i.e., parent_module.child_name give us child_module
             child_module (:obj:`nn.Module`): The original child module.
             new_module (:obj:`nn.Module`): The delta module.
-            delta_name (:obj:`str`, *optional*, default ot `delta`): The name of the delta module, used for recording.
+            delta_name (:obj:`str`, *optional*, default ot ``delta``): The name of the delta module, used for recording.
                             parent_module.delta_name WILL NOT give you the delta module.
         """
         self.delta_modules.append(new_module)
@@ -503,7 +503,7 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             name: (:obj:`str`, *optional*): The name of the delta in the backbone module.
             strict: (:obj:`bool`, *optional*): Whether to prohibit modify a modified module.
             _delta_info (:obj:`Dict`, *optional*): Used in attach(), reattach a delta module to backbone. The info of 
-                                    original delta is passed through `_delta_info`.
+                                    original delta is passed through ``_delta_info``.
         
         """
         def _caller(_org_func, org_module, delta_name, *args, **kwargs):
@@ -600,8 +600,8 @@ class DeltaBase(nn.Module, SaveLoadMixin):
     
     def log(self, module=None, delta_ratio=True, trainable_ratio=True, visualization=True):
         r"""Log and visualize the result of applying delta. 
-        Possible Options are `trainable_ratio`,
-        `visualization`, `delta_ratio`.
+        Possible Options are ``trainable_ratio``,
+        ``visualization``, ``delta_ratio``.
 
         Args:
             delta_ratio (:obj:`bool`, *optional*): Whether computing the ratio of parameters in the delta modules.

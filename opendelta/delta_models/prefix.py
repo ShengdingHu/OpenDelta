@@ -334,9 +334,9 @@ class PrefixLayerRoberta(nn.Module):
 
 class ReparameterizeFunction(nn.Module):
     r""" Prefix Tuning's performance is better with a reparameterize module, which generates
-    the `past_key_value` using an MLP instead of directly optimizing the `past_key_value` as leaf variable.
+    the ``past_key_value`` using an MLP instead of directly optimizing the ``past_key_value`` as leaf variable.
     In our implementation, the reparameterize module is constructed according to the number of parameters 
-    in all `past_key_value`s. Thus, variable number of prefixlayer is supported (not restricting to being equal
+    in all ``past_key_value``s. Thus, variable number of prefixlayer is supported (not restricting to being equal
     to the number of layers of the pretraind language model)
 
 
@@ -370,7 +370,7 @@ class ReparameterizeFunction(nn.Module):
     
     def allocate_parameter(self):
         r""" At the beginning of each forward pass through the whole network(PLM), 
-        cacalulate the reparameterized past_key and past_value (`past_key_reparam` and `past_value_reparam`)
+        cacalulate the reparameterized past_key and past_value (``past_key_reparam`` and ``past_value_reparam``)
         for later use in each layer.
         """
         input_tokens = self.input_tokens
@@ -426,7 +426,7 @@ class PrefixConfig(BaseDeltaConfig):
 class PrefixModel(DeltaBase):
     r""" The implementation of `Prefix-Tuning: Optimizing Continuous Prompts for Generation <https://arxiv.org/abs/2101.00190>`_ .
     However, as attention block of different PLM differs substantially, e.g., the input arguments, the name convention
-    of `past_key_value`, we have to implement different prefixlayer for different PLM. Given the inconvenience in the
+    of ``past_key_value``, we have to implement different prefixlayer for different PLM. Given the inconvenience in the
     code level, we only support several commonly used backbone models (Currently: T5, DistilBert,Bert, Roberta, GPT2, 
     BART). If you are trying to apply delta tuning to other backbone models, we suggest you trying other delta models 
     or implementing it and making a pull request. 
