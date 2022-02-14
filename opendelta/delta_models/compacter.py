@@ -201,8 +201,9 @@ class CompacterModel(DeltaBase):
         shared_W_phm (:obj:`str`, *optional* , default to :obj:`False`): Whether the W_phm is shared accross layer. 
         factorized_phm_rule (:obj:`str`, *optional* , default to :obj:`False`): Whether to factorize the phm rule into low rank product. 
         phm_rank=1 (:obj:`int`, *optional*, default to 1): The rank of low rank decomposition of phm. 
-        phm_init_range (:obj:`float, *optional*, default to 0.0001): The range of phm initialization.
-        kronecker_prod=None,
+        phm_init_range (:obj:`float`, *optional*, default to 0.0001): The range of phm initialization.
+        kronecker_prod (:obj:`bool`, *optional*, default to False): Whether to perform kronecker_prod in matvec_product, proposed by 
+            `Parameterization of Hypercomplex Multiplications <https://openreview.net/forum?id=rcQdycl0zyk>`_
         use_bias_up_sampler (:obj:`float`, *optional*, default to :obj:`True`): Whether add bias to the up projector. 
                             Note that the bias for this is a ``hidden_dim`` vector. 
         use_bias_down_sampler (:obj:`float`, *optional*, default to :obj:`True`): Whether add bias to the down projector. 

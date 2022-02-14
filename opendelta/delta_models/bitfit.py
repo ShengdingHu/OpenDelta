@@ -79,11 +79,13 @@ class BitFitModel(DeltaBase):
     a transformer block. 
 
     .. note:: 
+
         **Broadcast to Submodule**: We modify all potential positions  of the specified 
         ``modified_modules``. That is to say, if we specify ``attn`` in the modified_modules, then all position
         including the q, k, v and out linear layer of the attention layer are added bias layer (or unfreezing).
         The potential position is determined according to equation (1)-(5) and the previous three 
         equations.
+    
 
     class attributes:
         - default_modified_modules = ["attn", "ff", "layer_norm","lm_head.proj"] According to the paper and the 
@@ -177,7 +179,8 @@ class BitFitModel(DeltaBase):
     
     def add_bias_to_others(self, c):
         new_bias = BiasLayer()
-        self.insert_sequential_module(c, delta_module=new_bias, name="bias")
+        self.insert_sequential_module(c, delta_module=new_bias, name="bitfit") # name shouldn't be `bias` here, since
+                                        # the name `bias` is reserved for some module such as  roberta's LayerNorm.
         self.delta_modules.append(new_bias)
 
 
@@ -187,4 +190,13 @@ class BitFitModel(DeltaBase):
         fan_in, _ = init._calculate_fan_in_and_fan_out(linear_module.weight)
         bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
         init.uniform_(linear_module.bias, -bound, bound)
+
+    def detach(self, module):
+        r"""Not implemented for BitFit yet. Please wait for the next version.
+        """
+        raise NotImplementedError
     
+    def attach(self, module):
+        r"""Not implemented for BitFit yet. Please wait for the next version.
+        """
+        raise NotImplementedError

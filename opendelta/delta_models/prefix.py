@@ -434,6 +434,12 @@ class PrefixModel(DeltaBase):
     Experimental Feature: 
         
         Support inserting prefix token before each layer. For example, layer 3 4 6 10 and other layer untouched. 
+    
+    .. note::
+    
+        If using reparameterize, the parameters will be in a reparameterization network, not in the prefix, which
+        we attach to the first prefix layer. We will add a function to save only the generated prefix parameters for 
+        saving in the next version.
 
 
 

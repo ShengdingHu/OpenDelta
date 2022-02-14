@@ -130,7 +130,9 @@ class SaveLoadMixin(PushToHubMixin):
 
         Parameters:
 
-            finetuned_model_name_or_path (:obj:`str` or :obj:`os.PathLike`, *optional*): Can be either:
+            finetuned_model_name_or_path (:obj:`str` or :obj:`os.PathLike`, *optional*): 
+                Can be either:
+
                 - A string, the *model id* of a pretrained model hosted inside a model repo on huggingface.co.
                   Valid model ids can be located at the root-level, like ``bert-base-uncased``, or namespaced under a
                   user or organization name, like ``dbmdz/bert-base-german-cased``.
@@ -154,6 +156,7 @@ class SaveLoadMixin(PushToHubMixin):
                 
                 Configuration for the model to use instead of an automatically loaded configuration. Configuration can
                 be automatically loaded when:
+
                     - The model is a model provided by the library (loaded with the *model id* string of a pretrained
                       model).
                     - The model was saved using :py:meth:`~PreTrainedModel.save_pretrained` and is reloaded by supplying the
@@ -195,15 +198,16 @@ class SaveLoadMixin(PushToHubMixin):
                 will be automatically derived from the model's weights.
 
                 .. warning::
+
                     This feature is inherited from HuggingFace. We do not guarantee its usefulness currently.
                     One should only disable *_fast_init* to ensure backwards compatibility with `transformers.__version__ <
                     4.6.0` for seeded model initialization. This argument will be removed at the next major version. See
-                    [pull request 11471](https://github.com/huggingface/transformers/pull/11471) for more information.
-                
+                    `pull request 11471 <https://github.com/huggingface/transformers/pull/11471>`_ for more information.
             kwargs (remaining dictionary of keyword arguments, *optional*):
                 Can be used to update the configuration object (after it being loaded) and initiate the model (e.g.,
                 ``output_attentions=True``). Behaves differently depending on whether a ``config`` is provided or
                 automatically loaded:
+
                     - If a configuration is provided with ``config``, ``**kwargs`` will be directly passed to the
                       underlying model's ``__init__`` method (we assume all relevant updates to the configuration have
                       already been done)
@@ -217,7 +221,7 @@ class SaveLoadMixin(PushToHubMixin):
             Passing ``use_auth_token=True`` is required when you want to use a private model.
         
         .. code-block:: python
-        
+
             from transformers import AutoModelForSeq2SeqLM
             t5 = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
             from opendelta import AutoDeltaModel

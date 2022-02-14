@@ -116,22 +116,24 @@ class AutoDeltaConfig:
     @classmethod
     def from_finetuned(cls, finetuned_model_name_or_path, **kwargs):
         r"""
-        Instantiate one of the configuration classes of the library from a pretrained model configuration.
-        The configuration class to instantiate is selected based on the ``model_type`` property of the config object that
-        is loaded, or when it's missing, by falling back to using pattern matching on ``pretrained_model_name_or_path``:
-        List options
+        Instantiate one of the configuration classes of the library from a finetuned delta model configuration.
+        The configuration class to instantiate is selected based on the ``delta_type`` property of the config object that
+        is loaded.
 
-        Args:
-            pretrained_model_name_or_path (:obj:`str` or :obj:`os.PathLike`):
+        Parameters:
+
+            finetuned_model_name_or_path (:obj:`str` or :obj:`os.PathLike`, *optional*): 
                 Can be either:
-                - A string, the *model id* of a pretrained model configuration hosted inside a model repo on
-                    huggingface.co. Valid model ids can be located at the root-level, like ``bert-base-uncased``, or
-                    namespaced under a user or organization name, like ``dbmdz/bert-base-german-cased``.
+
+                - A string, the *model id* of a finetuned delta model configuration hosted inside a model repo on
+                  huggingface.co. Valid model ids can be located at the root-level, like ``Davin/lora``, or
+                  namespaced under a user or organization name, like ``DeltaHub/lora_t5-base_mrpc``.
                 - A path to a *directory* containing a configuration file saved using the
-                    :py:meth:`~PretrainedConfig.save_pretrained` method, or the :py:meth:`~PreTrainedModel.save_pretrained` method,
-                    e.g., ``./my_model_directory/``.
+                  :py:meth:`DeltaBase.save_finetuned` method, 
+                  e.g., ``./my_model_directory/``.
                 - A path or url to a saved configuration JSON *file*, e.g.,
-                    ``./my_model_directory/configuration.json``.
+                  ``./my_model_directory/configuration.json``.
+                The last two option are not tested but inherited from huggingface. 
             cache_dir (:obj:`str` or :obj:`os.PathLike`, *optional*):
                 Path to a directory in which a downloaded pretrained model configuration should be cached if the
                 standard cache should not be used.
@@ -163,9 +165,11 @@ class AutoDeltaConfig:
                 by the ``return_unused_kwargs`` keyword parameter.
         
         Examples:
+        
+        .. code-block:: python
 
-        >>> from transformers import AutoConfig
-        >>> config = AutoDeltaConfig.from_finetuned("deltahub/lora_t5-large")
+            from transformers import AutoConfig
+            delta_config = AutoDeltaConfig.from_finetuned("DeltaHub/lora_t5-base-mrpc")
 
         """
 
@@ -333,8 +337,12 @@ class AutoDeltaModel:
             config (:obj:`BaseDeltaConfig`):
             backbone_model (:obj:`nn.Module`):
     
-        >>> config = AutoDeltaConfig.from_finetuned("DeltaHub/lora_t5")
-        >>> delta_model = AutoDeltaModel.from_config(config, backbone_model)
+        Examples:
+
+        .. code-block:: python
+
+            config = AutoDeltaConfig.from_finetuned("DeltaHub/lora_t5-base_mrpc")
+            delta_model = AutoDeltaModel.from_config(config, backbone_model)
 
         """
         if type(config) in cls._delta_model_mapping.keys():
@@ -354,10 +362,27 @@ class AutoDeltaModel:
         delta checkpoint are used. 
 
         Args:
-            config (:obj:`BaseDeltaConfig`):
-            backbone_model (:obj:`nn.Module`):
-    
-        >>> delta_model = AutoDeltaModel.from_finetuned("DeltaHub/lora_t5", backbone_model)
+            finetuned_model_name_or_path (:obj:`str` or :obj:`os.PathLike`, *optional*): 
+                Can be either:
+
+                - A string, the *model id* of a finetuned delta model configuration hosted inside a model repo on
+                  huggingface.co. Valid model ids can be located at the root-level, like ``Davin/lora``, or
+                  namespaced under a user or organization name, like ``DeltaHub/lora_t5-base_mrpc``.
+                - A path to a *directory* containing a configuration file saved using the
+                  :py:meth:`DeltaBase.save_finetuned` method, 
+                  e.g., ``./my_model_directory/``.
+                - A path or url to a saved configuration JSON *file*, e.g.,
+                  ``./my_model_directory/configuration.json``.
+                The last two option are not tested but inherited from huggingface. 
+
+            backbone_model (:obj:`nn.Module`): The backbone model to be modified.
+            model_args: Other argument for initialize the model.
+
+        Example:
+        
+        .. code-block:: python
+
+            delta_model = AutoDeltaModel.from_finetuned("DeltaHub/lora_t5-base-mrpc", backbone_model)
 
         """
         config = kwargs.pop("config", None)
