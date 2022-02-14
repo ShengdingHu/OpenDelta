@@ -65,25 +65,32 @@ delta_model.from_finetuned("delta_model", backbone_model, local_files_only=True)
 delta_model.save_finetuned("test_delta_model", push_to_hub = True)
 ```
 
-### download.
+###  Download from community.
 ```python
-backbone_model = BertForMaskedLM.from_pretrained("bert-base-uncased")
-delta_model.from_finetuned("test_delta_model", backbone_model)
+from transformers import AutoModelForSeq2SeqLM
+t5 = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+from opendelta import AutoDeltaModel
+delta = AutoDeltaModel.from_finetuned("DeltaHub/lora_t5-base_mrpc", backbone_model=t5)
+delta.log()
 ```
 
 <div class="admonition tip"> 
-<p class="title">**Before**</p>
-<p> Before push to hub, you may need to register an account on Huggingface.
+<p class="title">**Push to Hub**</p>
+<p> Currently we only provide the option to push to huggingface model hub.</p>
+<p> Before push to hub, you may need to register an account on Huggingface. You can refer to this [tutorial about model sharing and uploading](https://huggingface.co/docs/transformers/model_sharing)
 </p>
-<p> In some cases, your checkpoint is still large for git, please install `git-lfs`.
+<p> In some cases, your checkpoint is still large for git, please install [`git-lfs`](https://git-lfs.github.com).
 </p>
 </div>
 
-<div class="admonition warning">
-<p class="title">**Sharing with the Community**</p>
-<p> If you are satisfied with your checkpoint, do not forget to share your model to <a href="https://huggingface.co/DeltaHub">DeltaHub</a>. This will make your model easier to be found!
-</p>
-</div>
+:::{admonition} **Sharing with the Community**
+:class: tip
+If you are satisfied with your checkpoint, do not forget to share your model to <a href="https://huggingface.co/DeltaHub">DeltaHub</a>:
+1. Add yourself to DeltaHub with the [public link](https://huggingface.co/organizations/DeltaHub/share/QzkBuLSmlVnNhQqHYnekoTXwSRkoRHBwZA)
+2. Be sure to edit your model card to clearly illustrate the delta model before you share.
+3. Click `setting` on the model
+4. Transfer the model in `rename or transfer this model` section.
+::: 
 
 
 ## Save & Load for Composition of Delta

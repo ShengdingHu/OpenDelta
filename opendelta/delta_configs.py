@@ -125,7 +125,7 @@ class BaseDeltaConfig(PushToHubMixin):
             
         .. code-block:: python
 
-            LoraConfig.from_finetuned("deltahub.com/checkpoints/lora_for_mnli_roberta_base")
+            delta_config = LoraConfig.from_finetuned("DeltaHub/lora_t5-base_mrpc")
 
         """
         config_dict, kwargs = cls.get_config_dict(finetuned_model_name_or_path, **kwargs)
@@ -149,14 +149,14 @@ class BaseDeltaConfig(PushToHubMixin):
                 the Hugging Face model hub after saving it.
 
                 .. warning::
-
-                    Using ``push_to_hub=True`` will synchronize the repository you are pushing to with ``save_directory``,
+                    1. Will raise error if you haven't config a Huggingface Model Hub.
+                    2. Using ``push_to_hub=True`` will synchronize the repository you are pushing to with ``save_directory``,
                     which requires ``save_directory`` to be a local clone of the repo you are pushing to if it's an existing
                     folder. Pass along ``temp_dir=True`` to use a temporary directory instead.
           
             kwargs:
                 Additional key word arguments passed along to the 
-                ``PushToHubMixin.push_to_hub <https://huggingface.co/docs/transformers/master/main_classes/model#transformers.file_utils.PushToHubMixin.push_to_hub>``_ method.
+                `PushToHubMixin.push_to_hub <https://huggingface.co/docs/transformers/master/main_classes/model#transformers.file_utils.PushToHubMixin.push_to_hub>`_ method.
         """
         if os.path.isfile(save_directory):
             raise AssertionError(f"Provided path ({save_directory}) should be a directory, not a file")

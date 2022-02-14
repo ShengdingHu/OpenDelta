@@ -582,6 +582,12 @@ class DeltaBase(nn.Module, SaveLoadMixin):
             raise RuntimeWarning("The forward function might have been wrapped by a decorator, is it intended?")
         module.state_dict = decorate(module.state_dict, _caller, extras=(includes,), kwsyntax=True) # decorator.decorate helps preserving the functions metadata (signature, etc.).
     
+    def _load_state_dict_into_backbone(self, backbone_model: nn.Module = None, state_dict: dict = {}):
+        r"""[NODOC]
+        """
+        if backbone_model is None:
+            backbone_model = self.backbone_model
+        self.backbone_model.load_state_dict(state_dict, strict=False)
 
     def create_config_from_model(self, ):
         r"""[NODOC] If the delta model was built by directly passing arguments, instead of passing a config object.

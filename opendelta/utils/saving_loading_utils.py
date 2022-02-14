@@ -216,6 +216,15 @@ class SaveLoadMixin(PushToHubMixin):
         .. tip::
             Passing ``use_auth_token=True`` is required when you want to use a private model.
         
+        .. code-block:: python
+        
+            from transformers import AutoModelForSeq2SeqLM
+            t5 = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+            from opendelta import AutoDeltaModel
+            delta = AutoDeltaModel.from_finetuned("DeltaHub/lora_t5-base_mrpc", backbone_model=t5)
+            delta.log()
+            
+        
   
         """
         config = kwargs.pop("config", None)
