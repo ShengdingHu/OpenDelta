@@ -32,22 +32,22 @@ class BaseDeltaConfig(PushToHubMixin):
 
     Class attributes (overridden by derived classes):
 
-    - **delta_type** （:obj:`str`) -- the name of the delta modules, used to create the correct [`~opendelta.AutoConfig`].
+    - **delta_type** （:obj:`str`) -- the name of the delta modules, used to create the correct :py:class:`~opendelta.AutoConfig`.
 
     Args:
-        modified_modules (:obj:`List[str]`, *optional*, defaults to :obj:`None`)
+        modified_modules (:obj:`List[str]`, *optional*, defaults to :obj:``None``)
             The list of keys to determine which modules you want to modify. OpenDelta will take every modulees that 
             **ends with** the one of the provided keys as the modification target. When not given any value, i.e. 
-            `modified_modules=None`, the delta module will use the it corresponding default modification modules. 
+            ``modified_modules=None``, the delta module will use the it corresponding default modification modules. 
             Taking DistilBertModel with an classifier on top as an example:
             
             .. note:: 
                 **Examples**: When adding delta to DistilBertModel,
 
-                1. set to :string:`["0.attention.out_lin"]` will add delta modules to the attention output of distilbert's 
-                ayer 0, i.e., :string:`distilbert.transformer.layer.0.attention.out_lin`.
+                1. set to ``["0.attention.out_lin"]`` will add delta modules to the attention output of distilbert's 
+                ayer 0, i.e., ``distilbert.transformer.layer.0.attention.out_lin``.
 
-                2. set to :string:`["attention.out_lin"]` will add the delta modules in every layer's :string:`attention.out_lin`.
+                2. set to ``["attention.out_lin"]`` will add the delta modules in every layer's ``attention.out_lin``.
       
         unfrozen_modules (:obj:`List[str]`, *optional*, defaults to :obj:`["deltas"]` ) 
         The modules that are unfrozen 
@@ -59,23 +59,23 @@ class BaseDeltaConfig(PushToHubMixin):
             .. note:: 
                 **Examples**: When adding delta to DistilBertModel,
 
-                1. set this argument to :string:`["bias"]` will make all bias terms tunable. 
+                1. set this argument to ``["bias"]`` will make all bias terms tunable. 
 
-                2. set this argument to :string:`["attention"]` will make all parameters in all attention modules tunable.
+                2. set this argument to ``["attention"]`` will make all parameters in all attention modules tunable.
 
-                3. set this argument to :string:`["deltas"]` will make all the parameters in the newly introduced delta
+                3. set this argument to ``["deltas"]`` will make all the parameters in the newly introduced delta
                 modules tunable. 
                 
-                4. set this argument to :string:`["classifier"]` will make all parameters in the classifier tunable.
+                4. set this argument to ``["classifier"]`` will make all parameters in the classifier tunable.
 
-                5. set this argument to :string:`["3.ffn.lin2", "deltas", "classifier"]`, will make all parameters in 
+                5. set this argument to ``["3.ffn.lin2", "deltas", "classifier"]``, will make all parameters in 
                 the third layer's feed forward layer's send linear layer, the detla modules, and the classifiers modules
                 tunable.  
         
         common_structure (:obj:`bool`, *optional*, default to :obj:`None`): Whether using the common structure mapping of
                 the transformer model when designating :obj:`modified_modules` and :obj:`unfrozen_modules`.
         backbone_class (:obj:`str`, *optional*, default to :obj:`None`): The name of backbone model's class, e.g.
-                :string:`RobertaForMaskedLM`. Saving this infomation let the users explicitly know on which backbone the 
+                ``RobertaForMaskedLM``. Saving this infomation let the users explicitly know on which backbone the 
                 delta model is trained. 
         backbone_checkpoint_name (:obj:`str`, *optional*, default to :obj:`None`): The specific checkpoint of the model.
                 In ideal case, it should be the url to download the checkpoint. However, we do not force the user to 
@@ -112,12 +112,12 @@ class BaseDeltaConfig(PushToHubMixin):
             finetuned_model_name_or_path (:obj:`str` or :obj:`os.PathLike`): This can be either:
     
                 * a string, the *model id* of a finetuned delta model configuration hosted inside a model repo on
-                  deltahub.co. Valid model ids can be located at the root-level, like :string:`bert-base-uncased`, or
-                  namespaced under a user or organization name, like :string:`dbmdz/bert-base-german-cased`.
+                  deltahub.co. Valid model ids can be located at the root-level, like ``bert-base-uncased``, or
+                  namespaced under a user or organization name, like ``dbmdz/bert-base-german-cased``.
 
-                * a path to a *directory* containing a configuration file saved using the :meth:`BaseDeltaConfig.save_finetuned` method, e.g., :string:`./my_model_directory/`.
+                * a path to a *directory* containing a configuration file saved using the :meth:`BaseDeltaConfig.save_finetuned` method, e.g., ``./my_model_directory/``.
 
-                * a path or url to a saved configuration JSON *file*, e.g., :string:`./my_model_directory/configuration.json`.
+                * a path or url to a saved configuration JSON *file*, e.g., ``./my_model_directory/configuration.json``.
 
             cache_dir (:obj:`str` or :obj:`os.PathLike`, *optional*):
                 Path to a directory in which a downloaded pretrained delta model configuration should be cached if the
@@ -150,13 +150,13 @@ class BaseDeltaConfig(PushToHubMixin):
 
                 .. warning::
 
-                    Using `push_to_hub=True` will synchronize the repository you are pushing to with `save_directory`,
-                    which requires `save_directory` to be a local clone of the repo you are pushing to if it's an existing
-                    folder. Pass along `temp_dir=True` to use a temporary directory instead.
+                    Using ``push_to_hub=True`` will synchronize the repository you are pushing to with ``save_directory``,
+                    which requires ``save_directory`` to be a local clone of the repo you are pushing to if it's an existing
+                    folder. Pass along ``temp_dir=True`` to use a temporary directory instead.
           
             kwargs:
                 Additional key word arguments passed along to the 
-                `PushToHubMixin.push_to_hub <https://huggingface.co/docs/transformers/master/main_classes/model#transformers.file_utils.PushToHubMixin.push_to_hub>`_ method.
+                ``PushToHubMixin.push_to_hub <https://huggingface.co/docs/transformers/master/main_classes/model#transformers.file_utils.PushToHubMixin.push_to_hub>``_ method.
         """
         if os.path.isfile(save_directory):
             raise AssertionError(f"Provided path ({save_directory}) should be a directory, not a file")
@@ -184,8 +184,8 @@ class BaseDeltaConfig(PushToHubMixin):
         Args:
             config_dict (:obj:`Dict[str, Any]`):
                 Dictionary that will be used to instantiate the configuration object. Such a dictionary can be
-                retrieved from a pretrained checkpoint by leveraging the [`~PretrainedConfig.get_config_dict`] method.
-            kwargs (`Dict[str, Any]`):
+                retrieved from a pretrained checkpoint by leveraging the :py:meth:`~PretrainedConfig.get_config_dict` method.
+            kwargs (:obj:`Dict[str, Any]`):
                 Additional parameters from which to initialize the configuration object.
         Returns:
             :obj:`BaseDeltaConfig`: The configuration object instantiated from those parameters.
@@ -223,13 +223,13 @@ class BaseDeltaConfig(PushToHubMixin):
         cls, pretrained_model_name_or_path: Union[str, os.PathLike], **kwargs
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """[NODOC]
-        From a `pretrained_model_name_or_path`, resolve to a dictionary of parameters, to be used for instantiating a
-        [`PretrainedConfig`] using `from_dict`.
+        From a ``pretrained_model_name_or_path``, resolve to a dictionary of parameters, to be used for instantiating a
+        [``PretrainedConfig``] using ``from_dict``.
         Parameters:
-            pretrained_model_name_or_path (`str` or `os.PathLike`):
+            pretrained_model_name_or_path (:obj:`str` or :obj:`os.PathLike`):
                 The identifier of the pre-trained checkpoint from which we want the dictionary of parameters.
         Returns:
-            `Tuple[Dict, Dict]`: The dictionary(ies) that will be used to instantiate the configuration object.
+            :obj:`Tuple[Dict, Dict]`: The dictionary(ies) that will be used to instantiate the configuration object.
         """
         cache_dir = kwargs.pop("cache_dir", None)
         force_download = kwargs.pop("force_download", False)
@@ -328,11 +328,11 @@ class BaseDeltaConfig(PushToHubMixin):
         """[NODOC]
         Serializes this instance to a JSON string.
         Args:
-            use_diff (`bool`, *optional*, defaults to `True`):
-                If set to `True`, only the difference between the config instance and the default `PretrainedConfig()`
+            use_diff (:obj:`bool`, *optional*, defaults to :obj:`True`):
+                If set to :obj:`True`, only the difference between the config instance and the default ``PretrainedConfig()``
                 is serialized to JSON string.
         Returns:
-            `str`: String containing all the attributes that make up this configuration instance in JSON format.
+            :obj:`str`: String containing all the attributes that make up this configuration instance in JSON format.
         """
         if use_diff is True:
             config_dict = self.to_diff_dict()
@@ -344,10 +344,10 @@ class BaseDeltaConfig(PushToHubMixin):
         """[NODOC]
         Save this instance to a JSON file.
         Args:
-            json_file_path (`str` or `os.PathLike`):
+            json_file_path (:obj:`str` or :obj:`os.PathLike`):
                 Path to the JSON file in which this configuration instance's parameters will be saved.
-            use_diff (`bool`, *optional*, defaults to `True`):
-                If set to `True`, only the difference between the config instance and the default `PretrainedConfig()`
+            use_diff (:obj:`bool`, *optional*, defaults to :obj:`True`):
+                If set to :obj:`True`, only the difference between the config instance and the default ``PretrainedConfig()``
                 is serialized to JSON file.
         """
         with open(json_file_path, "w", encoding="utf-8") as writer:
@@ -358,7 +358,7 @@ class BaseDeltaConfig(PushToHubMixin):
         Removes all attributes from config which correspond to the default config attributes for better readability and
         serializes to a Python dictionary.
         Returns:
-            `Dict[str, Any]`: Dictionary of all the attributes that make up this configuration instance,
+            :obj:`Dict[str, Any]`: Dictionary of all the attributes that make up this configuration instance,
         """
         config_dict = self.to_dict()
 
@@ -386,9 +386,9 @@ class BaseDeltaConfig(PushToHubMixin):
     
     def update(self, config_dict: Dict[str, Any]):
         """[NODOC]
-        Updates attributes of this class with attributes from `config_dict`.
+        Updates attributes of this class with attributes from ``config_dict``.
         Args:
-            config_dict (`Dict[str, Any]`): Dictionary of attributes that should be updated for this class.
+            config_dict (:obj:`Dict[str, Any]`): Dictionary of attributes that should be updated for this class.
         """
         for key, value in config_dict.items():
             setattr(self, key, value)
@@ -414,7 +414,7 @@ class BaseDeltaConfig(PushToHubMixin):
     def dict_torch_dtype_to_str(self, d: Dict[str, Any]) -> None:
         """[NODOC]
         Checks whether the passed dictionary has a *torch_dtype* key and if it's not None, converts torch.dtype to a
-        string of just the type. For example, `torch.float32` get converted into *"float32"* string, which can then be
+        string of just the type. For example, ``torch.float32`` get converted into *"float32"* string, which can then be
         stored in the json format.
         """
         if d.get("torch_dtype", None) is not None and not isinstance(d["torch_dtype"], str):
@@ -432,19 +432,19 @@ def get_configuration_file(
     """
     Get the configuration file to use for this version of transformers.
     Args:
-        path_or_repo (`str` or `os.PathLike`):
+        path_or_repo (`:obj:str` or `:obj:os.PathLike`):
             Can be either the id of a repo on huggingface.co or a path to a *directory*.
-        revision(`str`, *optional*, defaults to `"main"`):
+        revision(`:obj:str`, *optional*, defaults to ``"main"``):
             The specific model version to use. It can be a branch name, a tag name, or a commit id, since we use a
-            git-based system for storing models and other artifacts on huggingface.co, so `revision` can be any
+            git-based system for storing models and other artifacts on huggingface.co, so ``revision`` can be any
             identifier allowed by git.
-        use_auth_token (`str` or *bool*, *optional*):
-            The token to use as HTTP bearer authorization for remote files. If `True`, will use the token generated
-            when running `transformers-cli login` (stored in `~/.huggingface`).
-        local_files_only (`bool`, *optional*, defaults to `False`):
+        use_auth_token (:obj:`str` or *bool*, *optional*):
+            The token to use as HTTP bearer authorization for remote files. If :obj:`True`, will use the token generated
+            when running ``transformers-cli login`` (stored in ``~/.huggingface``).
+        local_files_only (:obj:`bool`, *optional*, defaults to :obj:`False`):
             Whether or not to only rely on local files and not to attempt to download any files.
     Returns:
-        `str`: The configuration file to use.
+        :obj:`str`: The configuration file to use.
     """
     # Inspect all files from the repo/folder.
     all_files = get_list_of_files(

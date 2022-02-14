@@ -13,7 +13,7 @@ logger = logging.get_logger(__name__)
 
 class SoftPromptConfig(BaseDeltaConfig):
     r"""
-    This is the configuration class to store the configuration of a [`LoraModel`]
+    This is the configuration class to store the configuration of a :py:class:`SoftPromptModel`
 
     """
     def __init__(
@@ -40,7 +40,7 @@ class SoftPromptLayer(nn.Module):
     the first n_tokens similar to their implementation).
 
     Note that this template can be simply achieved by :obj:`SoftManualTemplate`, in which
-    you set `n_token` <soft> tokens template before the <text_a> will give the same result.
+    you set ``n_token`` <soft> tokens template before the <text_a> will give the same result.
     """
 
     def __init__(self,
@@ -121,9 +121,26 @@ class SoftPromptLayer(nn.Module):
 
 class SoftPromptModel(DeltaBase):
     r"""
+    This is the implementation of `The Power of Scale for Parameter-Efficient
+    Prompt Tuning <https://arxiv.org/pdf/2104.08691v1.pdf>`_ . Similar to :obj:`PrefixTuningTemplate`,
+    This template also does not need any textual template. Addition tokens are directly
+    concatenated into the input ids. There are two initializations of the new tokens. 
+    (1). random initialization. (2) initialize with the tokens of the plm (We simply take 
+    the first n_tokens similar to their implementation).
+
+    Note that this template can be simply achieved by :obj:`SoftManualTemplate`, in which
+    you set ``n_token`` <soft> tokens template before the <text_a> will give the same result.
 
     Args:
-        emb_dim (:obj:`int`) The embedding dim of the reparameterization model.
+        backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
+        soft_token_num (:obj:`int`, *optional*): num of new tokens to add in the front of the input.
+        init_range (:obj:`bool`, *optional*): If initialize new tokens randomly, the random range of uniform distribution.
+        token_init (:obj:`bool`, *optional*, default to :obj:`True`): Whether to initialize the new tokens with tokens of the plm
+        modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only
+                        the implemented ones)
+        unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen
+                         together with the prefix parameters.
+        common_structure (:obj:`bool`): whether using name-based addressing witha common structure mapping.
 
     """
     config_class = SoftPromptConfig

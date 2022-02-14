@@ -41,33 +41,33 @@ class SaveLoadMixin(PushToHubMixin):
     ):
         r"""
         Save a model and its configuration file to a directory, so that it can be re-loaded using the
-        `~DeltaBase.from_finetuned` class method.
+        :py:meth:`~DeltaBase.from_finetuned` class method.
 
         Arguments:
             save_directory (:obj:`str` or :obj:`os.PathLike`):
                 Directory to which to save. Will be created if it doesn't exist.
-            save_config (:obj:`bool`, *optional*, defaults to `True`):
+            save_config (:obj:`bool`, *optional*, defaults to :obj:`True`):
                 Whether or not to save the config of the model. Useful when in distributed training like TPUs and need
-                to call this function on all processes. In this case, set `save_config=True` only on the main process
+                to call this function on all processes. In this case, set ``save_config=True`` only on the main process
                 to avoid race conditions.
             state_dict (nested dictionary of :obj:`torch.Tensor`):
-                The state dictionary of the model to save. Will default to `self.state_dict()`, but can be used to only
+                The state dictionary of the model to save. Will default to ``self.state_dict()``, but can be used to only
                 save parts of the model or if special precautions need to be taken when recovering the state dictionary
                 of a model (like when using model parallelism).
             save_function (:obj:`Callable`):
                 The function to use to save the state dictionary. Useful on distributed training like TPUs when one
-                need to replace `torch.save` by another method.
-            push_to_hub (:obj:`bool`, *optional*, defaults to `False`):
+                need to replace ``torch.save`` by another method.
+            push_to_hub (:obj:`bool`, *optional*, defaults to :obj:`False`):
                 Whether or not to push your model to the HuggingFace model hub after saving it.
                 
                 .. tip::
 
-                    Using `push_to_hub=True` will synchronize the repository you are pushing to with `save_directory`,
-                    which requires `save_directory` to be a local clone of the repo you are pushing to if it's an existing
-                    folder. Pass along `temp_dir=True` to use a temporary directory instead.
+                    Using ``push_to_hub=True`` will synchronize the repository you are pushing to with ``save_directory``,
+                    which requires ``save_directory`` to be a local clone of the repo you are pushing to if it's an existing
+                    folder. Pass along ``temp_dir=True`` to use a temporary directory instead.
                 
             kwargs:
-                Additional key word arguments passed along to the [`~file_utils.PushToHubMixin.push_to_hub`] method.
+                Additional key word arguments passed along to the :py:meth:`~file_utils.PushToHubMixin.push_to_hub` method.
 
         .. note::
 
@@ -125,73 +125,73 @@ class SaveLoadMixin(PushToHubMixin):
                         **kwargs):
         r"""
         Instantiate a finetuned delta model from a path.
-        The backbone_model is set in evaluation mode by default using `model.eval()` (Dropout modules are deactivated). 
+        The backbone_model is set in evaluation mode by default using ``model.eval()`` (Dropout modules are deactivated). 
         To further train the model, you can use the :meth:`freeze_module <opendelta.basemodel.DeltaBase.freeze_module>` method.
 
         Parameters:
 
             finetuned_model_name_or_path (:obj:`str` or :obj:`os.PathLike`, *optional*): Can be either:
                 - A string, the *model id* of a pretrained model hosted inside a model repo on huggingface.co.
-                  Valid model ids can be located at the root-level, like `bert-base-uncased`, or namespaced under a
-                  user or organization name, like `dbmdz/bert-base-german-cased`.
+                  Valid model ids can be located at the root-level, like ``bert-base-uncased``, or namespaced under a
+                  user or organization name, like ``dbmdz/bert-base-german-cased``.
                 - A path to a *directory* containing model weights saved using
-                  :meth:`SaveLoadMixin.save_finetuned`, e.g., `./my_model_directory/`.
-                - A path or url to a *tensorflow index checkpoint file* (e.g, `./tf_model/model.ckpt.index`). In
-                  this case, `from_tf` should be set to `True` and a configuration object should be provided as
-                  `config` argument. This loading path is slower than converting the TensorFlow checkpoint in a
+                  :meth:`SaveLoadMixin.save_finetuned`, e.g., ``./my_model_directory/``.
+                - A path or url to a *tensorflow index checkpoint file* (e.g, ``./tf_model/model.ckpt.index``). In
+                  this case, ``from_tf`` should be set to ``True`` and a configuration object should be provided as
+                  ``config`` argument. This loading path is slower than converting the TensorFlow checkpoint in a
                   PyTorch model using the provided conversion scripts and loading the PyTorch model afterwards.
                 - A path or url to a model folder containing a *flax checkpoint file* in *.msgpack* format (e.g,
-                  `./flax_model/` containing `flax_model.msgpack`). In this case, `from_flax` should be set to
-                  `True`.
-                - `None` if you are both providing the configuration and state dictionary (resp. with keyword
-                  arguments `config` and `state_dict`).
+                  ``./flax_model/`` containing ``flax_model.msgpack``). In this case, ``from_flax`` should be set to
+                  ``True``.
+                - ``None`` if you are both providing the configuration and state dictionary (resp. with keyword
+                  arguments ``config`` and ``state_dict``).
             backbone_model (:obj:`torch.nn.Module`): The backbone model to be modified.
             model_args (sequence of positional arguments, *optional*):
-                All remaining positional arguments will be passed to the underlying model's `__init__` method.
+                All remaining positional arguments will be passed to the underlying model's ``__init__`` method.
             config (Union[:obj:`BaseDeltaConfig`, :obj:`str`, :obj:`os.PathLike`], *optional*): Can be either:
-                - an instance of a class derived from [`PretrainedConfig`],
-                - a string or path valid as input to [`~PretrainedConfig.from_pretrained`].
+                - an instance of a class derived from :class:`~PretrainedConfig`,
+                - a string or path valid as input to :py:meth:`~PretrainedConfig.from_pretrained`.
                 
                 Configuration for the model to use instead of an automatically loaded configuration. Configuration can
                 be automatically loaded when:
                     - The model is a model provided by the library (loaded with the *model id* string of a pretrained
                       model).
-                    - The model was saved using [`~PreTrainedModel.save_pretrained`] and is reloaded by supplying the
+                    - The model was saved using :py:meth:`~PreTrainedModel.save_pretrained` and is reloaded by supplying the
                       save directory.
-                    - The model is loaded by supplying a local directory as `pretrained_model_name_or_path` and a
+                    - The model is loaded by supplying a local directory as ``pretrained_model_name_or_path`` and a
                       configuration JSON file named *config.json* is found in the directory.
             state_dict (Dict[:obj:`str`, :obj:`torch.Tensor`], *optional*):
                 A state dictionary to use instead of a state dictionary loaded from saved weights file.
                 This option can be used if you want to create a model from a pretrained configuration but load your own
-                weights. In this case though, you should check if using [`~PreTrainedModel.save_pretrained`] and
-                [`~PreTrainedModel.from_pretrained`] is not a simpler option.
-            cache_dir (`Union[str, os.PathLike]`, *optional*):
+                weights. In this case though, you should check if using :py:meth:`~PreTrainedModel.save_pretrained` and
+                :py:meth:`~PreTrainedModel.from_pretrained` is not a simpler option.
+            cache_dir (:obj:`Union[str, os.PathLike]`, *optional*):
                 Path to a directory in which a downloaded pretrained model configuration should be cached if the
                 standard cache should not be used.
-            force_download (`bool`, *optional*, defaults to `False`):
+            force_download (:obj:`bool`, *optional*, defaults to :obj:`False`):
                 Whether or not to force the (re-)download of the model weights and configuration files, overriding the
                 cached versions if they exist.
-            resume_download (`bool`, *optional*, defaults to `False`):
+            resume_download (:obj:`bool`, *optional*, defaults to :obj:`False`):
                 Whether or not to delete incompletely received files. Will attempt to resume the download if such a
                 file exists.
-            proxies (`Dict[str, str]`, *optional*):
+            proxies (:obj:`Dict[str, str]`, *optional*):
                 A dictionary of proxy servers to use by protocol or endpoint, e.g., `{'http': 'foo.bar:3128',
                 'http://hostname': 'foo.bar:4012'}`. The proxies are used on each request.
-            local_files_only(`bool`, *optional*, defaults to `False`):
+            local_files_only(:obj:`bool`, *optional*, defaults to :obj:`False`):
                 Whether or not to only look at local files (i.e., do not try to download the model).
-            use_auth_token (`str` or *bool*, *optional*):
-                The token to use as HTTP bearer authorization for remote files. If `True`, will use the token generated
-                when running `transformers-cli login` (stored in `~/.huggingface`).
-            revision(`str`, *optional*, defaults to `"main"`):
+            use_auth_token (:obj:`str` or *bool*, *optional*):
+                The token to use as HTTP bearer authorization for remote files. If :obj:`True`, will use the token generated
+                when running ``transformers-cli login`` (stored in ``~/.huggingface``).
+            revision(:obj:`str`, *optional*, defaults to ``"main"``):
                 The specific model version to use. It can be a branch name, a tag name, or a commit id, since we use a
-                git-based system for storing models and other artifacts on huggingface.co, so `revision` can be any
+                git-based system for storing models and other artifacts on huggingface.co, so ``revision`` can be any
                 identifier allowed by git.
-            mirror(`str`, *optional*):
+            mirror(:obj:`str`, *optional*):
                 Mirror source to accelerate downloads in China. If you are from China and have an accessibility
                 problem, you can set this option to resolve it. Note that we do not guarantee the timeliness or safety.
                 Please refer to the mirror site for more information.
-            torch_dtype (`str` or `torch.dtype`, *optional*):
-                Override the default `torch.dtype` and load the model under this dtype. If `"auto"` is passed the dtype
+            torch_dtype (:obj:`str` or :obj:`torch.dtype`, *optional*):
+                Override the default :obj:`torch.dtype` and load the model under this dtype. If ``"auto"`` is passed the dtype
                 will be automatically derived from the model's weights.
 
                 .. warning::
@@ -202,19 +202,19 @@ class SaveLoadMixin(PushToHubMixin):
                 
             kwargs (remaining dictionary of keyword arguments, *optional*):
                 Can be used to update the configuration object (after it being loaded) and initiate the model (e.g.,
-                `output_attentions=True`). Behaves differently depending on whether a `config` is provided or
+                ``output_attentions=True``). Behaves differently depending on whether a ``config`` is provided or
                 automatically loaded:
-                    - If a configuration is provided with `config`, `**kwargs` will be directly passed to the
-                      underlying model's `__init__` method (we assume all relevant updates to the configuration have
+                    - If a configuration is provided with ``config``, ``**kwargs`` will be directly passed to the
+                      underlying model's ``__init__`` method (we assume all relevant updates to the configuration have
                       already been done)
-                    - If a configuration is not provided, `kwargs` will be first passed to the configuration class
-                      initialization function ([`~PretrainedConfig.from_pretrained`]). Each key of `kwargs` that
+                    - If a configuration is not provided, ``kwargs`` will be first passed to the configuration class
+                      initialization function (:py:meth:`~PretrainedConfig.from_pretrained`). Each key of ``kwargs`` that
                       corresponds to a configuration attribute will be used to override said attribute with the
-                      supplied `kwargs` value. Remaining keys that do not correspond to any configuration attribute
-                      will be passed to the underlying model's `__init__` function.
+                      supplied ``kwargs`` value. Remaining keys that do not correspond to any configuration attribute
+                      will be passed to the underlying model's ``__init__`` function.
         
         .. tip::
-            Passing `use_auth_token=True`` is required when you want to use a private model.
+            Passing ``use_auth_token=True`` is required when you want to use a private model.
         
   
         """

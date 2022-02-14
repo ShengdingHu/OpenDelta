@@ -10,7 +10,7 @@ from opendelta import BaseDeltaConfig
 
 class LoraConfig(BaseDeltaConfig):
     r"""
-    This is the configuration class to store the configuration of a [`LoraModel`]
+    This is the configuration class to store the configuration of a :py:class:`~LoraModel`
 
     """
     def __init__(
@@ -48,7 +48,7 @@ class LoraModel(DeltaBase):
         backbone_model (:obj:`transformers.PretrainedModels`): The backbone model to be modified. 
         lora_r (:obj:`int`, *optional*): the rank of the lora parameters. The smaller lora_r is , the fewer parameters lora has.
         lora_alpha (:obj:`bool`, *optional*): A hyper-parameter to control the init scale of loralib.linear .
-        lora_dropout (:obj:`boo`, *optional*): The dropout rate in lora.linear. 
+        lora_dropout (:obj:`bool`, *optional*): The dropout rate in lora.linear. 
         modified_modules (:obj:`List[str]`): For prefix tuning, the it must refer to an attention layer (Currently, only
                         the implemented ones)
         unfrozen_modules (:obj:`List[str]`, *optional*, default to :obj:`None`): The modules that should be unfrozen

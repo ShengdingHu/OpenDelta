@@ -73,7 +73,7 @@ def pil_loader(path: str):
 class DataTrainingArguments:
     """
     Arguments pertaining to what data we are going to input our model for training and eval.
-    Using `HfArgumentParser` we can turn this class
+    Using ``HfArgumentParser`` we can turn this class
     into argparse arguments to be able to specify them on
     the command line.
     """
@@ -231,7 +231,7 @@ def main():
     # metric = datasets.load_metric("accuracy")
     metric = datasets.load_metric("metric.py")
 
-    # Define our compute_metrics function. It takes an `EvalPrediction` object (a namedtuple with a
+    # Define our compute_metrics function. It takes an ``EvalPrediction`` object (a namedtuple with a
     # predictions and label_ids field) and has to return a dictionary string to float.
     def compute_metrics(p):
         """Computes accuracy on a batch of predictions"""

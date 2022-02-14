@@ -82,14 +82,14 @@ LAZY_CONFIG_MAPPING = _LazyConfigMapping(DELTA_CONFIG_MAPPING)
 class AutoDeltaConfig:
     r"""
     This is a generic configuration class that will be instantiated as one of the configuration classes of the library
-    when created with the [`~AutoConfig.from_pretrained`] class method.
-    This class cannot be instantiated directly using `__init__()` (throws an error).
+    when created with the :py:meth:`~AutoConfig.from_pretrained` class method.
+    This class cannot be instantiated directly using ``__init__()`` (throws an error).
     """
 
     def __init__(self):
         raise EnvironmentError(
             "AutoConfig is designed to be instantiated "
-            "using the `AutoConfig.from_pretrained(pretrained_model_name_or_path)` method."
+            "using the ``AutoConfig.from_pretrained(pretrained_model_name_or_path)`` method."
         )
     
     @classmethod
@@ -117,56 +117,56 @@ class AutoDeltaConfig:
     def from_finetuned(cls, finetuned_model_name_or_path, **kwargs):
         r"""
         Instantiate one of the configuration classes of the library from a pretrained model configuration.
-        The configuration class to instantiate is selected based on the `model_type` property of the config object that
-        is loaded, or when it's missing, by falling back to using pattern matching on `pretrained_model_name_or_path`:
+        The configuration class to instantiate is selected based on the ``model_type`` property of the config object that
+        is loaded, or when it's missing, by falling back to using pattern matching on ``pretrained_model_name_or_path``:
         List options
 
         Args:
-            pretrained_model_name_or_path (`str` or `os.PathLike`):
+            pretrained_model_name_or_path (:obj:`str` or :obj:`os.PathLike`):
                 Can be either:
                 - A string, the *model id* of a pretrained model configuration hosted inside a model repo on
-                    huggingface.co. Valid model ids can be located at the root-level, like `bert-base-uncased`, or
-                    namespaced under a user or organization name, like `dbmdz/bert-base-german-cased`.
+                    huggingface.co. Valid model ids can be located at the root-level, like ``bert-base-uncased``, or
+                    namespaced under a user or organization name, like ``dbmdz/bert-base-german-cased``.
                 - A path to a *directory* containing a configuration file saved using the
-                    [`~PretrainedConfig.save_pretrained`] method, or the [`~PreTrainedModel.save_pretrained`] method,
-                    e.g., `./my_model_directory/`.
+                    :py:meth:`~PretrainedConfig.save_pretrained` method, or the :py:meth:`~PreTrainedModel.save_pretrained` method,
+                    e.g., ``./my_model_directory/``.
                 - A path or url to a saved configuration JSON *file*, e.g.,
-                    `./my_model_directory/configuration.json`.
-            cache_dir (`str` or `os.PathLike`, *optional*):
+                    ``./my_model_directory/configuration.json``.
+            cache_dir (:obj:`str` or :obj:`os.PathLike`, *optional*):
                 Path to a directory in which a downloaded pretrained model configuration should be cached if the
                 standard cache should not be used.
-            force_download (`bool`, *optional*, defaults to `False`):
+            force_download (:obj:`bool`, *optional*, defaults to :obj:`False`):
                 Whether or not to force the (re-)download the model weights and configuration files and override the
                 cached versions if they exist.
-            resume_download (`bool`, *optional*, defaults to `False`):
+            resume_download (:obj:`bool`, *optional*, defaults to :obj:`False`):
                 Whether or not to delete incompletely received files. Will attempt to resume the download if such a
                 file exists.
-            proxies (`Dict[str, str]`, *optional*):
+            proxies (:obj:`Dict[str, str]`, *optional*):
                 A dictionary of proxy servers to use by protocol or endpoint, e.g., `{'http': 'foo.bar:3128',
                 'http://hostname': 'foo.bar:4012'}`. The proxies are used on each request.
-            revision(`str`, *optional*, defaults to `"main"`):
+            revision(:obj:`str`, *optional*, defaults to ``"main"``):
                 The specific model version to use. It can be a branch name, a tag name, or a commit id, since we use a
                 git-based system for storing models and other artifacts on huggingface.co, so `revision` can be any
                 identifier allowed by git.
-            return_unused_kwargs (`bool`, *optional*, defaults to `False`):
-                If `False`, then this function returns just the final configuration object.
-                If `True`, then this functions returns a `Tuple(config, unused_kwargs)` where *unused_kwargs* is a
+            return_unused_kwargs (:obj:`bool`, *optional*, defaults to ``False``):
+                If ``False``, then this function returns just the final configuration object.
+                If ``True``, then this functions returns a ``Tuple(config, unused_kwargs)`` where *unused_kwargs* is a
                 dictionary consisting of the key/value pairs whose keys are not configuration attributes: i.e., the
-                part of `kwargs` which has not been used to update `config` and is otherwise ignored.
-            trust_remote_code (`bool`, *optional*, defaults to `False`):
+                part of ``kwargs`` which has not been used to update ``config`` and is otherwise ignored.
+            trust_remote_code (:obj:`bool`, *optional*, defaults to ``False``):
                 Whether or not to allow for custom models defined on the Hub in their own modeling files. This option
-                should only be set to `True` for repositories you trust and in which you have read the code, as it will
+                should only be set to ``True`` for repositories you trust and in which you have read the code, as it will
                 execute code present on the Hub on your local machine.
             kwargs(additional keyword arguments, *optional*):
                 The values in kwargs of any keys which are configuration attributes will be used to override the loaded
                 values. Behavior concerning key/value pairs whose keys are *not* configuration attributes is controlled
-                by the `return_unused_kwargs` keyword parameter.
+                by the ``return_unused_kwargs`` keyword parameter.
         
         Examples:
-        ```python
+
         >>> from transformers import AutoConfig
         >>> config = AutoDeltaConfig.from_finetuned("deltahub/lora_t5-large")
-        ```
+
         """
 
         kwargs["name_or_path"] = finetuned_model_name_or_path
@@ -330,8 +330,8 @@ class AutoDeltaModel:
             Please use from_finetuned directly. 
 
         Args:
-            config (:obj:`BaseDeltaConfig`）
-            backbone_model (:obj:`nn.Module`)
+            config (:obj:`BaseDeltaConfig`):
+            backbone_model (:obj:`nn.Module`):
     
         >>> config = AutoDeltaConfig.from_finetuned("DeltaHub/lora_t5")
         >>> delta_model = AutoDeltaModel.from_config(config, backbone_model)
@@ -354,11 +354,10 @@ class AutoDeltaModel:
         delta checkpoint are used. 
 
         Args:
-            config (:obj:`BaseDeltaConfig`）
-            backbone_model (:obj:`nn.Module`)
+            config (:obj:`BaseDeltaConfig`):
+            backbone_model (:obj:`nn.Module`):
     
         >>> delta_model = AutoDeltaModel.from_finetuned("DeltaHub/lora_t5", backbone_model)
-
 
         """
         config = kwargs.pop("config", None)
